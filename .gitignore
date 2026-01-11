@@ -1,0 +1,44 @@
+# Config files (use .example files as templates)
+config/config.php
+config/database.php
+
+# Logs
+logs/*.log
+logs/*.txt
+!logs/.gitkeep
+
+# MAMP/Local environment
+.DS_Store
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Uploads (if you add user uploads later)
+uploads/*
+!uploads/.gitkeep
+
+# Cache
+cache/
+*.cache
+
+# Composer (if you add it later)
+vendor/
+composer.lock
+
+# Node modules (if you add npm later)
+node_modules/
+package-lock.json
+
+# Build files
+build/
+dist/

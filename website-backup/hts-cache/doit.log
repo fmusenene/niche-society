@@ -1,0 +1,8 @@
+https://niche-society.com https://niche-society.com/services/ https://niche-society.com/about/ https://niche-society.com/contact/ https://niche-society.com/blog/ https://niche-society.com/success-stories/ -O . -%v -r6 +*niche-society.com/* -*wp-admin* -*wp-login* -*feed* -*xmlrpc*
+File generated automatically on Sun, 21 Dec 2025 22:13:27, do NOT edit
+
+To update a mirror, just launch httrack without any parameters
+The existing cache will be used (and modified)
+To have other options, retype all parameters and launch HTTrack
+To continue an interrupted mirror, just launch httrack without any parameters
+
