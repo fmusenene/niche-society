@@ -342,7 +342,7 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
                 <div class="divider mx-auto"></div>
             </div>
             <div class="row">
-                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="col-4 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="feature-box text-center">
                         <div class="feature-icon">
                             <i class="bi bi-chat-dots"></i>
@@ -351,7 +351,7 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
                         <p><?= $lang === 'ar' ? 'احصل على استشارة مجانية من خبرائنا' : 'Get a free consultation from our experts' ?></p>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="col-4 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="feature-box text-center">
                         <div class="feature-icon">
                             <i class="bi bi-clock-history"></i>
@@ -360,7 +360,7 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
                         <p><?= $lang === 'ar' ? 'نرد على استفساراتكم خلال 24 ساعة' : 'We respond to your inquiries within 24 hours' ?></p>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="col-4 mb-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="feature-box text-center">
                         <div class="feature-icon">
                             <i class="bi bi-shield-check"></i>
