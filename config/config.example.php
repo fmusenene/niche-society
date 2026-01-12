@@ -54,9 +54,9 @@ define('SOCIAL_INSTAGRAM', 'https://instagram.com/nichesociety');
 define('SOCIAL_LINKEDIN', 'https://linkedin.com/company/nichesociety');
 
 // SEO
-define('SITE_DESCRIPTION_AR', 'نيتش سوسايتي - حلول إدارية وتنظيمية استثنائية');
+define('SITE_DESCRIPTION_AR', 'نيش سوسايتي - حلول إدارية وتنظيمية استثنائية');
 define('SITE_DESCRIPTION_EN', 'Niche Society - Exceptional Management Solutions');
-define('SITE_KEYWORDS_AR', 'إدارة، تنظيم، خدمات فاخرة، نيتش سوسايتي');
+define('SITE_KEYWORDS_AR', 'إدارة، تنظيم، خدمات فاخرة، نيش سوسايتي');
 define('SITE_KEYWORDS_EN', 'management, organization, luxury services, niche society');
 
 // Google Analytics (optional)

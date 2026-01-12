@@ -13,9 +13,9 @@ handleLanguageSwitch();
 $lang = getCurrentLang();
 $dir = getTextDirection($lang);
 
-$pageTitle = $lang === 'ar' ? 'من نحن - نيتش سوسيتي' : 'About Us - Niche Society';
+$pageTitle = $lang === 'ar' ? 'من نحن - نيش سوسيتي' : 'About Us - Niche Society';
 $pageDescription = $lang === 'ar'
-    ? 'شركة نيتش سوسيتي - خبرة في إدارة الممتلكات والفعاليات والخدمات الفاخرة'
+    ? 'شركة نيش سوسيتي - خبرة في إدارة الممتلكات والفعاليات والخدمات الفاخرة'
     : 'Niche Society - Excellence in estate management, events, and luxury services';
 ?>
 <!DOCTYPE html>
@@ -31,13 +31,25 @@ $pageDescription = $lang === 'ar'
 <?php include __DIR__ . '/includes/header.php'; ?>
 
 <!-- Hero Section -->
-<section class="page-hero about-hero-clear" style="background-image: url('<?= url('assets/images/TEAM-scaled.jpg') ?>');">
-    <div class="container">
-        <div class="hero-content">
-            <div class="hero-text-animated">
-                <h1 class="about-hero-title">
-                    <?= $lang === 'ar' ? 'من نحن' : 'About Us' ?>
-                </h1>
+<section class="hero-premium">
+    <!-- Background Image -->
+    <div class="hero-bg-container">
+        <div class="hero-bg-image" style="background-image: url('<?= url('assets/images/TEAM-scaled.jpg') ?>');"></div>
+        <div class="hero-black-overlay"></div>
+    </div>
+    
+    <!-- Hero Content -->
+    <div class="hero-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9">
+                    <!-- Title -->
+                    <div class="hero-text-animated">
+                        <h1 class="hero-main-title">
+                            <?= $lang === 'ar' ? 'من نحن' : 'About Us' ?>
+                        </h1>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -54,12 +66,12 @@ $pageDescription = $lang === 'ar'
                         <?= $lang === 'ar' ? 'من نحن' : 'About Us' ?>
                     </span>
                     <h2 class="section-title-professional">
-                        <?= $lang === 'ar' ? 'من هي نيتش سوسيتي؟' : 'Who is Niche Society?' ?>
+                        <?= $lang === 'ar' ? 'من هي نيش سوسيتي؟' : 'Who is Niche Society?' ?>
                     </h2>
                     <div class="divider-professional"></div>
                     <p class="lead-text-professional">
                         <?= $lang === 'ar'
-                            ? 'نيتش سوسيتي شركة متخصصة في تقديم حلول إدارية وتنظيمية بمعايير تعيد تعريف معنى التميز، تشمل إدارة الممتلكات الخاصة، العقارات، البروتوكول والإتيكيت الرسمي، اللوجستيات، العلاقات العامة، والخدمات التشغيلية الفاخرة.'
+                            ? 'نيش سوسيتي شركة متخصصة في تقديم حلول إدارية وتنظيمية بمعايير تعيد تعريف معنى التميز، تشمل إدارة الممتلكات الخاصة، العقارات، البروتوكول والإتيكيت الرسمي، اللوجستيات، العلاقات العامة، والخدمات التشغيلية الفاخرة.'
                             : 'Niche Society is a company specialized in providing administrative and organizational solutions with standards that redefine the meaning of excellence, including private property management, real estate, official etiquette and protocols, logistics, public relations, and high-end operational services.' ?>
                     </p>
                     <p class="text-professional">
@@ -216,7 +228,7 @@ $pageDescription = $lang === 'ar'
                     <div class="divider-professional"></div>
                     <p class="lead-text-professional">
                         <?= $lang === 'ar'
-                            ? 'بدأت نيتش سوسيتي من شغف عميق بالتحدي ورغبة لا تتزعزع في خلق حلول حديثة تترجم أعلى معايير الجودة والدقة.'
+                            ? 'بدأت نيش سوسيتي من شغف عميق بالتحدي ورغبة لا تتزعزع في خلق حلول حديثة تترجم أعلى معايير الجودة والدقة.'
                             : 'Niche Society was born from a deep passion for challenge and an unwavering desire to create modern solutions that translate the highest standards of quality and accuracy.' ?>
                     </p>
                     <p class="text-professional">
@@ -226,7 +238,7 @@ $pageDescription = $lang === 'ar'
                     </p>
                     <p class="text-professional mb-0">
                         <?= $lang === 'ar'
-                            ? 'نيتش سوسيتي ليست مجرد مشروع، بل نتيجة لسنوات من الخبرة، التنوع الثقافي، والتحديات التي واجهناها خلال مسيرتنا المهنية. تأسست لتقديم خدمات تعزز الخصوصية، تعزز الإنتاجية، وتُنفذ بأعلى مستويات الحرفية، بهدوء وسلاسة، وتعزز الأناقة التي لا تُخطئها العين ولا يغفلها الحس.'
+                            ? 'نيش سوسيتي ليست مجرد مشروع، بل نتيجة لسنوات من الخبرة، التنوع الثقافي، والتحديات التي واجهناها خلال مسيرتنا المهنية. تأسست لتقديم خدمات تعزز الخصوصية، تعزز الإنتاجية، وتُنفذ بأعلى مستويات الحرفية، بهدوء وسلاسة، وتعزز الأناقة التي لا تُخطئها العين ولا يغفلها الحس.'
                             : 'Niche Society is not just a project, but the result of years of experience, cultural diversity, and the challenges we faced during our professional career. It was founded to provide services that enhance privacy, enhance productivity, and are executed with the highest levels of craftsmanship, with calmness and smoothness, and enhance elegance that is unmistakable to the eye and not overlooked by the senses.' ?>
                     </p>
                 </div>
@@ -243,7 +255,7 @@ $pageDescription = $lang === 'ar'
                 <i class="bi bi-star-fill"></i>
                 <?= $lang === 'ar' ? 'ما يميزنا' : 'What Sets Us Apart' ?>
             </span>
-            <h2 class="section-title-professional"><?= $lang === 'ar' ? 'لماذا تختار نيتش سوسيتي؟' : 'Why Choose Niche Society?' ?></h2>
+            <h2 class="section-title-professional"><?= $lang === 'ar' ? 'لماذا تختار نيش سوسيتي؟' : 'Why Choose Niche Society?' ?></h2>
             <div class="divider-professional mx-auto"></div>
             <p class="lead-text-professional">
                 <?= $lang === 'ar'

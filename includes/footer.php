@@ -12,7 +12,7 @@ $isArabic = ($lang === 'ar');
 /* Footer Interactive Styles */
 .footer-corporate {
     background: #602234 !important;
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
     padding: 15px 0 0 !important; /* very compact height */
     margin-top: 25px !important;  /* minimal gap above footer */
     position: relative;
@@ -25,7 +25,7 @@ $isArabic = ($lang === 'ar');
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #FFF7E7 0%, #ffffff 50%, #FFF7E7 100%);
+    background: linear-gradient(90deg, #fffaf3 0%, #fffaf3 50%, #fffaf3 100%);
 }
 
 .footer-logo-img {
@@ -42,7 +42,7 @@ $isArabic = ($lang === 'ar');
 }
 
 .footer-description {
-    color: rgba(255, 247, 231, 0.9) !important;
+    color: rgba(255, 250, 243, 0.9) !important;
     font-size: 13px !important;
     line-height: 1.6 !important;
     margin-bottom: 12px !important;
@@ -55,9 +55,9 @@ $isArabic = ($lang === 'ar');
     align-items: center !important;
     gap: 8px !important;
     padding: 10px 16px !important;
-    background: rgba(255, 247, 231, 0.12) !important;
-    border: 2px solid rgba(255, 247, 231, 0.35) !important;
-    color: #FFF7E7 !important;
+    background: rgba(255, 250, 243, 0.12) !important;
+    border: 2px solid rgba(255, 250, 243, 0.35) !important;
+    color: #fffaf3 !important;
     font-size: 12px !important;
     font-weight: 500 !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -66,8 +66,8 @@ $isArabic = ($lang === 'ar');
 }
 
 .footer-iso-badge:hover {
-    background: rgba(255, 247, 231, 0.22) !important;
-    border-color: #FFF7E7 !important;
+    background: rgba(255, 250, 243, 0.22) !important;
+    border-color: #fffaf3 !important;
     transform: translateX(-4px) !important;
 }
 
@@ -111,7 +111,7 @@ $isArabic = ($lang === 'ar');
     position: relative !important;
     max-width: 90% !important;
     max-height: 90vh !important;
-    background: #FFF7E7 !important;
+    background: #fffaf3 !important;
     border: 3px solid #602234 !important;
     box-shadow: 0 20px 60px rgba(96, 34, 52, 0.5) !important;
     z-index: 100000 !important;
@@ -125,7 +125,7 @@ $isArabic = ($lang === 'ar');
     top: 15px;
     right: 15px;
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
     border: 2px solid #602234;
     width: 40px;
     height: 40px;
@@ -140,8 +140,8 @@ $isArabic = ($lang === 'ar');
 }
 
 .iso-certificate-modal-close:hover {
-    background: #7A2E44;
-    border-color: #7A2E44;
+    background: #4a1a29;
+    border-color: #602234;
     transform: scale(1.1);
 }
 
@@ -178,14 +178,14 @@ $isArabic = ($lang === 'ar');
 }
 
 .footer-heading {
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
     font-size: 14px !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.6px !important;
     margin-bottom: 14px !important;
     padding-bottom: 8px !important;
-    border-bottom: 2px solid #FFF7E7 !important;
+    border-bottom: 2px solid #fffaf3 !important;
     display: inline-block !important;
     font-family: 'IBM Plex Sans', sans-serif !important;
 }
@@ -201,7 +201,7 @@ $isArabic = ($lang === 'ar');
 }
 
 .footer-links-list a {
-    color: rgba(255, 247, 231, 0.85) !important;
+    color: rgba(255, 250, 243, 0.85) !important;
     text-decoration: none !important;
     font-size: 15px !important;
     line-height: 1.6 !important;
@@ -220,12 +220,12 @@ $isArabic = ($lang === 'ar');
     transform: translateY(-50%);
     width: 0;
     height: 2px;
-    background: #FFF7E7;
+    background: #fffaf3;
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .footer-links-list a:hover {
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
     padding-left: 20px !important;
 }
 
@@ -243,7 +243,7 @@ $isArabic = ($lang === 'ar');
     display: flex !important;
     align-items: flex-start !important;
     gap: 10px !important;
-    color: rgba(255, 247, 231, 0.85) !important;
+    color: rgba(255, 250, 243, 0.85) !important;
     font-size: 13px !important;
     line-height: 1.5 !important;
     margin-bottom: 10px !important;
@@ -252,12 +252,12 @@ $isArabic = ($lang === 'ar');
 }
 
 .footer-contact-item:hover {
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
     transform: translateX(-4px) !important;
 }
 
 .footer-contact-item i {
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
     font-size: 14px !important;
     min-width: 18px !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -279,9 +279,9 @@ $isArabic = ($lang === 'ar');
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    background: rgba(255, 247, 231, 0.1) !important;
-    border: 2px solid #FFF7E7 !important;
-    color: #FFF7E7 !important;
+    background: rgba(255, 250, 243, 0.1) !important;
+    border: 2px solid #fffaf3 !important;
+    color: #fffaf3 !important;
     font-size: 15px !important;
     text-decoration: none !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -294,7 +294,7 @@ $isArabic = ($lang === 'ar');
     content: '';
     position: absolute;
     inset: 0;
-    background: #FFF7E7;
+    background: #fffaf3;
     transform: translateY(100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 0;
@@ -304,11 +304,17 @@ $isArabic = ($lang === 'ar');
     position: relative;
     z-index: 1;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
+    font-family: "bootstrap-icons", "Bootstrap Icons" !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-block !important;
 }
 
 .footer-social-link:hover {
-    border-color: #FFF7E7 !important;
+    border-color: #fffaf3 !important;
     background: transparent !important;
     transform: translateY(-5px) !important;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5) !important;
@@ -336,7 +342,7 @@ $isArabic = ($lang === 'ar');
 }
 
 .footer-copyright {
-    color: rgba(255, 247, 231, 0.7) !important;
+    color: rgba(255, 250, 243, 0.7) !important;
     font-size: 13px !important;
     line-height: 1.6 !important;
     margin: 0 !important;
@@ -344,7 +350,7 @@ $isArabic = ($lang === 'ar');
 }
 
 .footer-legal-links a {
-    color: rgba(255, 247, 231, 0.7) !important;
+    color: rgba(255, 250, 243, 0.7) !important;
     text-decoration: none !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     margin: 0 10px !important;
@@ -352,7 +358,7 @@ $isArabic = ($lang === 'ar');
 }
 
 .footer-legal-links a:hover {
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
     text-decoration: underline !important;
 }
 
@@ -576,7 +582,7 @@ $isArabic = ($lang === 'ar');
                      class="footer-logo-img">
                 <p class="footer-description">
                     <?php echo $isArabic 
-                        ? 'نيتش سوسايتي - الريادة في خدمات الإدارة الفاخرة منذ 25 عاماً. نقدم حلولاً متكاملة لإدارة الممتلكات والفعاليات مع أعلى معايير الجودة والسرية.'
+                        ? 'نيش سوسايتي - الريادة في خدمات الإدارة الفاخرة منذ 25 عاماً. نقدم حلولاً متكاملة لإدارة الممتلكات والفعاليات مع أعلى معايير الجودة والسرية.'
                         : 'Niche Society - Leading luxury management services for 25 years. We provide integrated solutions for property and event management with the highest standards of quality and confidentiality.'; 
                     ?>
                 </p>

@@ -12,8 +12,8 @@ $dir = getTextDirection($lang);
 
 // Page settings
 $currentPage = 'services';
-$pageTitle = $lang === 'ar' ? 'توظيف وتدريب الموظفين - نيتش سوسايتي' : 'Staff Recruitment & Training - Niche Society';
-$pageDescription = $lang === 'ar' ? 'اختيار وتطوير أفضل الكفاءات لخدمتكم بأعلى معايير الاحترافية والجودة.' : 'Selecting and developing the best talents to serve you with the highest standards of professionalism and quality.';
+$pageTitle = $lang === 'ar' ? 'تدريب الموظفين - نيش سوسايتي' : 'Staff Training - Niche Society';
+$pageDescription = $lang === 'ar' ? 'تطوير وتدريب الموظفين بأعلى معايير الاحترافية والجودة.' : 'Developing and training staff with the highest standards of professionalism and quality.';
 
 // CSRF token for contact form
 if (session_status() === PHP_SESSION_NONE) {
@@ -43,11 +43,11 @@ require_once 'includes/header.php';
         </div>
         <div class="service-detail-title-section">
             <div class="service-badge-header"><?php echo formatNumber('06'); ?></div>
-            <h1 class="service-detail-title"><?php echo $lang === 'ar' ? 'توظيف وتدريب الموظفين' : 'Staff Recruitment & Training'; ?></h1>
+            <h1 class="service-detail-title"><?php echo $lang === 'ar' ? 'تدريب الموظفين' : 'Staff Training'; ?></h1>
             <p class="service-detail-subtitle">
                 <?php echo $lang === 'ar' 
-                    ? 'اختيار وتطوير أفضل الكفاءات لخدمتكم بأعلى معايير الاحترافية' 
-                    : 'Selecting and developing the best talents to serve you with the highest standards of professionalism'; ?>
+                    ? 'تطوير وتدريب الموظفين بأعلى معايير الاحترافية' 
+                    : 'Developing and training staff with the highest standards of professionalism'; ?>
             </p>
             <div class="service-meta-badges">
                 <span class="meta-badge"><i class="bi bi-award-fill"></i> <?php echo $lang === 'ar' ? 'معتمد ISO 9001' : 'ISO 9001 Certified'; ?></span>
@@ -66,8 +66,8 @@ require_once 'includes/header.php';
                 <h2 class="section-title"><?php echo $lang === 'ar' ? 'نظرة عامة على الخدمة' : 'Service Overview'; ?></h2>
                 <p class="lead">
                     <?php echo $lang === 'ar' 
-                        ? 'نقدم خدمة شاملة لتوظيف وتدريب الموظفين المنزليين والمهنيين للعملاء المميزين. عملية اختيار صارمة متعددة المراحل تضمن أن كل موظف يلبي أعلى معايير الكفاءة والموثوقية والاحترافية.' 
-                        : 'We provide comprehensive staff recruitment and training services for distinguished clients. Our rigorous multi-stage selection process ensures every employee meets the highest standards of competence, reliability, and professionalism.'; ?>
+                        ? 'نقدم خدمة شاملة لتدريب الموظفين المنزليين والمهنيين للعملاء المميزين. برامج تدريب متخصصة تضمن أن كل موظف يلبي أعلى معايير الكفاءة والموثوقية والاحترافية.' 
+                        : 'We provide comprehensive staff training services for distinguished clients. Our specialized training programs ensure every employee meets the highest standards of competence, reliability, and professionalism.'; ?>
                 </p>
                 <p>
                     <?php echo $lang === 'ar' 
@@ -77,7 +77,7 @@ require_once 'includes/header.php';
                 <div class="service-stats mt-4">
                     <div class="stat-box">
                         <h3><?php echo formatNumber('500'); ?>+</h3>
-                        <p><?php echo $lang === 'ar' ? 'موظف مُوظف' : 'Staff Placed'; ?></p>
+                        <p><?php echo $lang === 'ar' ? 'موظف مدرب' : 'Staff Trained'; ?></p>
                     </div>
                     <div class="stat-box">
                         <h3><?php echo formatNumber('98'); ?>%</h3>
@@ -91,7 +91,7 @@ require_once 'includes/header.php';
             </div>
             <div class="col-lg-6" data-aos="fade-left">
                 <div class="service-image-wrapper">
-                    <img src="<?= url('assets/images/service-4.jpg') ?>" alt="<?php echo $lang === 'ar' ? 'توظيف وتدريب الموظفين' : 'Staff Recruitment & Training'; ?>" class="img-fluid service-detail-img">
+                    <img src="<?= url('assets/images/service-4.jpg') ?>" alt="<?php echo $lang === 'ar' ? 'تدريب الموظفين' : 'Staff Training'; ?>" class="img-fluid service-detail-img">
                 </div>
             </div>
         </div>
@@ -105,8 +105,8 @@ require_once 'includes/header.php';
             <h2 class="section-title"><?php echo $lang === 'ar' ? 'ما نقدمه لك' : 'What We Offer'; ?></h2>
             <p class="section-subtitle">
                 <?php echo $lang === 'ar' 
-                    ? 'خدمات شاملة لتوظيف وتطوير الموظفين' 
-                    : 'Comprehensive services for staff recruitment and development'; ?>
+                    ? 'خدمات شاملة لتطوير وتدريب الموظفين' 
+                    : 'Comprehensive services for staff development and training'; ?>
             </p>
         </div>
 
@@ -171,10 +171,10 @@ require_once 'includes/header.php';
                 ],
                 [
                     'icon_url' => 'https://api.iconify.design/mdi:handshake.svg?color=%23602234',
-                    'title_en' => 'Placement & Integration Support',
-                    'title_ar' => 'دعم التوظيف والاندماج',
-                    'desc_en' => 'Smooth onboarding process, team integration support, and ongoing assistance during the transition period.',
-                    'desc_ar' => 'عملية انضمام سلسة، دعم اندماج الفريق، والمساعدة المستمرة خلال فترة الانتقال.'
+                    'title_en' => 'Integration Support',
+                    'title_ar' => 'دعم الاندماج',
+                    'desc_en' => 'Team integration support and ongoing assistance during the transition period.',
+                    'desc_ar' => 'دعم اندماج الفريق والمساعدة المستمرة خلال فترة الانتقال.'
                 ]
             ];
 
@@ -202,11 +202,11 @@ require_once 'includes/header.php';
 <section class="section bg-light">
     <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="section-title"><?php echo $lang === 'ar' ? 'فئات الموظفين' : 'Staff Categories'; ?></h2>
+            <h2 class="section-title"><?php echo $lang === 'ar' ? 'أنواع التدريب' : 'Training Types'; ?></h2>
             <p class="section-subtitle">
                 <?php echo $lang === 'ar' 
-                    ? 'نوظف جميع أنواع الموظفين المنزليين والمهنيين' 
-                    : 'We recruit all types of household and professional staff'; ?>
+                    ? 'برامج تدريبية لجميع أنواع الموظفين المنزليين والمهنيين' 
+                    : 'Training programs for all types of household and professional staff'; ?>
             </p>
         </div>
 
@@ -402,24 +402,6 @@ require_once 'includes/header.php';
                     'a_ar' => 'تشمل عملية الفحص لدينا فحوصات الخلفية الشاملة، التحقق من المراجع، تقييم المهارات، الفحص الطبي، التصريح الأمني، وتقييم الشخصية. نتحقق من جميع الاعتمادات ونجري مقابلات متعمقة.'
                 ],
                 [
-                    'q_en' => 'How long does the recruitment process take?',
-                    'q_ar' => 'كم تستغرق عملية التوظيف؟',
-                    'a_en' => 'The recruitment timeline varies based on position and requirements. Typically, the process takes 4-8 weeks from initial request to placement, including vetting, training, and onboarding.',
-                    'a_ar' => 'يختلف الجدول الزمني للتوظيف حسب الوظيفة والمتطلبات. عادة، تستغرق العملية 4-8 أسابيع من الطلب الأولي إلى التوظيف، بما في ذلك الفحص والتدريب والانضمام.'
-                ],
-                [
-                    'q_en' => 'Do you provide training for existing staff?',
-                    'q_ar' => 'هل تقدمون التدريب للموظفين الحاليين؟',
-                    'a_en' => 'Yes, we offer comprehensive training programs for existing staff members. This includes skill enhancement, protocol training, and professional development to ensure they meet current standards.',
-                    'a_ar' => 'نعم، نقدم برامج تدريبية شاملة لأعضاء الفريق الحاليين. يشمل ذلك تعزيز المهارات، تدريب البروتوكول، والتطوير المهني لضمان تلبية المعايير الحالية.'
-                ],
-                [
-                    'q_en' => 'What happens if a placed employee doesn\'t work out?',
-                    'q_ar' => 'ماذا يحدث إذا لم ينجح الموظف الموظف؟',
-                    'a_en' => 'We offer a replacement guarantee within the first 90 days. If an employee doesn\'t meet expectations, we will find a suitable replacement at no additional cost, after understanding the specific issues.',
-                    'a_ar' => 'نقدم ضمان الاستبدال خلال أول 90 يوماً. إذا لم يلبي الموظف التوقعات، سنجد بديلاً مناسباً دون تكلفة إضافية، بعد فهم المشاكل المحددة.'
-                ],
-                [
                     'q_en' => 'Do you handle all legal and administrative requirements?',
                     'q_ar' => 'هل تتعاملون مع جميع المتطلبات القانونية والإدارية؟',
                     'a_en' => 'Yes, we assist with work permits, visa processing, contract preparation, and all necessary legal documentation. We ensure full compliance with local regulations and requirements.',
@@ -447,7 +429,7 @@ require_once 'includes/header.php';
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center" data-aos="fade-up">
-                <h2><?php echo $lang === 'ar' ? 'هل أنت مستعد لتوظيف فريق استثنائي؟' : 'Ready to Recruit an Exceptional Team?'; ?></h2>
+                <h2><?php echo $lang === 'ar' ? 'هل أنت مستعد لتدريب فريق استثنائي؟' : 'Ready to Train an Exceptional Team?'; ?></h2>
                 <p class="lead mb-4">
                     <?php echo $lang === 'ar' 
                         ? 'احصل على استشارة مجانية لمناقشة احتياجاتك' 

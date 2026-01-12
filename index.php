@@ -11,9 +11,9 @@ require_once __DIR__ . '/functions/helpers.php';
 handleLanguageSwitch();
 
 // Page meta information
-$pageTitle = t('home_title', 'نيتش سوسايتي - خدمات الإدارة الفاخرة');
+$pageTitle = t('home_title', 'نيش سوسايتي - خدمات الإدارة الفاخرة');
 $pageDescription = t('home_description', 'نقدم حلولاً متكاملة لإدارة الممتلكات والفعاليات الفاخرة مع 25 عاماً من الخبرة في خدمة الشخصيات الرفيعة في المملكة العربية السعودية');
-$pageKeywords = t('home_keywords', 'إدارة فاخرة، إدارة ممتلكات، إدارة فعاليات، بروتوكول ملكي، خدمات VIP، نيتش سوسايتي');
+$pageKeywords = t('home_keywords', 'إدارة فاخرة، إدارة ممتلكات، إدارة فعاليات، بروتوكول ملكي، خدمات VIP، نيش سوسايتي');
 
 include __DIR__ . '/includes/header.php';
 
@@ -34,8 +34,8 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
     <!-- Hero Content -->
     <div class="hero-content">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-9">
+            <div class="row justify-content-center">
+                <div class="col-lg-9 text-center">
                     <!-- Badge -->
                     <div class="hero-premium-badge">
                         <div class="badge-line"></div>
@@ -47,10 +47,10 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
                     <div class="hero-text-animated">
                         <h1 class="hero-main-title">
                             <?php if (getCurrentLang() === 'ar'): ?>
-                                <span class="title-line-1">إدارة <span class="text-gold">استثنائية</span></span>
+                                <span class="title-line-1">إدارة <span class="text-gold">احترافية</span></span>
                                 <span class="title-line-2">لحياة <span class="text-cream">استثنائية</span></span>
                             <?php else: ?>
-                                <span class="title-line-1">Exceptional <span class="text-gold">Management</span></span>
+                                <span class="title-line-1">Professional <span class="text-gold">Management</span></span>
                                 <span class="title-line-2">For Exceptional <span class="text-cream">Lives</span></span>
                             <?php endif; ?>
                         </h1>
@@ -143,13 +143,13 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
                     <div class="about-description-minimal">
                         <p class="lead-text">
                             <?php echo getCurrentLang() === 'ar'
-                                ? 'نيتش سوسايتي هي شركة متخصصة في تقديم حلول إدارية وتنظيمية بمعايير تعيد تعريف معنى التميز، تشمل الممتلكات الخاصة، العقارات، الإتيكيت والبروتوكولات الرسمية، اللوجستيات، العلاقات العامة، والخدمات التشغيلية الراقية.'
-                                : 'Niche Society specializes in providing management and organizational solutions that redefine excellence, covering private properties, real estate, etiquette and official protocols, logistics, public relations, and premium operational services.'; ?>
+                                ? 'نيش سوسايتي هي شركة متخصصة في تقديم حلول إدارية وتنظيمية بمعايير تعيد تعريف معنى التميز، تشمل الممتلكات الخاصة، العقارات، الإتيكيت والبروتوكولات الرسمية، اللوجستيات، العلاقات العامة، التدريب، والخدمات التشغيلية الراقية.'
+                                : 'Niche Society specializes in providing management and organizational solutions that redefine excellence, covering private properties, real estate, etiquette and official protocols, logistics, public relations, training, and premium operational services.'; ?>
                         </p>
                         <p>
                             <?php echo getCurrentLang() === 'ar'
-                                ? 'بخبرة تتجاوز 25 عامًا في خدمة الشخصيات الرفيعة والعملاء الدوليين، نُدير العمليات ونُنسّق التفاصيل بأسلوب يجمع بين الدقة، الخصوصية، والرقي؛ لأن العملاء الاستثنائيين لا يبحثون عن خدمة، بل عن تجربة تُدار بثقة وتُنفّذ بسلاسة بشكل استثنائي يشبههم.'
-                                : 'With over 25 years of experience serving distinguished personalities and international clients, we manage operations and coordinate details with precision, privacy, and elegance.'; ?>
+                                ? 'بأكثر من 25 عامًا من الخبرة في خدمة العائلات الملكية والشخصيات البارزة والعملاء الدوليين، نُدير العمليات ونُنسق التفاصيل بأسلوب يجمع بين الدقة، الخصوصية، والأناقة.'
+                                : 'With over 25 years of experience serving royal families, high-profile individuals, and international clients, we manage operations and coordinate details in a style that combines precision, privacy, and sophistication.'; ?>
                         </p>
                     </div>
                     
@@ -218,32 +218,15 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
                         <div class="ceo-quotes">
                             <p class="ceo-quote-text">
                                 <?php echo getCurrentLang() === 'ar'
-                                    ? 'وُلدت نيتش سوسايتي من شغفي العميق للتحدي، ورغبة لا تهدأ في ابتكار حلول عصرية تُترجم أعلى معايير الجودة والدقة.'
-                                    : 'Niche Society was born from my deep passion for challenge, and an unceasing desire to create modern solutions that translate the highest standards of quality and precision.'; ?>
-                            </p>
-                            <p class="ceo-quote-text">
-                                <?php echo getCurrentLang() === 'ar'
-                                    ? 'لطالما كان بناء الأنظمة، ومتابعة تفاصيل التفاصيل، وتحقيق نتائج ملموسة هو ما يُلهمني ويدفعني للاستمرار.'
-                                    : 'Building systems, following up on the smallest details, and achieving tangible results have always been what inspires me and drives me to continue.'; ?>
-                            </p>
-                            <p class="ceo-quote-text">
-                                <?php echo getCurrentLang() === 'ar'
-                                    ? 'نيش سوسايتي ليست مجرد مشروع، بل ثمرة سنوات من التجربة والتنوع الثقافي. تأسست لتقدم خدمات ترتقي بالخصوصية، وتُعزز الإنتاجية بأعلى درجات الحرفية والأناقة.'
-                                    : 'Niche Society is not just a project, but the fruit of years of experience and cultural diversity. It was founded to provide services that elevate privacy and enhance productivity with the highest degree of craftsmanship and elegance.'; ?>
-                            </p>
-                            <p class="ceo-quote-text">
-                                <?php echo getCurrentLang() === 'ar'
-                                    ? 'لأن ثقتكم وابتسامتكم.. هما مصدر فخرنا، وأساس قوة استمرارنا.'
-                                    : 'Because your trust and your smile.. are the source of our pride, and the foundation of our strength to continue.'; ?>
+                                    ? 'وُلدت نيش سوسايتي من شغفي العميق للتحدي، ورغبة لا تهدأ في ابتكار حلول عصرية تُترجم أعلى معايير الجودة والدقة. لطالما كان بناء الأنظمة، ومتابعة تفاصيل التفاصيل، وتحقيق نتائج ملموسة هو ما يُلهمني ويدفعني للاستمرار. نيش سوسايتي ليست مجرد مشروع، بل ثمرة سنوات من التجربة والتنوع الثقافي. تأسست لتقدم خدمات ترتقي بالخصوصية، وتُعزز الإنتاجية بأعلى درجات الحرفية والأناقة. لأن ثقتكم وابتسامتكم.. هما مصدر فخرنا، وأساس قوة استمرارنا.'
+                                    : 'Niche Society was born from my deep passion for challenge, and an unceasing desire to create modern solutions that translate the highest standards of quality and precision. Building systems, following up on the smallest details, and achieving tangible results have always been what inspires me and drives me to continue. Niche Society is not just a project, but the fruit of years of experience and cultural diversity. It was founded to provide services that elevate privacy and enhance productivity with the highest degree of craftsmanship and elegance. Because your trust and your smile.. are the source of our pride, and the foundation of our strength to continue.'; ?>
                             </p>
                         </div>
                         
                         <!-- CEO Signature -->
                         <div class="ceo-signature-block">
                             <div class="ceo-name-signature">
-                                <div class="signature-decoration signature-decoration-left"></div>
                                 <strong><?php echo getCurrentLang() === 'ar' ? 'خديجة' : 'Khadeeja'; ?></strong>
-                                <div class="signature-decoration signature-decoration-right"></div>
                             </div>
                         </div>
                     </div>
@@ -259,7 +242,7 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
                     <div class="divider"></div>
                     <p class="lead-text">
                         <?php echo getCurrentLang() === 'ar'
-                            ? 'نيتش سوسايتي شركة متخصصة في تقديم حلول إدارية وتنظيمية بمعايير تعيد تعريف معنى التميز، تشمل الممتلكات الخاصة، العقارات، الإتيكيت والبروتوكولات الرسمية، اللوجستيات، العلاقات العامة، والخدمات التشغيلية الراقية.'
+                            ? 'نيش سوسايتي شركة متخصصة في تقديم حلول إدارية وتنظيمية بمعايير تعيد تعريف معنى التميز، تشمل الممتلكات الخاصة، العقارات، الإتيكيت والبروتوكولات الرسمية، اللوجستيات، العلاقات العامة، والخدمات التشغيلية الراقية.'
                             : 'Niche Society is a company specialized in providing administrative and organizational solutions with standards that redefine the meaning of excellence, including private property, real estate, official etiquette and protocols, logistics, public relations, and high-end operational services.'; ?>
                     </p>
                     <p>
@@ -279,7 +262,7 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
                     </p>
                     <p class="mb-0">
                         <?php echo getCurrentLang() === 'ar'
-                            ? 'من الإدارة اليومية إلى التنسيق المتخصص، لا تقدم نيتش سوسايتي مجرد خدمة، بل تبني علاقة قائمة على الثقة، وتجسّد الفخامة الهادئة، وتمنح راحة البال في كل تفصيلة.'
+                            ? 'من الإدارة اليومية إلى التنسيق المتخصص، لا تقدم نيش سوسايتي مجرد خدمة، بل تبني علاقة قائمة على الثقة، وتجسّد الفخامة الهادئة، وتمنح راحة البال في كل تفصيلة.'
                             : 'From day-to-day management to specialized coordination, Niche Society doesn\'t just provide a service, it builds a relationship based on trust, embodies quiet luxury, and provides peace of mind in every detail.'; ?>
                     </p>
                 </div>
@@ -310,17 +293,6 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
                     <div class="card-corner top-left"></div>
                     <div class="card-corner bottom-right"></div>
                     <div class="philosophy-content">
-                        <div class="philosophy-icon-art">
-                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="30" cy="30" r="12" stroke="#602234" stroke-width="1.5"/>
-                                <circle cx="30" cy="30" r="20" stroke="#602234" stroke-width="1" opacity="0.3"/>
-                                <circle cx="30" cy="30" r="4" fill="#602234"/>
-                                <line x1="30" y1="8" x2="30" y2="16" stroke="#602234" stroke-width="1.5"/>
-                                <line x1="30" y1="44" x2="30" y2="52" stroke="#602234" stroke-width="1.5"/>
-                                <line x1="8" y1="30" x2="16" y2="30" stroke="#602234" stroke-width="1.5"/>
-                                <line x1="44" y1="30" x2="52" y2="30" stroke="#602234" stroke-width="1.5"/>
-                            </svg>
-                        </div>
                         <h3 class="philosophy-card-title"><?php echo t('vision_title', 'رؤيتنا'); ?></h3>
                         <div class="title-underline"></div>
                         <p class="philosophy-text">
@@ -337,12 +309,6 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
                     <div class="card-corner top-left"></div>
                     <div class="card-corner bottom-right"></div>
                     <div class="philosophy-content">
-                        <div class="philosophy-icon-art">
-                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M30 10 L34 26 L50 26 L37 37 L42 53 L30 43 L18 53 L23 37 L10 26 L26 26 Z" stroke="#602234" stroke-width="1.5" fill="none"/>
-                                <circle cx="30" cy="30" r="24" stroke="#602234" stroke-width="1" opacity="0.3"/>
-                            </svg>
-                        </div>
                         <h3 class="philosophy-card-title"><?php echo t('goals_title', 'أهدافنا'); ?></h3>
                         <div class="title-underline"></div>
                         <p class="philosophy-text">
@@ -359,18 +325,10 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
                     <div class="card-corner top-left"></div>
                     <div class="card-corner bottom-right"></div>
                     <div class="philosophy-content">
-                        <div class="philosophy-icon-art">
-                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="15" y="15" width="30" height="30" stroke="#602234" stroke-width="1.5"/>
-                                <rect x="10" y="10" width="40" height="40" stroke="#602234" stroke-width="1" opacity="0.3"/>
-                                <path d="M30 20 L38 30 L30 40 L22 30 Z" stroke="#602234" stroke-width="1.5" fill="none"/>
-                                <circle cx="30" cy="30" r="3" fill="#602234"/>
-                            </svg>
-                        </div>
                         <h3 class="philosophy-card-title"><?php echo t('values_title', 'قيمنا'); ?></h3>
                         <div class="title-underline"></div>
                         <p class="philosophy-text">
-                            <?php echo t('values_text', '١. الخصوصية: نُدير كل شيء من خلف الكواليس، باحترام تام للمساحات الشخصية، لأن الهدوء هو جوهر الفخامة، والثقة تبدأ من الصمت المدروس. ٢. الدقة: نُنفّذ كل مهمة وكأنها الأولى، ونُعامل كل تفصيلة وكأنها الأهم، لأن الإتقان ليس خيارًا، بل أسلوب عمل. ٣. الثقة: نبنيها عبر أداء لا يتغيّر، وشفافية لا تُطلب، لأن العلاقة مع نيتش سوسايتي تبدأ بالاطمئنان، وتستمر بالثبات. ٤. الفخامة: ليست في الشكل، بل في الشعور. نُصمّم كل تجربة لتُشبه أصحابها، وتُعبّر عنهم، وتُقدَّم بروح راقية ولمسة محسوبة. ٥. الانسجام: كل ما في نيتش سوسايتي يعمل بتناغم: الفرق، الأنظمة، والخدمات؛ لأننا لا نُدير فقط، بل نُنسّق الحياة لتتحوّل إلى تجربة استثنائية تعبر عن أصحابها.'); ?>
+                            <?php echo t('values_text', '١. الخصوصية: نُدير كل شيء من خلف الكواليس، باحترام تام للمساحات الشخصية، لأن الهدوء هو جوهر الفخامة، والثقة تبدأ من الصمت المدروس. ٢. الدقة: نُنفّذ كل مهمة وكأنها الأولى، ونُعامل كل تفصيلة وكأنها الأهم، لأن الإتقان ليس خيارًا، بل أسلوب عمل. ٣. الثقة: نبنيها عبر أداء لا يتغيّر، وشفافية لا تُطلب، لأن العلاقة مع نيش سوسايتي تبدأ بالاطمئنان، وتستمر بالثبات. ٤. الفخامة: ليست في الشكل، بل في الشعور. نُصمّم كل تجربة لتُشبه أصحابها، وتُعبّر عنهم، وتُقدَّم بروح راقية ولمسة محسوبة. ٥. الانسجام: كل ما في نيش سوسايتي يعمل بتناغم: الفرق، الأنظمة، والخدمات؛ لأننا لا نُدير فقط، بل نُنسّق الحياة لتتحوّل إلى تجربة استثنائية تعبر عن أصحابها.'); ?>
                         </p>
                     </div>
                 </div>
@@ -601,8 +559,8 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
 <!-- Why Choose Us Section -->
 <section class="why-section">
     <div class="container">
-        <div class="section-badge" data-aos="fade-up"><?php echo t('why_badge', 'لماذا نيتش سوسايتي'); ?></div>
-        <h2 class="section-title" data-aos="fade-up" data-aos-delay="100"><?php echo t('why_title', 'فرق نيتش سوسايتي'); ?></h2>
+        <div class="section-badge" data-aos="fade-up"><?php echo t('why_badge', 'لماذا نيش سوسايتي'); ?></div>
+        <h2 class="section-title" data-aos="fade-up" data-aos-delay="100"><?php echo t('why_title', 'فرق نيش سوسايتي'); ?></h2>
         <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200"><?php echo t('why_subtitle', 'نحن لا نكتفي بالإدارة، بل نهندس تجارب استثنائية'); ?></p>
         
         <div class="why-grid">
@@ -709,5 +667,49 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
 </section>
 
 </main>
+
+<!-- Lock hero title font-weight at 200 -->
+<script>
+(function() {
+    // Function to lock font-weight at 200
+    function lockHeroTitleWeight() {
+        const heroTitle = document.querySelector('.hero-main-title');
+        if (heroTitle) {
+            // Lock font-weight for the main element
+            heroTitle.style.fontWeight = '200';
+            heroTitle.style.setProperty('font-weight', '200', 'important');
+            
+            // Lock font-weight for all children
+            const allChildren = heroTitle.querySelectorAll('*');
+            allChildren.forEach(function(child) {
+                child.style.fontWeight = '200';
+                child.style.setProperty('font-weight', '200', 'important');
+            });
+        }
+    }
+    
+    // Run immediately
+    lockHeroTitleWeight();
+    
+    // Run after DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', lockHeroTitleWeight);
+    } else {
+        lockHeroTitleWeight();
+    }
+    
+    // Run after fonts are loaded
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function() {
+            lockHeroTitleWeight();
+        });
+    }
+    
+    // Run after a short delay to catch any late font loading
+    setTimeout(lockHeroTitleWeight, 100);
+    setTimeout(lockHeroTitleWeight, 500);
+    setTimeout(lockHeroTitleWeight, 1000);
+})();
+</script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

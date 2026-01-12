@@ -12,7 +12,7 @@ $dir = getTextDirection($lang);
 
 // Page settings
 $currentPage = 'services';
-$pageTitle = $lang === 'ar' ? 'إدارة الممتلكات - نيتش سوسايتي' : 'Property Management - Niche Society';
+$pageTitle = $lang === 'ar' ? 'إدارة الممتلكات - نيش سوسايتي' : 'Property Management - Niche Society';
 $pageDescription = $lang === 'ar' ? 'إدارة شاملة لممتلكاتكم العقارية مع دمج الأنظمة الذكية والتقنيات الحديثة لضمان أعلى مستويات الكفاءة والراحة.' : 'Comprehensive management of your properties with integration of smart systems and modern technologies to ensure the highest levels of efficiency and comfort.';
 
 // CSRF token for contact form
@@ -117,8 +117,8 @@ require_once 'includes/header.php';
                     'icon_url' => 'https://api.iconify.design/mdi:office-building.svg?color=%23602234',
                     'title_en' => 'Smart Building Systems',
                     'title_ar' => 'أنظمة المباني الذكية',
-                    'desc_en' => 'Integration of IoT devices, automated climate control, lighting systems, and security management for optimal efficiency.',
-                    'desc_ar' => 'تكامل أجهزة إنترنت الأشياء، التحكم الآلي في المناخ، أنظمة الإضاءة، وإدارة الأمن للكفاءة المثلى.'
+                    'desc_en' => 'Seamless integration of Internet of Things enabled technologies, intelligent climate control, advanced lighting solutions, and integrated security management to enhance comfort, efficiency, and overall building performance.',
+                    'desc_ar' => 'تكامل سلس لتقنيات مدعومة بإنترنت الأشياء، التحكم الذكي في المناخ، حلول إضاءة متقدمة، وإدارة أمنية متكاملة لتعزيز الراحة والكفاءة والأداء الشامل للمبنى.'
                 ],
                 [
                     'icon_url' => 'https://api.iconify.design/mdi:wrench.svg?color=%23602234',

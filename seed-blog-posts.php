@@ -143,7 +143,7 @@ Technology should enhance architecture, not compete with it. Speakers that disap
 
 <p>هذه هي السمة المميزة لتكامل المنزل الذكي الخبير: التكنولوجيا المنفذة بشكل جيد بحيث تصبح غير مرئية.</p>
 
-<h2>نهج نيتش سوسيتي</h2>
+<h2>نهج نيش سوسيتي</h2>
 
 <p><strong>التوقع بدلاً من التنشيط</strong><br>
 بدلاً من مطالبتك بإخبار منزلك بما يجب فعله، تتعلم الأنظمة المتكاملة بشكل صحيح أنماطك وتفضيلاتك.</p>
@@ -173,7 +173,7 @@ They read the household. Not just memorizing preferences, but understanding the 
 True professionals understand that their role includes protecting privacy absolutely. They see everything, say nothing. Trust is earned through consistent, unwavering discretion.</p>
 
 <p><strong>Pride in Craft</strong><br>
-Whether they are managing a wine cellar or maintaining gardens, the best household professionals take genuine pride in their work. Excellence is not a requirement imposed from above—it is a personal standard.</p>
+Whether they are managing storage facilities or maintaining gardens, the best household professionals take genuine pride in their work. Excellence is not a requirement imposed from above—it is a personal standard.</p>
 
 <h2>The Reward</h2>
 

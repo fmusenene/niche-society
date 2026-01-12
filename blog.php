@@ -71,7 +71,7 @@ $categoriesStmt = $pdo->prepare("SELECT DISTINCT category FROM blog_posts WHERE 
 $categoriesStmt->execute();
 $categories = $categoriesStmt->fetchAll(PDO::FETCH_COLUMN);
 
-$pageTitle = $lang === 'ar' ? 'المدونة وقصص النجاح - نيتش سوسيتي' : 'Blog & Success Stories - Niche Society';
+$pageTitle = $lang === 'ar' ? 'المدونة وقصص النجاح - نيش سوسيتي' : 'Blog & Success Stories - Niche Society';
 $pageDescription = $lang === 'ar' 
     ? 'اطلع على أحدث المقالات وقصص نجاح عملائنا في إدارة المنازل والفعاليات الفاخرة' 
     : 'Explore our latest articles and client success stories in luxury household and event management';

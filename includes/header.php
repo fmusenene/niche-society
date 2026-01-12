@@ -34,10 +34,11 @@ $translations = loadTranslations($lang);
     <!-- Animate.css for smooth animations -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
-    <!-- Google Fonts - IBM Plex (Arabic & English Support) -->
+    <!-- Google Fonts - Typography Guidelines -->
+    <!-- Headline: Domine Regular | Bodytext: Arimo Regular | Arabic: ElMessiri Family -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Domine:wght@200;300;400;500;600;700&family=Arimo:wght@400;500;600;700&family=ElMessiri:wght@400;500;600;700&display=block" rel="stylesheet">
     
     <!-- Custom CSS (MUST load after Bootstrap to override) -->
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/css/style.css?v=<?php echo time(); ?>">
@@ -48,39 +49,39 @@ $translations = loadTranslations($lang);
 <body class="<?php echo $lang; ?>-lang">
 
 <!-- Top Bar -->
-<div class="top-bar" style="background-color: #602234 !important; color: #FFF7E7 !important; padding: 8px 0 !important; font-size: 12px !important; border-bottom: 1px solid #4a1a29 !important;">
+<div class="top-bar" style="background-color: #602234 !important; color: #fffaf3 !important; padding: 8px 0 !important; font-size: 12px !important; border-bottom: 1px solid #4a1a29 !important;">
     <div class="container" style="display: flex !important; justify-content: space-between !important; align-items: center !important; padding-left: 15px !important; padding-right: 15px !important;">
         <!-- Left Side: Social Media -->
         <div style="display: flex; align-items: center; gap: 10px;">
-            <a href="<?php echo SOCIAL_LINKEDIN; ?>" target="_blank" rel="noopener noreferrer" class="social-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: #FFF7E7 !important; border: 1px solid #FFF7E7; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 12px; text-decoration: none;" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-            <a href="<?php echo SOCIAL_FACEBOOK; ?>" target="_blank" rel="noopener noreferrer" class="social-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: #FFF7E7 !important; border: 1px solid #FFF7E7; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 12px; text-decoration: none;" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-            <a href="<?php echo SOCIAL_TWITTER; ?>" target="_blank" rel="noopener noreferrer" class="social-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: #FFF7E7 !important; border: 1px solid #FFF7E7; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 12px; text-decoration: none;" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
-            <a href="<?php echo SOCIAL_INSTAGRAM; ?>" target="_blank" rel="noopener noreferrer" class="social-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: #FFF7E7 !important; border: 1px solid #FFF7E7; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 12px; text-decoration: none;" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="<?php echo SOCIAL_LINKEDIN; ?>" target="_blank" rel="noopener noreferrer" class="social-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: #fffaf3 !important; border: 1px solid #fffaf3; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 12px; text-decoration: none;" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a href="<?php echo SOCIAL_FACEBOOK; ?>" target="_blank" rel="noopener noreferrer" class="social-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: #fffaf3 !important; border: 1px solid #fffaf3; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 12px; text-decoration: none;" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="<?php echo SOCIAL_TWITTER; ?>" target="_blank" rel="noopener noreferrer" class="social-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: #fffaf3 !important; border: 1px solid #fffaf3; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 12px; text-decoration: none;" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+            <a href="<?php echo SOCIAL_INSTAGRAM; ?>" target="_blank" rel="noopener noreferrer" class="social-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: #fffaf3 !important; border: 1px solid #fffaf3; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 12px; text-decoration: none;" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
         </div>
         <!-- Right Side: Contact & Language -->
         <div style="display: flex; align-items: center; gap: 16px;">
-            <small style="color: #FFF7E7 !important; font-size: 12px; white-space: nowrap; display: inline-flex; align-items: center; gap: 12px;">
+            <small style="color: #fffaf3 !important; font-size: 12px; white-space: nowrap; display: inline-flex; align-items: center; gap: 12px;">
                 <span style="display: inline-flex; align-items: center; gap: 6px;">
-                    <i class="bi bi-envelope" style="color: #FFF7E7 !important; font-size: 12px;"></i>
+                    <i class="bi bi-envelope" style="color: #fffaf3 !important; font-size: 12px;"></i>
                     <span><?php echo CONTACT_EMAIL; ?></span>
                 </span>
                 <span style="opacity: 0.7;">|</span>
                 <span style="display: inline-flex; align-items: center; gap: 6px;">
-                    <i class="bi bi-telephone" style="color: #FFF7E7 !important; font-size: 12px;"></i>
+                    <i class="bi bi-telephone" style="color: #fffaf3 !important; font-size: 12px;"></i>
                     <span class="phone-number-ltr"><?php echo formatNumber(CONTACT_PHONE); ?></span>
                 </span>
             </small>
             <div class="language-switcher" style="display: inline-flex; gap: 0; white-space: nowrap;">
-                <a href="?lang=ar" class="lang-link <?php echo ($lang === 'ar') ? 'active' : ''; ?>" style="color: #FFF7E7 !important; padding: 2px 10px; font-size: 12px; font-weight: <?php echo ($lang === 'ar') ? '600' : '400'; ?>; border-bottom: <?php echo ($lang === 'ar') ? '2px solid #FFF7E7' : '2px solid transparent'; ?>; transition: all 0.3s ease; text-decoration: none;">AR</a>
-                <span style="color: #FFF7E7; opacity: 0.5; font-size: 12px; padding: 0 4px;">|</span>
-                <a href="?lang=en" class="lang-link <?php echo ($lang === 'en') ? 'active' : ''; ?>" style="color: #FFF7E7 !important; padding: 2px 10px; font-size: 12px; font-weight: <?php echo ($lang === 'en') ? '600' : '400'; ?>; border-bottom: <?php echo ($lang === 'en') ? '2px solid #FFF7E7' : '2px solid transparent'; ?>; transition: all 0.3s ease; text-decoration: none;">EN</a>
+                <a href="?lang=ar" class="lang-link <?php echo ($lang === 'ar') ? 'active' : ''; ?>" style="color: #fffaf3 !important; padding: 2px 10px; font-size: 12px; font-weight: <?php echo ($lang === 'ar') ? '600' : '400'; ?>; border-bottom: <?php echo ($lang === 'ar') ? '2px solid #fffaf3' : '2px solid transparent'; ?>; transition: all 0.3s ease; text-decoration: none;">AR</a>
+                <span style="color: #fffaf3; opacity: 0.5; font-size: 12px; padding: 0 4px;">|</span>
+                <a href="?lang=en" class="lang-link <?php echo ($lang === 'en') ? 'active' : ''; ?>" style="color: #fffaf3 !important; padding: 2px 10px; font-size: 12px; font-weight: <?php echo ($lang === 'en') ? '600' : '400'; ?>; border-bottom: <?php echo ($lang === 'en') ? '2px solid #fffaf3' : '2px solid transparent'; ?>; transition: all 0.3s ease; text-decoration: none;">EN</a>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Main Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light sticky-top" style="background-color: #FFF7E7 !important; padding: 10px 0 !important; border-bottom: 1px solid #e8dcc8 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;">
+<nav class="navbar navbar-expand-lg navbar-light sticky-top" style="background-color: #fffaf3 !important; padding: 10px 0 !important; border-bottom: 1px solid rgba(96, 34, 52, 0.15) !important; box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;">
     <div class="container">
         <!-- Logo -->
         <a class="navbar-brand" href="<?php echo SITE_URL; ?>/index.php" style="padding: 0; margin-right: 40px;" aria-label="<?php echo SITE_NAME; ?> - Home">
@@ -123,7 +124,7 @@ $translations = loadTranslations($lang);
             
             <!-- CTA Button -->
             <div class="<?php echo ($lang === 'ar') ? 'me-3' : 'ms-3'; ?>">
-                <a href="<?php echo SITE_URL; ?>/contact.php" class="btn btn-primary btn-cta-enhanced" style="background-color: #602234 !important; border: none !important; color: #FFF7E7 !important; padding: 9px 24px !important; font-size: 14px !important; font-weight: 600 !important; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; box-shadow: 0 2px 8px rgba(96, 34, 52, 0.2) !important; text-decoration: none !important; display: inline-block !important; border-radius: 0 !important;" aria-label="<?php echo $isArabic ? 'احصل على استشارة' : 'Get Consultation'; ?>">
+                <a href="<?php echo SITE_URL; ?>/contact.php" class="btn btn-primary btn-cta-enhanced" style="background-color: #602234 !important; border: none !important; color: #fffaf3 !important; padding: 9px 24px !important; font-size: 14px !important; font-weight: 600 !important; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; box-shadow: 0 2px 8px rgba(96, 34, 52, 0.2) !important; text-decoration: none !important; display: inline-block !important; border-radius: 0 !important;" aria-label="<?php echo $isArabic ? 'احصل على استشارة' : 'Get Consultation'; ?>">
                     <i class="bi bi-envelope" style="margin-<?php echo $isArabic ? 'left' : 'right'; ?>: 6px;"></i><?php echo $isArabic ? 'احصل على استشارة' : 'Get Consultation'; ?>
                 </a>
             </div>

@@ -15,7 +15,7 @@ $lang = getCurrentLanguage();
 $t = getTranslations($lang);
 $dir = getTextDirection($lang);
 
-$pageTitle = $lang === 'ar' ? 'خدماتنا - نيتش سوسيتي' : 'Our Services - Niche Society';
+$pageTitle = $lang === 'ar' ? 'خدماتنا - نيش سوسيتي' : 'Our Services - Niche Society';
 $pageDescription = $lang === 'ar' 
     ? 'خدمات متكاملة في إدارة المنازل، تنظيم الفعاليات، البروتوكول والإتيكيت، خدمات VIP والاستشارات' 
     : 'Comprehensive services in household management, event management, protocol & etiquette, VIP services and consultations';
@@ -34,20 +34,33 @@ $pageDescription = $lang === 'ar'
 
     <!-- Hero Section -->
     <!-- Hero background updated to new Our Services image -->
-    <section class="page-hero" style="background-image: url('<?= url('assets/images/our-services-hero.jpg') ?>');">
-        <div class="hero-burgundy-overlay"></div>
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text-animated">
-                    <h1 class="hero-title" data-aos="fade-up">
-                        <?= $lang === 'ar' ? 'خدماتنا' : 'Our Services' ?>
-                    </h1>
-                    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
-                        <?= $lang === 'ar' 
-                            ? 'حلول إدارية متكاملة ومعتمدة بشهادة ISO 9001:2015 لتلبية جميع احتياجاتكم'
-                            : 'Comprehensive management solutions certified with ISO 9001:2015 to meet all your needs'
-                        ?>
-                    </p>
+    <section class="hero-premium">
+        <!-- Background Image -->
+        <div class="hero-bg-container">
+            <div class="hero-bg-image" style="background-image: url('<?= url('assets/images/our-services-hero.jpg') ?>');"></div>
+            <div class="hero-black-overlay"></div>
+        </div>
+        
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <!-- Title -->
+                        <div class="hero-text-animated">
+                            <h1 class="hero-main-title">
+                                <?= $lang === 'ar' ? 'خدماتنا' : 'Our Services' ?>
+                            </h1>
+                            
+                            <!-- Subtitle -->
+                            <p class="hero-subtitle">
+                                <?= $lang === 'ar' 
+                                    ? 'حلول إدارية متكاملة ومعتمدة بشهادة ISO 9001:2015 لتلبية جميع احتياجاتكم'
+                                    : 'Comprehensive management solutions certified with ISO 9001:2015 to meet all your needs'
+                                ?>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -437,13 +450,13 @@ $pageDescription = $lang === 'ar'
         </div>
     </section>
 
-    <!-- Service 6: Staff Recruitment & Training -->
+    <!-- Service 6: Staff Training -->
     <section id="service-6" class="service-detail-section bg-cream">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6" data-aos="fade-right">
                     <div class="service-image">
-                        <img src="<?= url('assets/images/service-4.jpg') ?>" alt="<?= $lang === 'ar' ? 'توظيف وتدريب الموظفين' : 'Staff Recruitment & Training' ?>" class="img-fluid">
+                        <img src="<?= url('assets/images/service-4.jpg') ?>" alt="<?= $lang === 'ar' ? 'تدريب الموظفين' : 'Staff Training' ?>" class="img-fluid">
                         <div class="service-badge"><?php echo formatNumber('06'); ?></div>
                     </div>
                 </div>
@@ -453,14 +466,14 @@ $pageDescription = $lang === 'ar'
                             <i class="bi bi-people"></i>
                         </div>
                         <h2 class="service-title">
-                            <?= $lang === 'ar' ? 'توظيف وتدريب الموظفين' : 'Staff Recruitment & Training' ?>
+                            <?= $lang === 'ar' ? 'تدريب الموظفين' : 'Staff Training' ?>
                         </h2>
                     </div>
                     <div class="divider"></div>
                     <p class="lead-text">
                         <?= $lang === 'ar'
-                            ? 'اختيار وتطوير أفضل الكفاءات لخدمتكم بأعلى معايير الاحترافية.'
-                            : 'Selecting and developing the best talents to serve you with the highest standards of professionalism.'
+                            ? 'تطوير وتدريب الموظفين بأعلى معايير الاحترافية.'
+                            : 'Developing and training staff with the highest standards of professionalism.'
                         ?>
                     </p>
                     <ul class="service-features-list">

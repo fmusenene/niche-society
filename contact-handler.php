@@ -148,7 +148,7 @@ function logSecurityEvent($pdo, $eventType, $ipAddress, $details) {
 function sendEmailNotification($data, $lang) {
     $to = CONTACT_EMAIL; // info@niche-society.com
     $subject = $lang === 'ar' 
-        ? 'رسالة جديدة من موقع نيتش سوسيتي' 
+        ? 'رسالة جديدة من موقع نيش سوسيتي' 
         : 'New Contact Form Submission - Niche Society';
     
     $message = "
@@ -192,7 +192,7 @@ function sendEmailNotification($data, $lang) {
                 </div>
             </div>
             <div class='footer'>
-                <p>" . ($lang === 'ar' ? 'تم الإرسال من موقع نيتش سوسيتي' : 'Sent from Niche Society website') . "</p>
+                <p>" . ($lang === 'ar' ? 'تم الإرسال من موقع نيش سوسيتي' : 'Sent from Niche Society website') . "</p>
                 <p>" . date('Y-m-d H:i:s') . "</p>
             </div>
         </div>
@@ -228,7 +228,7 @@ function sendEmailNotification($data, $lang) {
  */
 function sendAutoReply($email, $name, $lang) {
     $subject = $lang === 'ar' 
-        ? 'شكراً لتواصلك معنا - نيتش سوسيتي' 
+        ? 'شكراً لتواصلك معنا - نيش سوسيتي' 
         : 'Thank You for Contacting Us - Niche Society';
     
     $message = "
@@ -252,7 +252,7 @@ function sendAutoReply($email, $name, $lang) {
                     ? "<p>عزيزي/عزيزتي <strong>" . htmlspecialchars($name) . "</strong>،</p>
                        <p>شكراً لتواصلك معنا. لقد استلمنا رسالتك وسيقوم فريقنا بالرد عليك في أقرب وقت ممكن.</p>
                        <p>نحن نقدر اهتمامك بخدماتنا ونتطلع إلى خدمتك.</p>
-                       <p>مع أطيب التحيات،<br>فريق نيتش سوسيتي</p>"
+                       <p>مع أطيب التحيات،<br>فريق نيش سوسيتي</p>"
                     : "<p>Dear <strong>" . htmlspecialchars($name) . "</strong>,</p>
                        <p>Thank you for contacting us. We have received your message and our team will respond to you as soon as possible.</p>
                        <p>We appreciate your interest in our services and look forward to serving you.</p>
@@ -260,7 +260,7 @@ function sendAutoReply($email, $name, $lang) {
                 ) . "
             </div>
             <div class='footer'>
-                <p><strong>" . ($lang === 'ar' ? 'نيتش سوسيتي' : 'Niche Society') . "</strong></p>
+                <p><strong>" . ($lang === 'ar' ? 'نيش سوسيتي' : 'Niche Society') . "</strong></p>
                 <p>info@niche-society.com | +966 532 447 976</p>
             </div>
         </div>

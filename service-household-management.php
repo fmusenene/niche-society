@@ -12,7 +12,7 @@ $dir = getTextDirection($lang);
 
 // Page settings
 $currentPage = 'services';
-$pageTitle = $lang === 'ar' ? 'إدارة المنازل الذكية - نيتش سوسايتي' : 'Smart Household Management - Niche Society';
+$pageTitle = $lang === 'ar' ? 'إدارة المنازل الذكية - نيش سوسايتي' : 'Smart Household Management - Niche Society';
 $pageDescription = $lang === 'ar' ? 'خدمات إدارة منازل احترافية تجمع بين الفخامة والكفاءة. فريق متخصص لإدارة جميع احتياجات منزلك بسرية تامة.' : 'Professional household management services combining luxury and efficiency. Specialized team to manage all your home needs with complete discretion.';
 
 // CSRF token for contact form
@@ -124,15 +124,15 @@ require_once 'includes/header.php';
                     'icon_url' => 'https://api.iconify.design/mdi:package-variant.svg?color=%23602234',
                     'title_en' => 'Inventory Management',
                     'title_ar' => 'إدارة المخزون',
-                    'desc_en' => 'Tracking and managing all household supplies, groceries, and essentials with automated reordering.',
-                    'desc_ar' => 'تتبع وإدارة جميع الإمدادات المنزلية والبقالة والأساسيات مع إعادة الطلب التلقائي.'
+                    'desc_en' => 'Tracking and managing all household supplies and essentials with automated reordering.',
+                    'desc_ar' => 'تتبع وإدارة جميع الإمدادات المنزلية والأساسيات مع إعادة الطلب التلقائي.'
                 ],
                 [
                     'icon_url' => 'https://api.iconify.design/mdi:wrench.svg?color=%23602234',
                     'title_en' => 'Maintenance Coordination',
                     'title_ar' => 'تنسيق الصيانة',
                     'desc_en' => 'Scheduling and overseeing all maintenance work, repairs, and renovations with trusted vendors.',
-                    'desc_ar' => 'جدولة والإشراف على جميع أعمال الصيانة والإصلاحات والتجديدات مع البائعين الموثوقين.'
+                    'desc_ar' => 'جدولة والإشراف على جميع أعمال الصيانة والإصلاحات والتجديدات مع مزودي الخدمات الموثوقين.'
                 ],
                 [
                     'icon_url' => 'https://api.iconify.design/mdi:calendar-clock.svg?color=%23602234',

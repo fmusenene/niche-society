@@ -2,11 +2,11 @@
  * Niche Society Corporate Theme
  * Hero Section with Clean Design
  * 
- * Color Scheme:
- * Primary (Burgundy): #602234
- * Secondary (Cream): #FFF7E7
- * Dark Burgundy: #4a1a29
- * Light Cream: #f5ead0
+ * Brand Color Palette (Official Guidelines):
+ * Maroon (Primary 45%): #602234
+ * Antique White (Primary 45%): #fffaf3
+ * Rose Gold (Secondary 10%): #c0877d
+ * Dark Maroon (variant): #4a1a29
  */
 
 /* ========================================
@@ -47,29 +47,40 @@
 .btn-primary,
 .btn-primary:focus,
 .btn-primary:active,
-.btn-primary.active {
+.btn-primary.active,
+.btn-primary.btn-lg,
+.btn-primary.btn-lg:focus,
+.btn-primary.btn-lg:active,
+a.btn-primary,
+a.btn-primary.btn-lg {
     background-color: #602234 !important;
     border-color: #602234 !important;
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
     box-shadow: 0 2px 8px rgba(96, 34, 52, 0.2) !important;
 }
 
 .btn-primary:hover,
 .btn-primary:focus:hover,
 .btn-primary:active:hover,
-.btn-primary.active:hover {
+.btn-primary.active:hover,
+.btn-primary.btn-lg:hover,
+.btn-primary.btn-lg:focus:hover,
+a.btn-primary:hover,
+a.btn-primary.btn-lg:hover {
     background-color: #4a1a29 !important;
     border-color: #4a1a29 !important;
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
     box-shadow: 0 4px 12px rgba(96, 34, 52, 0.3) !important;
     transform: translateY(-1px);
 }
 
 .btn-primary:active,
-.btn-primary.active {
+.btn-primary.active,
+.btn-primary.btn-lg:active {
     background-color: #3d1521 !important;
     border-color: #3d1521 !important;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    color: #fffaf3 !important;
 }
 
 /* Outline Primary Button */
@@ -86,30 +97,48 @@
 .btn-outline-primary:active:hover {
     background-color: #602234 !important;
     border-color: #602234 !important;
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
 }
 
 /* Success/Info Buttons - Use Burgundy */
 .btn-success,
 .btn-success:focus,
 .btn-success:active,
+.btn-success.active,
+.btn-success.btn-lg,
 .btn-info,
 .btn-info:focus,
-.btn-info:active {
+.btn-info:active,
+.btn-info.active,
+.btn-info.btn-lg,
+button.btn-success,
+input[type="submit"],
+input[type="submit"].btn-success,
+button[type="submit"],
+button[type="submit"].btn-success {
     background-color: #602234 !important;
     border-color: #602234 !important;
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
 }
 
 .btn-success:hover,
 .btn-success:focus:hover,
 .btn-success:active:hover,
+.btn-success.active:hover,
+.btn-success.btn-lg:hover,
 .btn-info:hover,
 .btn-info:focus:hover,
-.btn-info:active:hover {
+.btn-info:active:hover,
+.btn-info.active:hover,
+.btn-info.btn-lg:hover,
+button.btn-success:hover,
+input[type="submit"]:hover,
+input[type="submit"].btn-success:hover,
+button[type="submit"]:hover,
+button[type="submit"].btn-success:hover {
     background-color: #4a1a29 !important;
     border-color: #4a1a29 !important;
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
 }
 
 /* Link Button - Burgundy Theme */
@@ -144,21 +173,60 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Apply Arimo font to all text elements */
-body,
-p,
-h1, h2, h3, h4, h5, h6,
-a,
-span,
-div,
-li,
-td,
-th,
-input,
-textarea,
-select,
-button,
-label {
+/* Typography Guidelines Implementation */
+/* Headline Typeface: Domine Regular (serif) */
+/* Bodytext Typeface: Arimo Regular (sans-serif) */
+
+/* Apply Domine (serif) to all headings - Only for LTR (English) */
+[dir="ltr"] h1:not(.hero-main-title),
+[dir="ltr"] h2,
+[dir="ltr"] h3,
+[dir="ltr"] h4,
+[dir="ltr"] h5,
+[dir="ltr"] h6,
+h1:not([dir="rtl"]):not(.hero-main-title),
+h2:not([dir="rtl"]),
+h3:not([dir="rtl"]),
+h4:not([dir="rtl"]),
+h5:not([dir="rtl"]),
+h6:not([dir="rtl"]) {
+    font-family: 'Domine', serif !important;
+    font-weight: 400 !important; /* Regular weight */
+}
+
+/* Apply Arimo (sans-serif) to body text and other elements - Only for LTR (English) */
+[dir="ltr"] body,
+[dir="ltr"] p,
+[dir="ltr"] a,
+[dir="ltr"] span,
+[dir="ltr"] div,
+[dir="ltr"] li,
+[dir="ltr"] td,
+[dir="ltr"] th,
+[dir="ltr"] input,
+[dir="ltr"] textarea,
+[dir="ltr"] select,
+[dir="ltr"] button,
+[dir="ltr"] label {
+    font-family: 'Arimo', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Fallback for elements without dir attribute (default to English) */
+body:not([dir="rtl"]) h1,
+body:not([dir="rtl"]) h2,
+body:not([dir="rtl"]) h3,
+body:not([dir="rtl"]) h4,
+body:not([dir="rtl"]) h5,
+body:not([dir="rtl"]) h6 {
+    font-family: 'Domine', serif;
+    font-weight: 400;
+}
+
+body:not([dir="rtl"]),
+body:not([dir="rtl"]) p,
+body:not([dir="rtl"]) a,
+body:not([dir="rtl"]) span,
+body:not([dir="rtl"]) div {
     font-family: 'Arimo', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -169,6 +237,94 @@ i,
 [style*="font-style: italic"] {
     font-family: 'Arimo', -apple-system, BlinkMacSystemFont, sans-serif;
     font-style: italic;
+}
+
+/* Apply Domine (serif) to all heading-related classes */
+/* All heading classes - Use Domine Regular for English (LTR) */
+[dir="ltr"] .section-title,
+[dir="ltr"] .hero-title,
+[dir="ltr"] .hero-main-title,
+[dir="ltr"] .page-title,
+[dir="ltr"] .section-heading,
+[dir="ltr"] .card-title,
+[dir="ltr"] .lead-text,
+[dir="ltr"] .feature-box h4,
+[dir="ltr"] .feature-card h3,
+[dir="ltr"] .feature-card h4,
+[dir="ltr"] .approach-title,
+[dir="ltr"] .advantage-title,
+[dir="ltr"] .philosophy-card-title,
+[dir="ltr"] .about-mvv-card h3,
+[dir="ltr"] .value-card h4,
+[dir="ltr"] .mission-vision-card h3,
+[dir="ltr"] .differentiator-card h4,
+[dir="ltr"] .clientele-card h4,
+[dir="ltr"] .why-card h3,
+[dir="ltr"] .why-choose-card h3,
+[dir="ltr"] .team-text h2,
+[dir="ltr"] .cta-content h2,
+[dir="ltr"] .contact-hero-title,
+[dir="ltr"] .contact-hero-subtitle,
+[dir="ltr"] .title-line-1,
+[dir="ltr"] .title-line-2,
+[dir="ltr"] .form-title,
+[dir="ltr"] .form-subtitle,
+[dir="ltr"] .services-title-elegant,
+[dir="ltr"] .service-title-elegant,
+[dir="ltr"] .philosophy-main-title,
+[dir="ltr"] .philosophy-subtitle,
+[dir="ltr"] .services-badge-elegant,
+[dir="ltr"] .section-badge,
+.section-title:not([dir="rtl"]),
+.hero-title:not([dir="rtl"]),
+.hero-main-title:not([dir="rtl"]),
+.page-title:not([dir="rtl"]),
+.section-heading:not([dir="rtl"]),
+.card-title:not([dir="rtl"]),
+.lead-text:not([dir="rtl"]),
+.feature-box:not([dir="rtl"]) h4,
+.feature-card:not([dir="rtl"]) h3,
+.feature-card:not([dir="rtl"]) h4,
+.approach-title:not([dir="rtl"]),
+.advantage-title:not([dir="rtl"]),
+.philosophy-card-title:not([dir="rtl"]),
+.about-mvv-card:not([dir="rtl"]) h3,
+.value-card:not([dir="rtl"]) h4,
+.mission-vision-card:not([dir="rtl"]) h3,
+.differentiator-card:not([dir="rtl"]) h4,
+.clientele-card:not([dir="rtl"]) h4,
+.why-card:not([dir="rtl"]) h3,
+.why-choose-card:not([dir="rtl"]) h3,
+.team-text:not([dir="rtl"]) h2,
+.cta-content:not([dir="rtl"]) h2,
+.contact-hero-title:not([dir="rtl"]),
+.contact-hero-subtitle:not([dir="rtl"]),
+.title-line-1:not([dir="rtl"]),
+.title-line-2:not([dir="rtl"]),
+.form-title:not([dir="rtl"]),
+.form-subtitle:not([dir="rtl"]),
+.services-title-elegant:not([dir="rtl"]),
+.service-title-elegant:not([dir="rtl"]),
+.philosophy-main-title:not([dir="rtl"]),
+.philosophy-subtitle:not([dir="rtl"]),
+.services-badge-elegant:not([dir="rtl"]),
+.section-badge:not([dir="rtl"]) {
+    font-family: 'Domine', serif !important;
+    font-weight: 400 !important; /* Regular weight */
+}
+
+/* Override for hero title lines - must come after general rules to ensure font-weight 200 is applied */
+.title-line-1,
+.title-line-2,
+.hero-main-title .title-line-1,
+.hero-main-title .title-line-2,
+.hero-main-title .text-gold,
+.hero-main-title .text-cream,
+.title-line-1 .text-gold,
+.title-line-1 .text-cream,
+.title-line-2 .text-gold,
+.title-line-2 .text-cream {
+    font-weight: 200 !important; /* Extra light weight - very soft appearance */
 }
 
 /* Prevent horizontal scroll on all devices */
@@ -299,7 +455,7 @@ body.en-lang {
     right: 0;
     width: 100%;
     z-index: 999;
-    background-color: #FFF7E7 !important;
+    background-color: #fffaf3 !important;
     transition: top 0.3s ease-in-out;
 }
 
@@ -500,6 +656,24 @@ body.top-bar-hidden {
     width: 100%;
     padding: 60px 0 40px;
     color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center !important;
+}
+
+.hero-content .container {
+    text-align: center !important;
+}
+
+.hero-content .row {
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+.hero-content .col-lg-9 {
+    text-align: center !important;
+    margin: 0 auto;
 }
 
 .hero-premium-badge {
@@ -511,6 +685,8 @@ body.top-bar-hidden {
     border: 2px solid rgba(96, 34, 52, 0.5);
     backdrop-filter: blur(15px);
     margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .badge-line {
@@ -520,7 +696,7 @@ body.top-bar-hidden {
 }
 
 .badge-year {
-    color: #602234;
+    color: #FFFFFF !important;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 3px;
@@ -528,9 +704,14 @@ body.top-bar-hidden {
 }
 
 .hero-text-animated {
-    text-align: center;
+    text-align: center !important;
     width: 100%;
     animation: slideInOut 12s infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
 }
 
 @keyframes slideInOut {
@@ -562,50 +743,145 @@ body.top-bar-hidden {
 
 .hero-main-title {
     margin-bottom: 30px;
-    font-size: 72px;
-    font-weight: 300;
+    font-size: 54px;
+    font-weight: 200 !important; /* Extra light weight - very soft appearance */
     line-height: 1.1;
     text-align: center;
+    font-family: 'Domine', serif !important; /* Headline typeface */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Ensure hero title h1 is never bold */
+h1.hero-main-title,
+.hero-main-title h1,
+.hero-main-title {
+    font-weight: 200 !important;
+}
+
+/* Prevent any bold styling on hero title and all its children */
+.hero-main-title,
+.hero-main-title *,
+.hero-main-title span,
+.hero-main-title strong,
+.hero-main-title b,
+.hero-main-title em {
+    font-weight: 200 !important;
+    font-style: normal !important;
+}
+
+/* Lock font-weight at 200 for hero title - prevent any changes after font load */
+.hero-main-title,
+.hero-main-title *,
+.hero-main-title span,
+.hero-main-title .title-line-1,
+.hero-main-title .title-line-2,
+.hero-main-title .text-gold,
+.hero-main-title .text-cream,
+.title-line-1,
+.title-line-1 *,
+.title-line-1 span,
+.title-line-2,
+.title-line-2 *,
+.title-line-2 span,
+.text-gold,
+.text-cream {
+    font-weight: 200 !important;
+    font-variation-settings: 'wght' 200 !important; /* Explicitly set variable font weight */
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+}
+
+/* Ensure all children of hero-main-title inherit uniform styling */
+.hero-main-title *,
+.hero-main-title span {
+    font-family: 'Domine', serif !important;
+    font-weight: 200 !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 .title-line-1 {
     display: block;
-    font-size: 72px;
-    font-weight: 400;
-    letter-spacing: 3px;
+    font-size: 54px;
+    font-weight: 200 !important; /* Extra light weight - very soft appearance */
+    letter-spacing: 2px; /* Reduced from 3px for softer look */
     color: #FFFFFF !important;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 0, 0, 0.3); /* Softer shadows */
     line-height: 1;
     margin-bottom: 15px;
-    font-family: 'Arimo', sans-serif;
+    font-family: 'Domine', serif !important; /* Headline typeface */
     text-transform: uppercase;
     white-space: nowrap;
     text-align: center;
     width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Ensure all text within title-line-1 has uniform styling */
+.title-line-1 *,
+.title-line-1 span,
+.title-line-1 .text-gold,
+.title-line-1 .text-cream {
+    font-family: 'Domine', serif !important;
+    font-weight: 200 !important;
+    letter-spacing: 2px !important;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 0, 0, 0.3) !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 .title-line-2 {
     display: block;
-    font-size: 64px;
-    font-weight: 600;
-    font-style: italic;
+    font-size: 48px;
+    font-weight: 200 !important; /* Extra light weight - very soft appearance */
+    font-style: normal; /* Remove italic to match title-line-1 */
     color: #FFFFFF !important;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 0, 0, 0.3); /* Softer shadows */
     line-height: 1.1;
-    font-family: 'Arimo', sans-serif;
+    font-family: 'Domine', serif !important; /* Headline typeface - Domine Regular */
     text-transform: uppercase;
     white-space: nowrap;
     text-align: center;
     width: 100%;
     margin-bottom: 15px;
+    letter-spacing: 2px; /* Reduced for softer look */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Ensure all text within title-line-2 has uniform styling */
+.title-line-2 *,
+.title-line-2 span,
+.title-line-2 .text-gold,
+.title-line-2 .text-cream {
+    font-family: 'Domine', serif !important;
+    font-weight: 200 !important;
+    letter-spacing: 2px !important;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 0, 0, 0.3) !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 .text-gold,
 .text-cream {
     color: #FFFFFF !important;
-    font-style: italic;
-    font-weight: 600;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    font-style: normal !important; /* Remove italic to match rest of text */
+    font-weight: 200 !important; /* Extra light weight - very soft appearance */
+    font-family: 'Domine', serif !important; /* Headline typeface - Domine Regular */
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 0, 0, 0.3) !important; /* Match title lines shadow */
+    letter-spacing: 2px !important; /* Match title lines letter spacing */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 .hero-subtitle {
@@ -617,13 +893,12 @@ body.top-bar-hidden {
     font-weight: 400;
     letter-spacing: 1px;
     white-space: nowrap;
-    text-align: center;
+    text-align: center !important;
     width: 100%;
     display: block;
     font-family: 'Arimo', sans-serif;
     opacity: 1 !important;
     visibility: visible !important;
-    text-align: center;
 }
 
 .hero-stats-premium {
@@ -641,7 +916,7 @@ body.top-bar-hidden {
     align-items: center;
     gap: 12px;
     padding: 18px 40px;
-    background: #FFF7E7;
+    background: #fffaf3;
     color: #602234;
     font-size: 16px;
     font-weight: 700;
@@ -654,7 +929,7 @@ body.top-bar-hidden {
     transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
 }
 
 .btn-premium-outline {
@@ -689,6 +964,90 @@ body.top-bar-hidden {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+/* Ensure btn-primary and btn-success buttons and ALL their text content have #fffaf3 color everywhere */
+.btn-primary,
+.btn-primary *,
+.btn-primary .btn-text,
+.btn-primary .btn-text *,
+.btn-primary span,
+.btn-primary span *,
+.btn-primary i,
+.btn-primary button,
+.btn-success,
+.btn-success *,
+.btn-success .btn-text,
+.btn-success .btn-text *,
+.btn-success span,
+.btn-success span *,
+.btn-success i,
+button.btn-primary,
+button.btn-primary *,
+button.btn-primary .btn-text,
+button.btn-primary .btn-text *,
+button.btn-primary span,
+button.btn-primary span *,
+button.btn-primary i,
+button[type="submit"].btn-primary,
+button[type="submit"].btn-primary *,
+button[type="submit"].btn-primary .btn-text,
+button[type="submit"].btn-primary .btn-text *,
+button[type="submit"].btn-primary span,
+button[type="submit"].btn-primary span *,
+button[type="submit"].btn-primary i,
+button.btn-primary,
+button.btn-primary *,
+button.btn-primary .btn-text,
+button.btn-primary .btn-text *,
+input[type="submit"].btn-primary,
+input[type="submit"].btn-primary *,
+input[type="submit"].btn-primary .btn-text,
+input[type="submit"].btn-primary .btn-text *,
+a.btn-primary,
+a.btn-primary *,
+a.btn-primary .btn-text,
+a.btn-primary .btn-text *,
+a.btn-primary span,
+a.btn-primary span * {
+    color: #fffaf3 !important;
+}
+
+.btn-primary:hover,
+.btn-primary:hover *,
+.btn-primary:hover .btn-text,
+.btn-primary:hover .btn-text *,
+.btn-primary:hover span,
+.btn-primary:hover span *,
+.btn-primary:hover i,
+.btn-success:hover,
+.btn-success:hover *,
+.btn-success:hover .btn-text,
+.btn-success:hover .btn-text *,
+.btn-success:hover span,
+.btn-success:hover span *,
+.btn-success:hover i,
+button.btn-primary:hover,
+button.btn-primary:hover *,
+button.btn-primary:hover .btn-text,
+button.btn-primary:hover .btn-text *,
+button.btn-primary:hover span,
+button.btn-primary:hover span *,
+button.btn-primary:hover i,
+button[type="submit"].btn-primary:hover,
+button[type="submit"].btn-primary:hover *,
+button[type="submit"].btn-primary:hover .btn-text,
+button[type="submit"].btn-primary:hover .btn-text *,
+button[type="submit"].btn-primary:hover span,
+button[type="submit"].btn-primary:hover span *,
+button[type="submit"].btn-primary:hover i,
+a.btn-primary:hover,
+a.btn-primary:hover *,
+a.btn-primary:hover .btn-text,
+a.btn-primary:hover .btn-text *,
+a.btn-primary:hover span,
+a.btn-primary:hover span * {
+    color: #fffaf3 !important;
 }
 
 /* Container & Grid */
@@ -887,7 +1246,7 @@ body.top-bar-hidden {
 ======================================== */
 
 .about-section-minimal {
-    background: #FFF7E7;
+    background: #fffaf3;
     padding: 60px 0;
     position: relative;
 }
@@ -965,13 +1324,13 @@ body.top-bar-hidden {
 .btn-cta-enhanced {
     background-color: #602234 !important;
     border-color: #602234 !important;
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
 }
 
 .btn-cta-enhanced:hover {
     background-color: #4a1a29 !important;
     border-color: #4a1a29 !important;
-    color: #FFF7E7 !important;
+    color: #fffaf3 !important;
 }
 
 /* CTA Button */
@@ -981,7 +1340,7 @@ body.top-bar-hidden {
     gap: 15px;
     padding: 18px 40px;
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
     font-size: 15px;
     font-weight: 700;
     text-decoration: none;
@@ -1108,7 +1467,7 @@ body.top-bar-hidden {
 
 .meet-ceo-section {
     padding: 60px 0;
-    background: #FFFFFF;
+    background: #fffaf3;
 }
 
 /* Image Wrapper with Circular Design */
@@ -1125,7 +1484,7 @@ body.top-bar-hidden {
     transform: translate(-50%, -50%);
     width: 280px;
     height: 280px;
-    border: 3px solid #FFF7E7;
+    border: 3px solid #fffaf3;
     border-radius: 50%;
     pointer-events: none;
     transition: all 0.5s ease;
@@ -1421,7 +1780,7 @@ body.top-bar-hidden {
 
 .philosophy-section {
     padding: 60px 0;
-    background: #ffffff;
+    background: #fffaf3;
     position: relative;
     overflow: hidden;
 }
@@ -1498,7 +1857,7 @@ body.top-bar-hidden {
 }
 
 .philosophy-card {
-    background: #FFF7E7;
+    background: #fffaf3;
     padding: 40px 35px;
     position: relative;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1627,8 +1986,13 @@ body.top-bar-hidden {
     flex: 1;
     display: -webkit-box;
     -webkit-line-clamp: 8;
+    line-clamp: 8;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-align: justify;
+    text-align-last: left;
+    word-spacing: normal;
+    hyphens: auto;
 }
 
 /* Responsive */
@@ -1755,6 +2119,9 @@ body.top-bar-hidden {
     .philosophy-text {
         font-size: 14px;
         line-height: 1.8;
+        text-align: justify;
+        text-align-last: left;
+        word-spacing: normal;
     }
 }
 
@@ -1786,6 +2153,9 @@ body.top-bar-hidden {
     
     .philosophy-text {
         font-size: 13px;
+        text-align: justify;
+        text-align-last: left;
+        word-spacing: normal;
     }
 }
 
@@ -1795,7 +2165,7 @@ body.top-bar-hidden {
 
 .services-section {
     padding: 80px 0;
-    background: #FFFFFF;
+    background: #fffaf3;
     position: relative;
 }
 
@@ -1854,7 +2224,7 @@ body.top-bar-hidden {
 
 .service-card {
     display: flex;
-    background: #FFF7E7;
+    background: #fffaf3;
     overflow: hidden;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid transparent;
@@ -2006,7 +2376,7 @@ body.top-bar-hidden {
 }
 
 .service-btn:hover {
-    color: #FFF7E7;
+    color: #fffaf3;
 }
 
 .service-btn i {
@@ -2166,7 +2536,7 @@ body.ar-lang .service-btn:hover i {
 /* Section Container */
 .services-section-elegant {
     padding: 40px 0 20px;
-    background: linear-gradient(180deg, #FFFFFF 0%, #FFF7E7 100%);
+    background: linear-gradient(180deg, #fffaf3 0%, #fffaf3 100%);
     position: relative;
     overflow: hidden;
 }
@@ -2193,7 +2563,7 @@ body.ar-lang .service-btn:hover i {
 .services-title-elegant {
     font-size: 42px;
     font-weight: 700;
-    color: #1A1A1A;
+    color: #602234;
     line-height: 1.3;
     margin-bottom: 5px;
     max-width: 800px;
@@ -2226,8 +2596,8 @@ body.ar-lang .service-btn:hover i {
 
 /* Service Card */
 .service-card-elegant {
-    background: #FFFFFF;
-    border: 1.5px solid #E5E5E5;
+    background: #fffaf3;
+    border: 1.5px solid rgba(96, 34, 52, 0.15);
     display: flex;
     flex-direction: column;
     transition: all 0.4s ease;
@@ -2278,14 +2648,14 @@ body.ar-lang .service-btn:hover i {
     width: 50px;
     height: 50px;
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
     font-weight: 700;
     z-index: 2;
-    border: 2px solid #FFF7E7;
+    border: 2px solid #fffaf3;
 }
 
 [dir="rtl"] .service-badge-number {
@@ -2304,7 +2674,7 @@ body.ar-lang .service-btn:hover i {
 .service-title-elegant {
     font-size: 24px;
     font-weight: 700;
-    color: #1A1A1A;
+    color: #602234;
     line-height: 1.4;
     margin-bottom: 16px;
     min-height: 68px;
@@ -2313,7 +2683,7 @@ body.ar-lang .service-btn:hover i {
 .service-description-elegant {
     font-size: 15px;
     line-height: 1.8;
-    color: #666666;
+    color: #602234;
     margin-bottom: 24px;
     flex: 1;
 }
@@ -2331,7 +2701,7 @@ body.ar-lang .service-btn:hover i {
     gap: 12px;
     font-size: 14px;
     line-height: 1.6;
-    color: #4A4A4A;
+    color: #602234;
     margin-bottom: 12px;
     padding-left: 0;
 }
@@ -2360,14 +2730,14 @@ body.ar-lang .service-btn:hover i {
     font-weight: 600;
     text-decoration: none;
     padding-top: 20px;
-    border-top: 1.5px solid #E5E5E5;
+    border-top: 1.5px solid rgba(96, 34, 52, 0.15);
     transition: all 0.3s ease;
     margin-top: auto;
 }
 
 .service-link-elegant:hover {
     gap: 15px;
-    color: #8B334E;
+    color: #602234;
 }
 
 .service-link-elegant svg {
@@ -2395,7 +2765,7 @@ body.ar-lang .service-link-elegant:hover svg {
     gap: 12px;
     padding: 16px 40px;
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
     font-size: 16px;
     font-weight: 600;
     text-decoration: none;
@@ -2568,7 +2938,7 @@ body.ar-lang .view-all-services-btn:hover svg {
    ISO Certification Banner
    ========================== */
 .iso-banner {
-    background: #FFF7E7;
+    background: #fffaf3;
     padding: 25px 0;
     margin-top: 0;
 }
@@ -2693,21 +3063,21 @@ body.ar-lang .view-all-services-btn:hover svg {
    ========================== */
 .stats-section {
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
     padding: 30px 0 25px;
     text-align: center;
 }
 
 .stats-section .section-badge {
-    color: #FFF7E7;
-    border-color: #FFF7E7;
+    color: #fffaf3;
+    border-color: #fffaf3;
     font-size: 0.7rem;
     padding: 0.3rem 0.8rem;
     margin-bottom: 8px;
 }
 
 .stats-section .section-title {
-    color: #FFF7E7;
+    color: #fffaf3;
     margin-bottom: 20px;
     font-size: 1.5rem;
 }
@@ -2726,14 +3096,14 @@ body.ar-lang .view-all-services-btn:hover svg {
 .stat-number {
     font-size: 32px;
     font-weight: 700;
-    color: #FFF7E7;
+    color: #fffaf3;
     margin-bottom: 6px;
     line-height: 1;
 }
 
 .stat-label {
     font-size: 12px;
-    color: #FFF7E7;
+    color: #fffaf3;
     opacity: 0.9;
     line-height: 1.4;
 }
@@ -2775,7 +3145,7 @@ body.ar-lang .view-all-services-btn:hover svg {
    ========================== */
 .why-section {
     padding: 100px 0;
-    background: #FFFFFF;
+    background: #fffaf3;
     text-align: center;
 }
 
@@ -2788,8 +3158,8 @@ body.ar-lang .view-all-services-btn:hover svg {
 
 .why-card {
     padding: 40px 30px;
-    background: #FFFFFF;
-    border: 2px solid #F5F5F5;
+    background: #fffaf3;
+    border: 2px solid #fffaf3;
     transition: all 0.3s ease;
 }
 
@@ -2807,14 +3177,14 @@ body.ar-lang .view-all-services-btn:hover svg {
 .why-card h3 {
     font-size: 20px;
     font-weight: 600;
-    color: #1A1A1A;
+    color: #602234;
     margin-bottom: 16px;
     line-height: 1.3;
 }
 
 .why-card p {
     font-size: 15px;
-    color: #666666;
+    color: #602234;
     line-height: 1.6;
     margin: 0;
 }
@@ -2841,7 +3211,7 @@ body.ar-lang .view-all-services-btn:hover svg {
    ========================== */
 .team-section {
     padding: 80px 0 60px;
-    background: #FFF7E7;
+    background: #fffaf3;
 }
 
 .team-content {
@@ -2862,14 +3232,14 @@ body.ar-lang .view-all-services-btn:hover svg {
 .team-text h2 {
     font-size: 42px;
     font-weight: 700;
-    color: #1A1A1A;
+    color: #602234;
     line-height: 1.3;
     margin-bottom: 24px;
 }
 
 .team-text p {
     font-size: 18px;
-    color: #666666;
+    color: #602234;
     line-height: 1.7;
     margin-bottom: 32px;
 }
@@ -2934,7 +3304,7 @@ body.ar-lang .view-all-services-btn:hover svg {
    Final CTA Section
    ========================== */
 .final-cta-section {
-    background: #FFF7E7;
+    background: #fffaf3;
     padding: 60px 0 40px;
     text-align: center;
 }
@@ -2951,14 +3321,14 @@ body.ar-lang .view-all-services-btn:hover svg {
 .cta-content h2 {
     font-size: 48px;
     font-weight: 700;
-    color: #1A1A1A;
+    color: #602234;
     line-height: 1.3;
     margin-bottom: 24px;
 }
 
 .cta-content p {
     font-size: 18px;
-    color: #666666;
+    color: #602234;
     line-height: 1.7;
     margin-bottom: 40px;
 }
@@ -2991,12 +3361,12 @@ body.ar-lang .view-all-services-btn:hover svg {
 
 .btn-secondary:hover {
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
 }
 
 .cta-or {
     font-size: 16px;
-    color: #666666;
+    color: #602234;
     font-weight: 500;
 }
 
@@ -3112,51 +3482,78 @@ body.ar-lang .view-all-services-btn:hover svg {
 .contact-hero-map {
     position: relative;
     overflow: hidden;
-    background: #f5f5f5;
 }
 
-.contact-hero-map .map-container {
+.contact-hero-map .hero-bg-container .map-container {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: 1;
+    filter: none !important;
+    -webkit-filter: none !important;
 }
 
-.contact-hero-map .map-container iframe {
+.contact-hero-map .hero-bg-container .map-container iframe {
     width: 100%;
     height: 100%;
     border: none;
-    filter: grayscale(30%) brightness(0.85);
+    filter: grayscale(30%) brightness(0.7);
     transition: filter 0.3s ease;
 }
 
-.contact-hero-map:hover .map-container iframe {
-    filter: grayscale(20%) brightness(0.9);
+.contact-hero-map:hover .hero-bg-container .map-container iframe {
+    filter: grayscale(20%) brightness(0.75);
 }
 
-.contact-hero-map .hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        to bottom,
-        rgba(96, 34, 52, 0.3) 0%,
-        rgba(96, 34, 52, 0.2) 50%,
-        rgba(96, 34, 52, 0.4) 100%
-    );
-    z-index: 2;
-    pointer-events: none;
-}
-
-.contact-hero-map .hero-content {
-    position: relative;
-    z-index: 3;
-    width: 100%;
+/* Ensure hero sections on About, Services, and Contact use same text styling as home */
+.hero-premium .hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+}
+
+.hero-premium .hero-content .container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.hero-premium .hero-content .row {
+    justify-content: center !important;
+    text-align: center !important;
+    margin: 0 auto;
+}
+
+.hero-premium .hero-content .col-lg-9 {
+    text-align: center !important;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-premium .hero-main-title {
+    font-size: 4.5rem;
+    font-weight: 400;
+    color: #FFFFFF !important;
+    text-align: center !important;
+    margin: 0 auto 20px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 0, 0, 0.6);
+    line-height: 1.2;
+}
+
+.hero-premium .hero-subtitle {
+    font-size: 20px;
+    line-height: 1.8;
+    color: #FFFFFF !important;
+    text-align: center !important;
+    margin: 0 auto 45px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 0, 0, 0.6);
 }
 
 /* Contact Form Button Size */
@@ -3169,18 +3566,53 @@ body.ar-lang .view-all-services-btn:hover svg {
     align-items: center !important;
     justify-content: center !important;
     gap: 0.5rem !important;
+    color: #fffaf3 !important;
+}
+
+#submitBtn,
+#submitBtn *,
+#submitBtn::before,
+#submitBtn::after {
+    color: #fffaf3 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 #submitBtn .btn-text {
     display: inline-flex !important;
     align-items: center !important;
     gap: 0.5rem !important;
+    color: #fffaf3 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-size: inherit !important;
+}
+
+/* Force all text content inside btn-text to be visible */
+#submitBtn .btn-text,
+#submitBtn .btn-text::before,
+#submitBtn .btn-text::after {
+    color: #fffaf3 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+#submitBtn .btn-text *,
+#submitBtn .btn-text *::before,
+#submitBtn .btn-text *::after {
+    color: #fffaf3 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 #submitBtn .btn-text i {
     font-size: 1rem !important;
     line-height: 1 !important;
+    color: #fffaf3 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
+
 
 /* Checkbox Styling - Burgundy Theme */
 .form-check-input {
@@ -3193,7 +3625,7 @@ body.ar-lang .view-all-services-btn:hover svg {
 .form-check-input:checked {
     background-color: #602234 !important;
     border-color: #602234 !important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23FFF7E7' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e") !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fffaf3' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e") !important;
 }
 
 .form-check-input:focus {
@@ -3212,6 +3644,11 @@ body.ar-lang .view-all-services-btn:hover svg {
     padding: 2rem 0;
 }
 
+.content-box p,
+.content-box .lead-text {
+    text-align: justify;
+}
+
 .lead-text {
     font-size: 1.2rem;
     line-height: 1.8;
@@ -3219,7 +3656,7 @@ body.ar-lang .view-all-services-btn:hover svg {
 }
 
 .highlight-box {
-    background: #FFF7E7;
+    background: #fffaf3;
     padding: 2rem;
     border-radius: 0;
     border-left: 4px solid #602234;
@@ -3242,7 +3679,7 @@ body.ar-lang .view-all-services-btn:hover svg {
 
 .highlight-box p {
     margin: 0;
-    color: #333;
+    color: #602234;
     line-height: 1.6;
 }
 
@@ -3443,7 +3880,7 @@ img,
     text-align: center;
     height: 100%;
     transition: all 0.3s ease;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
 }
 
 .philosophy-card:hover {
@@ -3455,7 +3892,7 @@ img,
 .philosophy-card .icon-box {
     width: 80px;
     height: 80px;
-    background: #FFF7E7;
+    background: #fffaf3;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3476,7 +3913,7 @@ img,
 }
 
 .philosophy-card p {
-    color: #666;
+    color: #602234;
     line-height: 1.7;
 }
 
@@ -3514,7 +3951,7 @@ img,
 }
 
 .value-card p {
-    color: #666;
+    color: #602234;
     font-size: 0.95rem;
 }
 
@@ -3534,7 +3971,7 @@ img,
 }
 
 .certification-list i {
-    color: #FFF7E7;
+    color: #fffaf3;
     font-size: 1.5rem;
     flex-shrink: 0;
 }
@@ -3544,7 +3981,7 @@ img,
 }
 
 .certified-services h4 {
-    color: #FFF7E7;
+    color: #fffaf3;
     margin-bottom: 1rem;
 }
 
@@ -3574,7 +4011,7 @@ img,
 
 .iso-certificate-display .certificate-icon {
     font-size: 8rem;
-    color: #FFF7E7;
+    color: #fffaf3;
     margin-bottom: 1.5rem;
     animation: pulse 2s infinite;
 }
@@ -3595,7 +4032,7 @@ img,
 
 .certificate-badge .badge-subtext {
     font-size: 1.2rem;
-    color: #FFF7E7;
+    color: #fffaf3;
 }
 
 @keyframes pulse {
@@ -3612,7 +4049,7 @@ img,
     background: white;
     padding: 3rem 2.5rem;
     height: 100%;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
     transition: all 0.3s ease;
 }
 
@@ -3624,7 +4061,7 @@ img,
 .mission-vision-card .icon-large {
     width: 90px;
     height: 90px;
-    background: #FFF7E7;
+    background: #fffaf3;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3645,7 +4082,7 @@ img,
 }
 
 .mission-vision-card p {
-    color: #666;
+    color: #602234;
     line-height: 1.8;
     font-size: 1.05rem;
 }
@@ -3705,7 +4142,7 @@ img,
 }
 
 .timeline-content p {
-    color: #666;
+    color: #602234;
     margin: 0;
 }
 
@@ -3713,7 +4150,7 @@ img,
 .differentiator-card {
     background: white;
     padding: 2rem;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
     height: 100%;
     transition: all 0.3s ease;
     position: relative;
@@ -3732,7 +4169,7 @@ img,
     transform: translateY(-50%);
     font-size: 3rem;
     font-weight: 700;
-    color: #FFF7E7;
+    color: #fffaf3;
     background: #602234;
     width: 70px;
     height: 70px;
@@ -3749,7 +4186,7 @@ img,
 }
 
 .differentiator-card p {
-    color: #666;
+    color: #602234;
     margin: 0;
     font-size: 0.95rem;
 }
@@ -3760,7 +4197,7 @@ img,
     padding: 2.5rem 2rem;
     text-align: center;
     height: 100%;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
     transition: all 0.3s ease;
 }
 
@@ -3778,11 +4215,11 @@ img,
 }
 
 .clientele-card:hover i {
-    color: #FFF7E7;
+    color: #fffaf3;
 }
 
 .clientele-card h4 {
-    color: #333;
+    color: #602234;
     font-weight: 600;
     transition: color 0.3s ease;
 }
@@ -3804,8 +4241,8 @@ img,
 .cta-section .btn-light {
     padding: 1rem 2.5rem;
     font-size: 1.1rem;
-    background-color: #FFF7E7 !important;
-    border-color: #FFF7E7 !important;
+    background-color: #fffaf3 !important;
+    border-color: #fffaf3 !important;
     color: #602234 !important;
 }
 
@@ -3930,7 +4367,7 @@ img,
 
 .stat-box .stat-label {
     font-size: 0.95rem;
-    color: #666;
+    color: #602234;
 }
 
 /* Service Detail Section */
@@ -3985,7 +4422,7 @@ img,
 .service-icon {
     width: 65px;
     height: 65px;
-    background: #FFF7E7;
+    background: #fffaf3;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4167,7 +4604,7 @@ img,
 }
 
 .service-features-list span {
-    color: #333;
+    color: #602234;
     line-height: 1.7;
     flex: 1;
     word-wrap: break-word;
@@ -4203,14 +4640,12 @@ img,
 }
 
 .process-step p {
-    color: #666;
+    color: #602234;
     font-size: 0.88rem;
     line-height: 1.5;
 }
 
 /* Decorative corners for service cards (match philosophy-card style) */
-.feature-card::before,
-.feature-card::after,
 .process-step::before,
 .process-step::after,
 .why-choose-card::before,
@@ -4224,6 +4659,13 @@ img,
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Remove decorative corners from feature-card */
+.feature-card::before,
+.feature-card::after {
+    content: none !important;
+    display: none !important;
+}
+
 .feature-card,
 .process-step,
 .why-choose-card {
@@ -4232,7 +4674,6 @@ img,
 }
 
 /* Top-left corner */
-.feature-card::before,
 .process-step::before,
 .why-choose-card::before {
     top: 0;
@@ -4242,7 +4683,6 @@ img,
 }
 
 /* Bottom-right corner */
-.feature-card::after,
 .process-step::after,
 .why-choose-card::after {
     bottom: 0;
@@ -4252,8 +4692,6 @@ img,
 }
 
 /* Enlarge corners on hover, similar to philosophy cards */
-.feature-card:hover::before,
-.feature-card:hover::after,
 .process-step:hover::before,
 .process-step:hover::after,
 .why-choose-card:hover::before,
@@ -4268,11 +4706,11 @@ img,
 }
 
 .bg-cream {
-    background-color: #FFF7E7 !important;
+    background-color: #fffaf3 !important;
 }
 
 .bg-white {
-    background-color: #FFFFFF !important;
+    background-color: #fffaf3 !important;
 }
 
 /* Divider Light (for dark backgrounds) */
@@ -4315,18 +4753,18 @@ img,
 
 .why-choose-card .icon-circle i {
     font-size: 1.2rem;
-    color: white;
+    color: #fffaf3;
 }
 
 .why-choose-card h4 {
-    color: white !important;
+    color: #fffaf3 !important;
     margin-bottom: 0.3rem;
     font-weight: 600;
     font-size: 0.8rem;
 }
 
 .why-choose-card p {
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: rgba(255, 250, 243, 0.9) !important;
     font-size: 0.7rem;
     line-height: 1.3;
     margin: 0;
@@ -4338,17 +4776,18 @@ img,
     padding: 1rem 0;
     display: block !important;
     visibility: visible !important;
+    color: #fffaf3 !important;
 }
 
 .section.bg-burgundy .section-title {
-    color: white !important;
+    color: #fffaf3 !important;
     visibility: visible !important;
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
 }
 
 .section.bg-burgundy .text-white {
-    color: white !important;
+    color: #fffaf3 !important;
     visibility: visible !important;
 }
 
@@ -4433,7 +4872,7 @@ img,
    SERVICE DETAIL PAGE HEADER - REDESIGNED
    ============================================ */
 .service-detail-header {
-    background: linear-gradient(135deg, #FFF7E7 0%, #ffffff 50%, #FFF7E7 100%);
+    background: linear-gradient(135deg, #fffaf3 0%, #fffaf3 50%, #fffaf3 100%);
     padding: 2rem 0 3rem;
     position: relative;
     overflow: hidden;
@@ -4464,7 +4903,7 @@ img,
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1.5rem;
-    background: #fff;
+    background: #fffaf3;
     border: 2px solid rgba(96, 34, 52, 0.2);
     color: #602234;
     text-decoration: none;
@@ -4572,7 +5011,7 @@ img,
 
 .back-button:hover {
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
     border-color: #602234;
     transform: translateX(-5px);
     box-shadow: 0 4px 15px rgba(96, 34, 52, 0.25);
@@ -4596,8 +5035,8 @@ img,
 .service-badge-header {
     display: inline-block;
     padding: 12px 28px;
-    background: linear-gradient(135deg, #602234, #7A2E44);
-    color: #FFF7E7;
+    background: linear-gradient(135deg, #602234, #4a1a29);
+    color: #fffaf3;
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: 2px;
@@ -4639,7 +5078,7 @@ img,
 
 .service-detail-subtitle {
     font-size: 1.4rem;
-    color: #666;
+    color: #602234;
     line-height: 1.7;
     max-width: 800px;
     margin: 0 auto 2rem;
@@ -4670,7 +5109,7 @@ img,
 
 .meta-badge:hover {
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
     border-color: #602234;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(96, 34, 52, 0.2);
@@ -4799,7 +5238,7 @@ section[id^="service-"] {
 }
 
 .about-story-card {
-    background: #ffffff;
+    background: #fffaf3;
     border-radius: 0;
     padding: 2.5rem 2.5rem;
     border-left: 4px solid #602234;
@@ -4857,7 +5296,7 @@ section[id^="service-"] {
 
 /* Advantage Cards */
 .advantage-card {
-    background: #fff;
+    background: #fffaf3;
     padding: 1rem 0.9rem;
     text-align: center;
     height: 100%;
@@ -4887,7 +5326,7 @@ section[id^="service-"] {
 }
 
 .advantage-card:hover .advantage-icon {
-    background: linear-gradient(135deg, #602234, #7A2E44);
+    background: linear-gradient(135deg, #602234, #4a1a29);
     border-color: #602234;
     transform: rotate(5deg) scale(1.1);
 }
@@ -4899,7 +5338,7 @@ section[id^="service-"] {
 }
 
 .advantage-card:hover .advantage-icon i {
-    color: #FFF7E7;
+    color: #fffaf3;
     transform: scale(1.1);
 }
 
@@ -4911,7 +5350,7 @@ section[id^="service-"] {
 }
 
 .advantage-text {
-    color: #666;
+    color: #602234;
     line-height: 1.6;
     font-size: 0.8rem;
 }
@@ -4934,7 +5373,7 @@ section[id^="service-"] {
 .stat-number-white {
     font-size: 3.5rem;
     font-weight: 700;
-    color: #FFF7E7;
+    color: #fffaf3;
     margin-bottom: 0.5rem;
     line-height: 1;
     font-family: 'Arimo', sans-serif;
@@ -4952,7 +5391,7 @@ section[id^="service-"] {
 .certificate-wrapper {
     position: relative;
     padding: 2rem;
-    background: #fff;
+    background: #fffaf3;
     border: 3px solid rgba(96, 34, 52, 0.1);
     box-shadow: 0 8px 25px rgba(96, 34, 52, 0.15);
 }
@@ -4984,13 +5423,13 @@ section[id^="service-"] {
 }
 
 .cert-detail-item span {
-    color: #333;
+    color: #602234;
     font-size: 0.95rem;
 }
 
 /* Approach Cards */
 .approach-card {
-    background: #fff;
+    background: #fffaf3;
     padding: 2rem 1.5rem;
     text-align: center;
     height: 100%;
@@ -5020,7 +5459,7 @@ section[id^="service-"] {
 }
 
 .approach-card:hover .approach-icon {
-    background: linear-gradient(135deg, #602234, #7A2E44);
+    background: linear-gradient(135deg, #602234, #4a1a29);
     border-color: #602234;
     transform: rotate(5deg) scale(1.1);
 }
@@ -5032,7 +5471,7 @@ section[id^="service-"] {
 }
 
 .approach-card:hover .approach-icon i {
-    color: #FFF7E7;
+    color: #fffaf3;
     transform: scale(1.1);
 }
 
@@ -5044,7 +5483,7 @@ section[id^="service-"] {
 }
 
 .approach-text {
-    color: #666;
+    color: #602234;
     line-height: 1.7;
     font-size: 0.95rem;
 }
@@ -5112,6 +5551,216 @@ section[id^="service-"] {
     }
 }
 
+/* Service Detail Pages - bg-light sections */
+.section.bg-light {
+    background: #fffaf3 !important;
+    color: #602234 !important;
+}
+
+.section.bg-light .section-title,
+.section.bg-light h1,
+.section.bg-light h2,
+.section.bg-light h3,
+.section.bg-light h4,
+.section.bg-light h5,
+.section.bg-light h6 {
+    color: #602234 !important;
+}
+
+.section.bg-light p,
+.section.bg-light .lead,
+.section.bg-light .section-subtitle,
+.section.bg-light span,
+.section.bg-light li,
+.section.bg-light td,
+.section.bg-light th,
+.section.bg-light label {
+    color: #602234 !important;
+}
+
+.section.bg-light a:not(.btn-primary):not(.btn) {
+    color: #602234 !important;
+}
+
+.section.bg-light a:not(.btn-primary):not(.btn):hover {
+    color: #4a1a29 !important;
+}
+
+/* Ensure buttons in bg-light sections keep their button colors */
+.section.bg-light .btn-primary,
+.section.bg-light .btn-primary:hover,
+.section.bg-light .btn-primary:focus,
+.section.bg-light .btn-primary:active,
+.section.bg-light .btn-primary.btn-lg {
+    color: #fffaf3 !important;
+}
+
+/* Section bg-cream - background #fffaf3, text #602234 */
+.section.bg-cream {
+    background: #fffaf3 !important;
+    color: #602234 !important;
+}
+
+.section.bg-cream .section-title,
+.section.bg-cream .section-subtitle,
+.section.bg-cream h1,
+.section.bg-cream h2,
+.section.bg-cream h3,
+.section.bg-cream h4,
+.section.bg-cream h5,
+.section.bg-cream h6,
+.section.bg-cream p,
+.section.bg-cream .lead,
+.section.bg-cream span,
+.section.bg-cream li,
+.section.bg-cream a:not(.btn-primary):not(.btn) {
+    color: #602234 !important;
+}
+
+.section.bg-cream a:not(.btn-primary):not(.btn):hover {
+    color: #4a1a29 !important;
+}
+
+/* Ensure buttons in bg-cream sections keep their button colors */
+.section.bg-cream .btn-primary,
+.section.bg-cream .btn-primary:hover,
+.section.bg-cream .btn-primary:focus,
+.section.bg-cream .btn-primary:active,
+.section.bg-cream .btn-primary.btn-lg {
+    color: #fffaf3 !important;
+}
+
+/* Section subtitles - default to #602234 (for #fffaf3 backgrounds) */
+.section-subtitle {
+    color: #602234 !important;
+}
+
+/* Section bg-burgundy - background #602234, text #fffaf3 */
+.section.bg-burgundy {
+    background: #602234 !important;
+    color: #fffaf3 !important;
+}
+
+.section.bg-burgundy .section-title,
+.section.bg-burgundy .section-subtitle,
+.section.bg-burgundy h1,
+.section.bg-burgundy h2,
+.section.bg-burgundy h3,
+.section.bg-burgundy h4,
+.section.bg-burgundy h5,
+.section.bg-burgundy h6,
+.section.bg-burgundy p,
+.section.bg-burgundy .lead,
+.section.bg-burgundy span,
+.section.bg-burgundy li,
+.section.bg-burgundy .why-choose-card,
+.section.bg-burgundy .why-choose-card h4,
+.section.bg-burgundy .why-choose-card p {
+    color: #fffaf3 !important;
+}
+
+.section.bg-burgundy a {
+    color: #fffaf3 !important;
+}
+
+.section.bg-burgundy a:hover {
+    color: rgba(255, 250, 243, 0.8) !important;
+}
+
+/* Why section - background #fffaf3, text #602234 */
+.why-section .section-title,
+.why-section .section-subtitle,
+.why-section .section-badge {
+    color: #602234 !important;
+}
+
+/* Regular section (without bg-light, bg-cream, bg-burgundy) - default to #fffaf3 background, #602234 text */
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) {
+    background: #fffaf3 !important;
+    color: #602234 !important;
+}
+
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .section-title,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) h1,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) h2,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) h3,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) h4,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) h5,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) h6,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) p,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .lead,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .section-subtitle,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) span,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) li,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) small {
+    color: #602234 !important;
+}
+
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) a:not(.btn-primary):not(.btn-success):not(.btn) {
+    color: #602234 !important;
+}
+
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) a:not(.btn-primary):not(.btn-success):not(.btn):hover {
+    color: #4a1a29 !important;
+}
+
+/* Ensure buttons in regular sections keep their button colors */
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .btn-primary,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .btn-primary:hover,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .btn-success,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .btn-success:hover,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) button[type="submit"],
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) input[type="submit"],
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .btn {
+    color: #fffaf3 !important;
+}
+
+/* CTA Section - background #fffaf3, text #602234 */
+.cta-section {
+    background: #fffaf3 !important;
+    color: #602234 !important;
+}
+
+.cta-section h2,
+.cta-section h1,
+.cta-section h3,
+.cta-section h4,
+.cta-section h5,
+.cta-section h6,
+.cta-section p,
+.cta-section .lead,
+.cta-section span,
+.cta-section small,
+.cta-section i {
+    color: #602234 !important;
+}
+
+.cta-section a:not(.btn):not(.btn-primary):not(.btn-secondary) {
+    color: #602234 !important;
+}
+
+.cta-section a:not(.btn):not(.btn-primary):not(.btn-secondary):hover {
+    color: #4a1a29 !important;
+}
+
+/* CTA Section Buttons - text color #fffaf3 */
+.cta-section .btn-primary,
+.cta-section .btn-primary:hover,
+.cta-section .btn-primary:focus,
+.cta-section .btn-primary:active,
+.cta-section .btn-primary.btn-lg,
+.cta-section .btn-primary.btn-lg:hover,
+.cta-section .btn-primary.btn-lg:focus,
+.cta-section .btn-primary.btn-lg:active,
+.cta-section .btn,
+.cta-section .btn:hover,
+.cta-section a.btn,
+.cta-section a.btn.btn-primary,
+.cta-section a.btn-primary,
+.cta-section a.btn-primary:hover {
+    color: #fffaf3 !important;
+}
+
 /* Apply compact philosophy-style design to all cards */
 .philosophy-card,
 .about-mvv-card,
@@ -5133,7 +5782,7 @@ section[id^="service-"] {
 .about-story-card {
     border-radius: 0;
     border: 1px solid rgba(96, 34, 52, 0.15);
-    background: #FFF7E7;
+    background: #fffaf3;
     box-shadow: 0 12px 35px rgba(96, 34, 52, 0.12);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -5193,6 +5842,7 @@ section[id^="service-"] {
 .about-mvv-section .philosophy-text {
     font-size: 0.8rem;
     line-height: 1.5;
+    text-align: justify;
 }
 
 @media (max-width: 767.98px) {
@@ -5218,6 +5868,7 @@ section[id^="service-"] {
     
     .about-mvv-section .philosophy-text {
         font-size: 0.75rem;
+        text-align: justify;
     }
 }
 
@@ -5226,7 +5877,7 @@ section[id^="service-"] {
 .program-card,
 .service-level-card,
 .staff-category-card {
-    background: #fff;
+    background: #fffaf3;
     border: 2px solid rgba(96, 34, 52, 0.1);
     padding: 2.5rem 2rem;
     text-align: center;
@@ -5258,7 +5909,7 @@ section[id^="service-"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #FFF7E7 0%, #f5ead0 100%);
+    background: linear-gradient(135deg, #fffaf3 0%, #f0f0e8 100%);
     border: 2px solid #602234;
     border-radius: 12px;
     transition: all 0.4s ease;
@@ -5286,8 +5937,8 @@ section[id^="service-"] {
 .program-card:hover .program-icon,
 .service-level-card:hover .service-level-icon,
 .staff-category-card:hover .staff-category-icon {
-    background: linear-gradient(135deg, #FFF7E7 0%, #f5ead0 100%);
-    border-color: #7A2E44;
+    background: linear-gradient(135deg, #fffaf3 0%, #f0f0e8 100%);
+    border-color: #602234;
     transform: translateY(-3px) scale(1.05);
     box-shadow: 
         0 8px 20px rgba(96, 34, 52, 0.25),
@@ -5354,7 +6005,7 @@ section[id^="service-"] {
 .event-type-card:hover .event-type-icon i,
 .program-card:hover .program-icon i,
 .service-level-card:hover .service-level-icon i {
-    color: #FFF7E7;
+    color: #fffaf3;
     transform: scale(1.1);
 }
 
@@ -5374,7 +6025,7 @@ section[id^="service-"] {
 .program-card p,
 .service-level-card p,
 .staff-category-card p {
-    color: #666;
+    color: #602234;
     line-height: 1.7;
     flex-grow: 1;
     position: relative;
@@ -5405,7 +6056,7 @@ section[id^="service-"] {
     display: inline-block;
     padding: 10px 24px;
     background: rgba(96, 34, 52, 0.9);
-    color: #FFF7E7;
+    color: #fffaf3;
     font-size: 1rem;
     font-weight: 600;
     letter-spacing: 2px;
@@ -5415,15 +6066,15 @@ section[id^="service-"] {
 
 /* FAQ Accordion */
 .faq-accordion {
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
     border-radius: 0;
-    background: #fff;
+    background: #fffaf3;
     max-width: 100%;
     margin: 0 auto;
 }
 
 .faq-item {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid rgba(96, 34, 52, 0.15);
     transition: all 0.3s ease;
 }
 
@@ -5439,7 +6090,7 @@ section[id^="service-"] {
     padding: 1.25rem 1.5rem;
     margin: 0;
     font-size: 1.05rem;
-    color: #333;
+    color: #602234;
     cursor: pointer;
     position: relative;
     transition: all 0.3s ease;
@@ -5496,7 +6147,7 @@ section[id^="service-"] {
 }
 
 .faq-answer p {
-    color: #666;
+    color: #602234;
     line-height: 1.8;
     margin: 0;
     padding-top: 0.5rem;
@@ -5696,7 +6347,7 @@ section[id^="service-"] {
 }
 
 .contact-details a {
-    color: #333;
+    color: #602234;
     text-decoration: none;
     transition: color 0.3s ease;
 }
@@ -5706,7 +6357,7 @@ section[id^="service-"] {
 }
 
 .contact-details p {
-    color: #666;
+    color: #602234;
     margin: 0;
     line-height: 1.6;
 }
@@ -5722,44 +6373,96 @@ section[id^="service-"] {
     width: 50px;
     height: 50px;
     background: #602234;
-    color: white;
+    color: #fffaf3 !important;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
     border-radius: 50%;
     transition: all 0.3s ease;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.social-icons-large a i {
+    color: #fffaf3 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-family: "bootstrap-icons", "Bootstrap Icons" !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    display: inline-block !important;
 }
 
 .social-icons-large a:hover {
-    background: #FFF7E7;
+    background: #fffaf3;
     color: #602234;
     transform: translateY(-5px);
+}
+
+.social-icons-large a:hover i {
+    color: #602234 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Header Top Bar Social Icons - Ensure Bootstrap Icons font in RTL */
+[dir="rtl"] .top-bar .social-icon i,
+[dir="rtl"] .top-bar .social-icon i.bi,
+[dir="rtl"] .top-bar .social-icon i[class*="bi-"],
+html[dir="rtl"] .top-bar .social-icon i,
+html[dir="rtl"] .top-bar .social-icon i.bi,
+html[dir="rtl"] .top-bar .social-icon i[class*="bi-"] {
+    font-family: "bootstrap-icons", "Bootstrap Icons" !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-block !important;
+    color: #fffaf3 !important;
+}
+
+/* Footer Social Icons - Ensure Bootstrap Icons font in RTL */
+[dir="rtl"] .footer-social-link i,
+[dir="rtl"] .footer-social-link i.bi,
+[dir="rtl"] .footer-social-link i[class*="bi-"],
+html[dir="rtl"] .footer-social-link i,
+html[dir="rtl"] .footer-social-link i.bi,
+html[dir="rtl"] .footer-social-link i[class*="bi-"] {
+    font-family: "bootstrap-icons", "Bootstrap Icons" !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-block !important;
+    color: #fffaf3 !important;
 }
 
 /* Contact Form Wrapper */
 .contact-form-wrapper {
     background: white;
     padding: 3rem;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
 }
 
 .form-title {
-    color: #602234;
+    color: #602234 !important;
     font-size: 2rem;
     font-weight: 600;
     margin-bottom: 1rem;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .form-subtitle {
-    color: #666;
+    color: #602234;
     margin-bottom: 2rem;
     font-size: 1.05rem;
 }
 
 /* Form Controls */
 .form-label {
-    color: #333;
+    color: #602234;
     font-weight: 500;
     margin-bottom: 0.5rem;
     display: block;
@@ -5772,6 +6475,7 @@ section[id^="service-"] {
     border: 1px solid #d0d0d0;
     border-radius: 0;
     transition: all 0.3s ease;
+    color: #602234;
 }
 
 .form-control:focus {
@@ -5799,6 +6503,30 @@ select.form-control {
     background-repeat: no-repeat;
     background-position: right 1rem center;
     padding-right: 3rem;
+    color: #602234 !important;
+}
+
+select.form-control option {
+    color: #602234 !important;
+    background-color: #fffaf3;
+}
+
+select.form-control:focus {
+    color: #602234 !important;
+}
+
+/* Service of Interest select field */
+#service.form-control,
+select#service,
+select[name="service"] {
+    color: #602234 !important;
+}
+
+#service.form-control option,
+select#service option,
+select[name="service"] option {
+    color: #602234 !important;
+    background-color: #fffaf3;
 }
 
 .invalid-feedback {
@@ -5832,7 +6560,7 @@ select.form-control {
 .form-check-input:checked {
     background-color: #602234 !important;
     border-color: #602234 !important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23FFF7E7' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e") !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fffaf3' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e") !important;
 }
 
 .form-check-input:focus {
@@ -5847,7 +6575,7 @@ select.form-control {
 }
 
 .form-check-label {
-    color: #666;
+    color: #602234;
     font-size: 0.95rem;
     line-height: 1.6;
 }
@@ -5903,7 +6631,7 @@ select.form-control {
 .feature-icon {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, #FFF7E7 0%, #f5ead0 100%);
+    background: linear-gradient(135deg, #fffaf3 0%, #f0f0e8 100%);
     color: #602234;
     display: flex;
     align-items: center;
@@ -5927,7 +6655,7 @@ select.form-control {
     right: -2px;
     bottom: -2px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #602234, #7A2E44);
+    background: linear-gradient(135deg, #602234, #4a1a29);
     z-index: -1;
     opacity: 0;
     transition: opacity 0.4s ease;
@@ -5939,7 +6667,7 @@ select.form-control {
     box-shadow: 
         0 8px 20px rgba(96, 34, 52, 0.25),
         inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    border-color: #7A2E44;
+    border-color: #602234;
 }
 
 .feature-box:hover .feature-icon::before,
@@ -5954,7 +6682,7 @@ select.form-control {
 }
 
 .feature-box p {
-    color: #666;
+    color: #602234;
     line-height: 1.7;
 }
 
@@ -6034,7 +6762,7 @@ select.form-control {
     background: white;
     padding: 2rem;
     margin-bottom: 2rem;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
 }
 
 .widget-title {
@@ -6043,7 +6771,7 @@ select.form-control {
     font-weight: 600;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #FFF7E7;
+    border-bottom: 2px solid #fffaf3;
 }
 
 /* Search Form */
@@ -6088,7 +6816,7 @@ select.form-control {
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 1rem;
-    color: #333;
+    color: #602234;
     text-decoration: none;
     background: #f8f9fa;
     transition: all 0.3s ease;
@@ -6116,7 +6844,7 @@ select.form-control {
 
 .recent-posts-list li {
     padding: 1rem 0;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid rgba(96, 34, 52, 0.15);
 }
 
 .recent-posts-list li:last-child {
@@ -6124,7 +6852,7 @@ select.form-control {
 }
 
 .recent-posts-list a {
-    color: #333;
+    color: #602234;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s ease;
@@ -6170,7 +6898,7 @@ select.form-control {
 /* Blog Card */
 .blog-card {
     background: white;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -6268,7 +6996,7 @@ select.form-control {
 }
 
 .blog-card-title a {
-    color: #333;
+    color: #602234;
     text-decoration: none;
     transition: color 0.3s ease;
 }
@@ -6278,11 +7006,12 @@ select.form-control {
 }
 
 .blog-card-excerpt {
-    color: #666;
+    color: #602234;
     line-height: 1.6;
     flex: 1;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -6300,16 +7029,16 @@ select.form-control {
 
 .page-link {
     padding: 0.75rem 1rem;
-    color: #333;
+    color: #602234;
     text-decoration: none;
     background: white;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
     transition: all 0.3s ease;
     display: block;
 }
 
 .page-link:hover {
-    background: #FFF7E7;
+    background: #fffaf3;
     border-color: #602234;
     color: #602234;
 }
@@ -6435,7 +7164,7 @@ select.form-control {
 .feature-card .feature-icon {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, #FFF7E7 0%, #f5ead0 100%);
+    background: linear-gradient(135deg, #fffaf3 0%, #f0f0e8 100%);
     color: #602234;
     display: flex;
     align-items: center;
@@ -6460,7 +7189,7 @@ select.form-control {
     right: -2px;
     bottom: -2px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #602234, #7A2E44);
+    background: linear-gradient(135deg, #602234, #4a1a29);
     z-index: -1;
     opacity: 0;
     transition: opacity 0.4s ease;
@@ -6489,7 +7218,7 @@ select.form-control {
     box-shadow: 
         0 8px 20px rgba(96, 34, 52, 0.25),
         inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    border-color: #7A2E44;
+    border-color: #602234;
 }
 
 .feature-card:hover .feature-icon::before {
@@ -6508,7 +7237,7 @@ select.form-control {
 }
 
 .feature-card p {
-    color: #666;
+    color: #602234;
     line-height: 1.5;
     font-size: 0.9rem;
     margin: 0;
@@ -6547,7 +7276,7 @@ select.form-control {
 }
 
 .benefit-item p {
-    color: #666;
+    color: #602234;
     line-height: 1.6;
     margin: 0;
 }
@@ -6556,7 +7285,7 @@ select.form-control {
 .pricing-card {
     background: white;
     padding: 3rem 2rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid rgba(96, 34, 52, 0.15);
     text-align: center;
     height: 100%;
     transition: all 0.3s ease;
@@ -6581,7 +7310,7 @@ select.form-control {
     top: -15px;
     left: 50%;
     transform: translateX(-50%);
-    background: #FFF7E7;
+    background: #fffaf3;
     color: #602234;
     padding: 0.5rem 1.5rem;
     font-weight: 600;
@@ -6622,7 +7351,7 @@ select.form-control {
 
 .pricing-features li {
     padding: 0.75rem 0;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid rgba(96, 34, 52, 0.15);
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -6638,14 +7367,14 @@ select.form-control {
 }
 
 .pricing-card.featured .pricing-features li i {
-    color: #FFF7E7;
+    color: #fffaf3;
 }
 
 /* Related Services */
 .related-service-card {
     background: white;
     padding: 2rem;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
     height: 100%;
     text-align: center;
     transition: all 0.3s ease;
@@ -6660,7 +7389,7 @@ select.form-control {
 .related-service-card .service-icon {
     width: 80px;
     height: 80px;
-    background: #FFF7E7;
+    background: #fffaf3;
     color: #602234;
     display: flex;
     align-items: center;
@@ -6676,7 +7405,7 @@ select.form-control {
 }
 
 .related-service-card p {
-    color: #666;
+    color: #602234;
     line-height: 1.6;
     margin-bottom: 1.5rem;
 }
@@ -6692,7 +7421,7 @@ select.form-control {
 .testimonial-quote {
     font-size: 1.1rem;
     line-height: 1.8;
-    color: #333;
+    color: #602234;
     font-style: italic;
     margin-bottom: 1.5rem;
     position: relative;
@@ -6701,7 +7430,7 @@ select.form-control {
 .testimonial-quote::before {
     content: '"';
     font-size: 4rem;
-    color: #FFF7E7;
+    color: #fffaf3;
     position: absolute;
     top: -20px;
     left: -10px;
@@ -6750,7 +7479,7 @@ select.form-control {
     text-align: center;
     padding: 1.5rem;
     background: white;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(96, 34, 52, 0.15);
 }
 
 .stat-box h3 {
@@ -6761,7 +7490,7 @@ select.form-control {
 }
 
 .stat-box p {
-    color: #666;
+    color: #602234;
     margin: 0;
     font-size: 0.9rem;
 }
@@ -7426,7 +8155,7 @@ select.form-control {
    ======================================== */
 .about-modal-section {
     padding: 80px 0;
-    background: #FFF7E7;
+    background: #fffaf3;
     margin: 40px 0;
     border-top: 1px solid rgba(96, 34, 52, 0.1);
     border-bottom: 1px solid rgba(96, 34, 52, 0.1);
@@ -7500,7 +8229,8 @@ select.form-control {
     font-size: 1rem;
     line-height: 1.7;
     margin-bottom: 1.2rem;
-    color: #555;
+    color: #602234;
+    text-align: justify;
 }
 
 .about-modal-section .ceo-quote-text:last-of-type {
@@ -7511,6 +8241,7 @@ select.form-control {
     font-size: 1.05rem;
     line-height: 1.75;
     margin-bottom: 1.3rem;
+    text-align: justify;
 }
 
 .about-modal-section .divider {
@@ -7523,15 +8254,16 @@ select.form-control {
 .about-modal-section .lead-text {
     font-size: 1.25rem;
     line-height: 1.8;
-    color: #333;
+    color: #602234;
     margin-bottom: 1.5rem;
     font-weight: 400;
+    text-align: justify;
 }
 
 .about-modal-section p {
     font-size: 1.1rem;
     line-height: 1.8;
-    color: #555;
+    color: #602234;
     margin-bottom: 1.5rem;
 }
 
@@ -7552,7 +8284,7 @@ select.form-control {
 
 .btn-close-modal:hover {
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
     transform: rotate(90deg);
 }
 
@@ -7563,7 +8295,7 @@ select.form-control {
 
 /* CEO Card Small */
 .ceo-card-small {
-    background: #fff;
+    background: #fffaf3;
     border: 1px solid rgba(96, 34, 52, 0.1);
     padding: 2rem;
     box-shadow: 0 4px 20px rgba(96, 34, 52, 0.08);
@@ -7581,7 +8313,7 @@ select.form-control {
     margin: 0 auto 1.5rem;
     overflow: visible;
     position: relative;
-    background: linear-gradient(135deg, #FFF7E7 0%, #fff 100%);
+    background: linear-gradient(135deg, #fffaf3 0%, #fffaf3 100%);
     background-image: 
         linear-gradient(rgba(96, 34, 52, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(96, 34, 52, 0.03) 1px, transparent 1px);
@@ -7633,7 +8365,7 @@ select.form-control {
         inset 0 0 0 2px rgba(96, 34, 52, 0.15);
     transform: translateY(-8px) scale(1.03);
     padding: 8px;
-    background: linear-gradient(135deg, #fff 0%, #FFF7E7 100%);
+    background: linear-gradient(135deg, #fffaf3 0%, #fffaf3 100%);
     animation: subtleGlow 2s ease-in-out infinite alternate;
 }
 
@@ -7693,7 +8425,7 @@ select.form-control {
 .ceo-card-text {
     font-size: 0.95rem;
     line-height: 1.7;
-    color: #555;
+    color: #602234;
     margin-bottom: 1rem;
     text-align: left;
 }
@@ -7714,7 +8446,7 @@ select.form-control {
     line-height: 1.8;
     color: #602234;
     margin-bottom: 1.25rem;
-    text-align: left;
+    text-align: justify;
     font-style: italic;
     position: relative;
     padding-left: 1.5rem;
@@ -7880,7 +8612,7 @@ select.form-control {
    ======================================== */
 .services-intro-section {
     padding: 100px 0;
-    background: linear-gradient(135deg, #FFF7E7 0%, #ffffff 50%, #FFF7E7 100%);
+    background: linear-gradient(135deg, #fffaf3 0%, #fffaf3 50%, #fffaf3 100%);
     position: relative;
     overflow: hidden;
 }
@@ -7966,7 +8698,7 @@ select.form-control {
 .services-intro-lead {
     font-size: 1.3rem;
     line-height: 1.9;
-    color: #555;
+    color: #602234;
     font-weight: 400;
     max-width: 900px;
     margin: 0 auto;
@@ -7978,7 +8710,7 @@ select.form-control {
 }
 
 .stat-card-enhanced {
-    background: #FFF7E7;
+    background: #fffaf3;
     border: 1px solid rgba(96, 34, 52, 0.15);
     padding: 0.9rem 0.8rem;
     text-align: center;
@@ -8024,7 +8756,7 @@ select.form-control {
 }
 
 .stat-card-enhanced:hover .stat-icon-wrapper {
-    background: linear-gradient(135deg, #602234, #7A2E44);
+    background: linear-gradient(135deg, #602234, #4a1a29);
     border-color: #602234;
     transform: rotate(5deg) scale(1.1);
 }
@@ -8036,7 +8768,7 @@ select.form-control {
 }
 
 .stat-card-enhanced:hover .stat-icon-wrapper i {
-    color: #FFF7E7;
+    color: #fffaf3;
     transform: scale(1.1);
 }
 
@@ -8059,7 +8791,7 @@ select.form-control {
 
 .stat-label-enhanced {
     font-size: 0.75rem;
-    color: #666;
+    color: #602234;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -8324,6 +9056,31 @@ select.form-control {
     .hero-premium {
         min-height: 60vh;
         padding: 40px 15px;
+    }
+    
+    .hero-premium .hero-content {
+        text-align: center !important;
+    }
+    
+    .hero-premium .hero-content .row {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+    
+    .hero-premium .hero-content .col-lg-9 {
+        text-align: center !important;
+    }
+    
+    .hero-premium .hero-main-title {
+        font-size: 2.5rem;
+        text-align: center !important;
+        margin: 0 auto 20px;
+    }
+    
+    .hero-premium .hero-subtitle {
+        font-size: 1.2rem;
+        text-align: center !important;
+        margin: 0 auto 45px;
     }
     
     .title-line-1 {
@@ -8655,6 +9412,31 @@ select.form-control {
     .hero-premium {
         min-height: 50vh;
         padding: 30px 12px;
+    }
+    
+    .hero-premium .hero-content {
+        text-align: center !important;
+    }
+    
+    .hero-premium .hero-content .row {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+    
+    .hero-premium .hero-content .col-lg-9 {
+        text-align: center !important;
+    }
+    
+    .hero-premium .hero-main-title {
+        font-size: 2rem;
+        text-align: center !important;
+        margin: 0 auto 20px;
+    }
+    
+    .hero-premium .hero-subtitle {
+        font-size: 1rem;
+        text-align: center !important;
+        margin: 0 auto 45px;
     }
     
     .title-line-1 {
@@ -9163,7 +9945,7 @@ select.form-control {
 
 .hero-subtitle-professional {
     font-size: 1.3rem;
-    color: #333;
+    color: #602234;
     font-weight: 400;
     max-width: 700px;
     margin: 0 auto 2rem;
@@ -9197,8 +9979,8 @@ select.form-control {
 
 .section-badge-professional.badge-light {
     background: rgba(255, 255, 255, 0.15);
-    color: #FFF7E7;
-    border-left-color: #FFF7E7;
+    color: #fffaf3;
+    border-left-color: #fffaf3;
 }
 
 /* Section Title - Professional */
@@ -9211,7 +9993,7 @@ select.form-control {
 }
 
 .section-title-professional.text-white {
-    color: #FFF7E7;
+    color: #fffaf3;
 }
 
 /* Divider - Professional */
@@ -9223,14 +10005,14 @@ select.form-control {
 }
 
 .divider-professional.divider-light {
-    background: #FFF7E7;
+    background: #fffaf3;
 }
 
 /* Lead Text - Professional */
 .lead-text-professional {
     font-size: 1.2rem;
     line-height: 1.8;
-    color: #555;
+    color: #602234;
     margin-bottom: 1.5rem;
     font-weight: 400;
 }
@@ -9238,14 +10020,14 @@ select.form-control {
 .text-professional {
     font-size: 1rem;
     line-height: 1.8;
-    color: #666;
+    color: #602234;
     margin-bottom: 1.2rem;
 }
 
 /* Company Overview Section */
 .about-overview-section {
     padding: 100px 0;
-    background: #fff;
+    background: #fffaf3;
 }
 
 .overview-content-wrapper {
@@ -9263,7 +10045,7 @@ select.form-control {
     align-items: flex-start;
     gap: 1rem;
     padding: 1.5rem;
-    background: #FFF7E7;
+    background: #fffaf3;
     border: 1px solid rgba(96, 34, 52, 0.1);
     transition: all 0.3s ease;
 }
@@ -9281,7 +10063,7 @@ select.form-control {
     align-items: center;
     justify-content: center;
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
     font-size: 1.5rem;
     flex-shrink: 0;
 }
@@ -9295,7 +10077,7 @@ select.form-control {
 
 .feature-content-professional p {
     font-size: 0.85rem;
-    color: #666;
+    color: #602234;
     margin: 0;
 }
 
@@ -9305,7 +10087,7 @@ select.form-control {
 }
 
 .mvv-card-professional {
-    background: #fff;
+    background: #fffaf3;
     padding: 2rem 1.5rem;
     border: 1px solid rgba(96, 34, 52, 0.15);
     box-shadow: 0 8px 25px rgba(96, 34, 52, 0.1);
@@ -9363,8 +10145,8 @@ select.form-control {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #602234, #7A2E44);
-    color: #FFF7E7;
+    background: linear-gradient(135deg, #602234, #4a1a29);
+    color: #fffaf3;
     font-size: 2rem;
     border-radius: 50%;
     box-shadow: 0 5px 15px rgba(96, 34, 52, 0.3);
@@ -9387,14 +10169,14 @@ select.form-control {
 .mvv-card-text {
     font-size: 0.95rem;
     line-height: 1.7;
-    color: #666;
+    color: #602234;
     margin: 0;
 }
 
 /* Our Story Section - Professional */
 .about-story-section-professional {
     padding: 100px 0;
-    background: linear-gradient(135deg, #FFF7E7 0%, #ffffff 50%, #FFF7E7 100%);
+    background: linear-gradient(135deg, #fffaf3 0%, #fffaf3 50%, #fffaf3 100%);
 }
 
 .story-visual-wrapper {
@@ -9409,8 +10191,8 @@ select.form-control {
     justify-content: center;
     width: 200px;
     height: 200px;
-    background: linear-gradient(135deg, #602234, #7A2E44);
-    color: #FFF7E7;
+    background: linear-gradient(135deg, #602234, #4a1a29);
+    color: #fffaf3;
     border-radius: 50%;
     box-shadow: 0 15px 40px rgba(96, 34, 52, 0.3);
     margin-bottom: 2rem;
@@ -9445,7 +10227,7 @@ select.form-control {
 }
 
 .advantage-card-professional {
-    background: #fff;
+    background: #fffaf3;
     padding: 2rem 1.5rem;
     text-align: center;
     height: 100%;
@@ -9491,7 +10273,7 @@ select.form-control {
 }
 
 .advantage-card-professional:hover .advantage-icon-professional {
-    background: linear-gradient(135deg, #602234, #7A2E44);
+    background: linear-gradient(135deg, #602234, #4a1a29);
     border-color: #602234;
     transform: rotate(360deg) scale(1.1);
 }
@@ -9503,7 +10285,7 @@ select.form-control {
 }
 
 .advantage-card-professional:hover .advantage-icon-professional i {
-    color: #FFF7E7;
+    color: #fffaf3;
 }
 
 .advantage-title-professional {
@@ -9514,7 +10296,7 @@ select.form-control {
 }
 
 .advantage-text-professional {
-    color: #666;
+    color: #602234;
     line-height: 1.7;
     font-size: 0.95rem;
     margin: 0;
@@ -9559,7 +10341,7 @@ select.form-control {
 .stat-number-professional {
     font-size: 3.5rem;
     font-weight: 300;
-    color: #FFF7E7;
+    color: #fffaf3;
     margin-bottom: 0.5rem;
     line-height: 1;
 }
@@ -9575,7 +10357,7 @@ select.form-control {
 /* ISO Certification Section - Professional */
 .about-certification-section-professional {
     padding: 100px 0;
-    background: #fff;
+    background: #fffaf3;
 }
 
 .certificate-wrapper-professional {
@@ -9584,7 +10366,7 @@ select.form-control {
 }
 
 .certificate-frame {
-    background: #FFF7E7;
+    background: #fffaf3;
     padding: 2rem;
     border: 3px solid #602234;
     box-shadow: 0 20px 60px rgba(96, 34, 52, 0.2);
@@ -9635,7 +10417,7 @@ select.form-control {
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: #FFF7E7;
+    background: #fffaf3;
     border-left: 3px solid #602234;
 }
 
@@ -9646,7 +10428,7 @@ select.form-control {
     align-items: center;
     justify-content: center;
     background: #602234;
-    color: #FFF7E7;
+    color: #fffaf3;
     border-radius: 50%;
     flex-shrink: 0;
 }
@@ -9665,7 +10447,7 @@ select.form-control {
 }
 
 .cert-detail-content span {
-    color: #333;
+    color: #602234;
     font-size: 1rem;
     font-weight: 600;
 }
@@ -9676,7 +10458,7 @@ select.form-control {
 }
 
 .approach-card-professional {
-    background: #fff;
+    background: #fffaf3;
     padding: 2rem 1.5rem;
     text-align: center;
     height: 100%;
@@ -9717,7 +10499,7 @@ select.form-control {
 }
 
 .approach-card-professional:hover .approach-icon-professional {
-    background: linear-gradient(135deg, #602234, #7A2E44);
+    background: linear-gradient(135deg, #602234, #4a1a29);
     border-color: #602234;
     transform: scale(1.1);
 }
@@ -9729,7 +10511,7 @@ select.form-control {
 }
 
 .approach-card-professional:hover .approach-icon-professional i {
-    color: #FFF7E7;
+    color: #fffaf3;
 }
 
 .approach-title-professional {
@@ -9740,7 +10522,7 @@ select.form-control {
 }
 
 .approach-text-professional {
-    color: #666;
+    color: #602234;
     line-height: 1.7;
     font-size: 0.95rem;
     margin: 0;
@@ -9749,7 +10531,7 @@ select.form-control {
 /* CTA Section - Professional */
 .about-cta-section-professional {
     padding: 100px 0;
-    background: linear-gradient(135deg, #602234 0%, #7A2E44 100%);
+    background: linear-gradient(135deg, #602234 0%, #4a1a29 100%);
     position: relative;
     overflow: hidden;
 }
@@ -9782,7 +10564,7 @@ select.form-control {
 .cta-title-professional {
     font-size: 2.5rem;
     font-weight: 300;
-    color: #FFF7E7;
+    color: #fffaf3;
     margin-bottom: 1rem;
 }
 
@@ -9797,19 +10579,19 @@ select.form-control {
     align-items: center;
     gap: 0.8rem;
     padding: 1rem 2.5rem;
-    background: #FFF7E7;
+    background: #fffaf3;
     color: #602234;
     font-size: 1rem;
     font-weight: 600;
     text-decoration: none;
     border-radius: 4px;
     transition: all 0.3s ease;
-    border: 2px solid #FFF7E7;
+    border: 2px solid #fffaf3;
 }
 
 .btn-cta-professional:hover {
     background: transparent;
-    color: #FFF7E7;
+    color: #fffaf3;
     transform: translateY(-3px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }

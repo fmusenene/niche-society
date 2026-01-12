@@ -26,7 +26,7 @@ $lang = getCurrentLanguage();
 $t = getTranslations($lang);
 $dir = getTextDirection($lang);
 
-$pageTitle = $lang === 'ar' ? 'تواصل معنا - نيتش سوسيتي' : 'Contact Us - Niche Society';
+$pageTitle = $lang === 'ar' ? 'تواصل معنا - نيش سوسيتي' : 'Contact Us - Niche Society';
 $pageDescription = $lang === 'ar' 
     ? 'تواصل معنا للحصول على استشارة مجانية حول خدماتنا في إدارة المنازل والفعاليات' 
     : 'Contact us for a free consultation about our services in household and event management';
@@ -50,32 +50,44 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
     <?php include __DIR__ . '/includes/header.php'; ?>
 
     <!-- Hero Section with Map -->
-    <section class="page-hero contact-hero-map">
-        <div class="map-container">
-            <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.5!2d46.675!3d24.713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjTCsDQyJzQ2LjgiTiA0NsKwNDAnMzAuMCJF!5e0!3m2!1sen!2s!4v1234567890!5m2!1sen!2s&q=Prince+Mohammed+Ibn+Salman+Ibn+Abdulaziz+Rd,+Al+Falah+District,+Riyadh,+Saudi+Arabia" 
-                width="100%" 
-                height="100%" 
-                style="border:0;" 
-                allowfullscreen="" 
-                loading="lazy" 
-                referrerpolicy="no-referrer-when-downgrade"
-                title="Niche Society Location - Prince Mohammed Ibn Salman Ibn Abdulaziz Rd, Al Falah District, Riyadh">
-            </iframe>
+    <section class="hero-premium contact-hero-map">
+        <!-- Background Image/Map -->
+        <div class="hero-bg-container">
+            <div class="map-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.5!2d46.675!3d24.713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjTCsDQyJzQ2LjgiTiA0NsKwNDAnMzAuMCJF!5e0!3m2!1sen!2s!4v1234567890!5m2!1sen!2s&q=Prince+Mohammed+Ibn+Salman+Ibn+Abdulaziz+Rd,+Al+Falah+District,+Riyadh,+Saudi+Arabia" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Niche Society Location - Prince Mohammed Ibn Salman Ibn Abdulaziz Rd, Al Falah District, Riyadh">
+                </iframe>
+            </div>
+            <div class="hero-black-overlay"></div>
         </div>
-        <div class="hero-overlay"></div>
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text-animated">
-                    <h1 class="contact-hero-title" data-aos="fade-up">
-                        <?= $lang === 'ar' ? 'تواصل معنا' : 'Contact Us' ?>
-                    </h1>
-                    <p class="contact-hero-subtitle" data-aos="fade-up" data-aos-delay="100">
-                        <?= $lang === 'ar' 
-                            ? 'نحن هنا لمساعدتك. تواصل معنا اليوم للحصول على استشارة مجانية'
-                            : 'We\'re here to help. Contact us today for a free consultation'
-                        ?>
-                    </p>
+        
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <!-- Title -->
+                        <div class="hero-text-animated">
+                            <h1 class="hero-main-title">
+                                <?= $lang === 'ar' ? 'تواصل معنا' : 'Contact Us' ?>
+                            </h1>
+                            
+                            <!-- Subtitle -->
+                            <p class="hero-subtitle">
+                                <?= $lang === 'ar' 
+                                    ? 'نحن هنا لمساعدتك. تواصل معنا اليوم للحصول على استشارة مجانية'
+                                    : 'We\'re here to help. Contact us today for a free consultation'
+                                ?>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -263,7 +275,7 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
                                         <option value="events" <?= (isset($formData['service']) && $formData['service'] === 'events') ? 'selected' : '' ?>><?= $lang === 'ar' ? 'تنظيم الفعاليات' : 'Event Management' ?></option>
                                         <option value="protocol" <?= (isset($formData['service']) && $formData['service'] === 'protocol') ? 'selected' : '' ?>><?= $lang === 'ar' ? 'البروتوكول والإتيكيت' : 'Protocol & Etiquette' ?></option>
                                         <option value="vip" <?= (isset($formData['service']) && $formData['service'] === 'vip') ? 'selected' : '' ?>><?= $lang === 'ar' ? 'خدمة الكونسيرج VIP' : 'VIP Concierge Service' ?></option>
-                                        <option value="staff" <?= (isset($formData['service']) && $formData['service'] === 'staff') ? 'selected' : '' ?>><?= $lang === 'ar' ? 'توظيف وتدريب الموظفين' : 'Staff Recruitment & Training' ?></option>
+                                        <option value="staff" <?= (isset($formData['service']) && $formData['service'] === 'staff') ? 'selected' : '' ?>><?= $lang === 'ar' ? 'تدريب الموظفين' : 'Staff Training' ?></option>
                                         <option value="consultation" <?= (isset($formData['service']) && $formData['service'] === 'consultation') ? 'selected' : '' ?>><?= $lang === 'ar' ? 'استشارة عامة' : 'General Consultation' ?></option>
                                     </select>
                                 </div>

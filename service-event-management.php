@@ -12,7 +12,7 @@ $dir = getTextDirection($lang);
 
 // Page settings
 $currentPage = 'services';
-$pageTitle = $lang === 'ar' ? 'تنظيم الفعاليات - نيتش سوسايتي' : 'Event Management - Niche Society';
+$pageTitle = $lang === 'ar' ? 'تنظيم الفعاليات - نيش سوسايتي' : 'Event Management - Niche Society';
 $pageDescription = $lang === 'ar' ? 'تخطيط وتنفيذ فعاليات استثنائية من الألف إلى الياء بأعلى معايير الاحترافية والأناقة.' : 'Planning and executing exceptional events from A to Z with the highest standards of professionalism and elegance.';
 
 // CSRF token for contact form

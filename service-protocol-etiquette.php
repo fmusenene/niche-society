@@ -12,7 +12,7 @@ $dir = getTextDirection($lang);
 
 // Page settings
 $currentPage = 'services';
-$pageTitle = $lang === 'ar' ? 'البروتوكول والإتيكيت - نيتش سوسايتي' : 'Protocol & Etiquette Training - Niche Society';
+$pageTitle = $lang === 'ar' ? 'البروتوكول والإتيكيت - نيش سوسايتي' : 'Protocol & Etiquette Training - Niche Society';
 $pageDescription = $lang === 'ar' ? 'برامج تدريبية مخصصة لتعزيز التواصل والسلوك في المواقف الرسمية واليومية بأعلى معايير الاحترافية.' : 'Tailored training programs to enhance communication and behavior in formal and everyday settings with the highest standards of professionalism.';
 
 // CSRF token for contact form
@@ -66,8 +66,8 @@ require_once 'includes/header.php';
                 <h2 class="section-title"><?php echo $lang === 'ar' ? 'نظرة عامة على الخدمة' : 'Service Overview'; ?></h2>
                 <p class="lead">
                     <?php echo $lang === 'ar' 
-                        ? 'نقدم برامج تدريبية شاملة في البروتوكول والإتيكيت مصممة خصيصاً للأفراد والعائلات والمؤسسات. خبرتنا تمتد لأكثر من 25 عاماً في خدمة الشخصيات الرفيعة.' 
-                        : 'We offer comprehensive training programs in protocol and etiquette specifically designed for individuals, families, and institutions. Our experience spans over 25 years serving distinguished personalities.'; ?>
+                        ? 'نقدم برامج تدريبية شاملة في البروتوكول والإتيكيت مصممة خصيصاً للأفراد والعائلات والمؤسسات. خبرتنا تمتد لأكثر من 25 عاماً في خدمة العائلات الملكية والشخصيات المهمة والعملاء المميزين.' 
+                        : 'We offer comprehensive training programs in protocol and etiquette specifically designed for individuals, families, and institutions. Our experience spans over 25 years serving royal families, VIPs, and distinguished clients.'; ?>
                 </p>
                 <p>
                     <?php echo $lang === 'ar' 
@@ -117,8 +117,8 @@ require_once 'includes/header.php';
                     'icon_url' => 'https://api.iconify.design/mdi:crown.svg?color=%23602234',
                     'title_en' => 'Royal & Official Protocol',
                     'title_ar' => 'البروتوكول الملكي والرسمي',
-                    'desc_en' => 'Training in royal protocol, official ceremonies, diplomatic etiquette, and formal event conduct.',
-                    'desc_ar' => 'التدريب على البروتوكول الملكي، المراسم الرسمية، الإتيكيت الدبلوماسي، وسلوك الفعاليات الرسمية.'
+                    'desc_en' => 'Specialized training for royal families and VIPs in royal protocol, official ceremonies, diplomatic etiquette, and formal event conduct.',
+                    'desc_ar' => 'تدريب متخصص للعائلات الملكية والشخصيات المهمة في البروتوكول الملكي، المراسم الرسمية، الإتيكيت الدبلوماسي، وسلوك الفعاليات الرسمية.'
                 ],
                 [
                     'icon_url' => 'https://api.iconify.design/mdi:silverware-fork-knife.svg?color=%23602234',
@@ -145,8 +145,8 @@ require_once 'includes/header.php';
                     'icon_url' => 'https://api.iconify.design/mdi:school.svg?color=%23602234',
                     'title_en' => 'School Etiquette Programs',
                     'title_ar' => 'برامج إتيكيت المدارس',
-                    'desc_en' => 'Age-appropriate etiquette training for students, building confidence and social skills.',
-                    'desc_ar' => 'تدريب إتيكيت مناسب للعمر للطلاب، بناء الثقة والمهارات الاجتماعية.'
+                    'desc_en' => 'Age-appropriate etiquette training for students, developing future leaders through building confidence and social skills.',
+                    'desc_ar' => 'تدريب إتيكيت مناسب للعمر للطلاب، تطوير قادة المستقبل من خلال بناء الثقة والمهارات الاجتماعية.'
                 ],
                 [
                     'icon_url' => 'https://api.iconify.design/mdi:home-heart.svg?color=%23602234',
@@ -224,8 +224,8 @@ require_once 'includes/header.php';
                     'icon_url' => 'https://api.iconify.design/mdi:account-group.svg?color=%23602234',
                     'title_en' => 'Family Programs',
                     'title_ar' => 'برامج العائلات',
-                    'desc_en' => 'Comprehensive family etiquette training for all members, including children and teenagers.',
-                    'desc_ar' => 'تدريب إتيكيت عائلي شامل لجميع الأعضاء، بما في ذلك الأطفال والمراهقين.'
+                    'desc_en' => 'Comprehensive family etiquette training for all members, including children and teenagers. Specialized programs available for royal families and VIPs.',
+                    'desc_ar' => 'تدريب إتيكيت عائلي شامل لجميع الأعضاء، بما في ذلك الأطفال والمراهقين. برامج متخصصة متاحة للعائلات الملكية والشخصيات المهمة.'
                 ],
                 [
                     'icon_url' => 'https://api.iconify.design/mdi:office-building.svg?color=%23602234',
@@ -338,7 +338,7 @@ require_once 'includes/header.php';
                         <i class="fas fa-check-circle"></i>
                         <div>
                             <h4><?php echo $lang === 'ar' ? 'خبرة ملكية' : 'Royal Experience'; ?></h4>
-                            <p><?php echo $lang === 'ar' ? '25 عاماً من الخبرة في خدمة الشخصيات الرفيعة' : '25 years of experience serving distinguished personalities'; ?></p>
+                            <p><?php echo $lang === 'ar' ? '25 عاماً من الخبرة في خدمة العائلات الملكية والشخصيات المهمة والشخصيات الرفيعة' : '25 years of experience serving royal families, VIPs, and distinguished personalities'; ?></p>
                         </div>
                     </div>
                     <div class="benefit-item">

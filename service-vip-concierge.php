@@ -12,7 +12,7 @@ $dir = getTextDirection($lang);
 
 // Page settings
 $currentPage = 'services';
-$pageTitle = $lang === 'ar' ? 'خدمة الكونسيرج VIP - نيتش سوسايتي' : 'VIP Logistics & Consulting Service - Niche Society';
+$pageTitle = $lang === 'ar' ? 'خدمة الكونسيرج VIP - نيش سوسايتي' : 'VIP Logistics & Consulting Service - Niche Society';
 $pageDescription = $lang === 'ar' ? 'مساعدة شخصية حصرية على مدار الساعة لتلبية جميع احتياجاتكم ورغباتكم بأعلى معايير الخدمة والسرية.' : 'Exclusive 24/7 personal assistance to meet all your needs and desires with the highest standards of service and discretion.';
 
 // CSRF token for contact form
@@ -124,8 +124,8 @@ require_once 'includes/header.php';
                     'icon_url' => 'https://api.iconify.design/mdi:silverware-fork-knife.svg?color=%23602234',
                     'title_en' => 'Exclusive Dining & Reservations',
                     'title_ar' => 'المطاعم الحصرية والحجوزات',
-                    'desc_en' => 'Access to exclusive restaurants, private chef services, wine pairings, and culinary experiences.',
-                    'desc_ar' => 'الوصول إلى المطاعم الحصرية، خدمات الشيف الخاص، تذوق النبيذ، والتجارب الطهوية.'
+                    'desc_en' => 'Access to exclusive restaurants, private chef services, and culinary experiences.',
+                    'desc_ar' => 'الوصول إلى المطاعم الحصرية، خدمات الشيف الخاص، والتجارب الطهوية.'
                 ],
                 [
                     'icon_url' => 'https://api.iconify.design/mdi:shopping.svg?color=%23602234',

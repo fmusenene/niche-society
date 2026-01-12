@@ -32,9 +32,9 @@ $imageCategories = [
 
 // Alt text mapping (Arabic and English)
 $altTextMap = [
-    'logo.png' => ['ar' => 'شعار نيتش سوسايتي', 'en' => 'Niche Society Logo'],
-    'logo-light.png' => ['ar' => 'شعار نيتش سوسايتي - فاتح', 'en' => 'Niche Society Logo - Light'],
-    'niche-logo-png-150x150.png' => ['ar' => 'شعار نيتش سوسايتي مربع', 'en' => 'Niche Society Square Logo'],
+    'logo.png' => ['ar' => 'شعار نيش سوسايتي', 'en' => 'Niche Society Logo'],
+    'logo-light.png' => ['ar' => 'شعار نيش سوسايتي - فاتح', 'en' => 'Niche Society Logo - Light'],
+    'niche-logo-png-150x150.png' => ['ar' => 'شعار نيش سوسايتي مربع', 'en' => 'Niche Society Square Logo'],
     'brand-logo.pdf-3-120x57.png' => ['ar' => 'شعار العلامة التجارية', 'en' => 'Brand Logo'],
     'niche-society-homepage-1-scaled.jpg' => ['ar' => 'داخلية فاخرة - خدمات إدارة الممتلكات', 'en' => 'Luxury Interior - Property Management Services'],
     'sunlit-library-escape-701x1024.jpg' => ['ar' => 'مكتبة خاصة أنيقة', 'en' => 'Elegant Private Library'],
@@ -44,12 +44,12 @@ $altTextMap = [
     'service-4.jpg' => ['ar' => 'خدمات الممتلكات', 'en' => 'Property Services'],
     'service-5.jpg' => ['ar' => 'الاستشارات', 'en' => 'Consulting Services'],
     'service-6.jpg' => ['ar' => 'خدمات VIP', 'en' => 'VIP Services'],
-    'Niche-Society-mission.png' => ['ar' => 'مهمة نيتش سوسايتي', 'en' => 'Niche Society Mission'],
-    'Niche-Society-values.png' => ['ar' => 'قيم نيتش سوسايتي', 'en' => 'Niche Society Values'],
-    'Niche-Society-vison.png' => ['ar' => 'رؤية نيتش سوسايتي', 'en' => 'Niche Society Vision'],
+    'Niche-Society-mission.png' => ['ar' => 'مهمة نيش سوسايتي', 'en' => 'Niche Society Mission'],
+    'Niche-Society-values.png' => ['ar' => 'قيم نيش سوسايتي', 'en' => 'Niche Society Values'],
+    'Niche-Society-vison.png' => ['ar' => 'رؤية نيش سوسايتي', 'en' => 'Niche Society Vision'],
     'Niche-Society-Arabic-ceo-1-661x1024.png' => ['ar' => 'المدير التنفيذي', 'en' => 'CEO'],
     'Niche-Society-Arabic-CP2.png' => ['ar' => 'ملف الشركة', 'en' => 'Company Profile'],
-    'TEAM-scaled.jpg' => ['ar' => 'فريق نيتش سوسايتي', 'en' => 'Niche Society Team'],
+    'TEAM-scaled.jpg' => ['ar' => 'فريق نيش سوسايتي', 'en' => 'Niche Society Team'],
     '1.svg' => ['ar' => 'أيقونة', 'en' => 'Icon'],
 ];
 

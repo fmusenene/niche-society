@@ -1,11 +1,286 @@
 /**
  * RTL (Right-to-Left) Stylesheet for Arabic
  * Niche Society Website
+ * 
+ * Typography Guidelines:
+ * Arabic Typeface: ElMessiri Family
+ * 
+ * CRITICAL: This file MUST override all font-family rules from style.css
+ * to ensure ElMessiri is applied to ALL Arabic text without fail.
  */
 
 /* ========================================
-   RTL ADJUSTMENTS
+   UNIVERSAL ARABIC FONT - HIGHEST PRIORITY
+   Apply ElMessiri to EVERYTHING in RTL pages
 ======================================== */
+
+/* Universal rule for ALL elements in RTL - Exclude Bootstrap Icons */
+/* CRITICAL: ElMessiri must be first and only font to ensure proper Arabic rendering */
+html[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]),
+html[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"])::before,
+html[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"])::after,
+[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]),
+[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"])::before,
+[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"])::after,
+body[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]),
+body[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"])::before,
+body[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"])::after {
+    font-family: 'ElMessiri', sans-serif !important;
+}
+
+/* ========================================
+   SPECIFIC ELEMENT TARGETING
+   Ensure all text elements use ElMessiri
+======================================== */
+
+/* All HTML elements */
+html[dir="rtl"] body,
+html[dir="rtl"] p,
+html[dir="rtl"] span,
+html[dir="rtl"] div,
+html[dir="rtl"] a,
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] h4,
+html[dir="rtl"] h5,
+html[dir="rtl"] h6,
+html[dir="rtl"] li,
+html[dir="rtl"] ul,
+html[dir="rtl"] ol,
+html[dir="rtl"] td,
+html[dir="rtl"] th,
+html[dir="rtl"] input,
+html[dir="rtl"] textarea,
+html[dir="rtl"] select,
+html[dir="rtl"] button,
+html[dir="rtl"] label,
+html[dir="rtl"] small,
+html[dir="rtl"] strong,
+html[dir="rtl"] em,
+html[dir="rtl"] b,
+html[dir="rtl"] i:not(.bi):not([class*="bi-"]),
+html[dir="rtl"] blockquote,
+html[dir="rtl"] cite,
+html[dir="rtl"] code,
+html[dir="rtl"] pre,
+[dir="rtl"] body,
+[dir="rtl"] p,
+[dir="rtl"] span,
+[dir="rtl"] div,
+[dir="rtl"] a,
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6,
+[dir="rtl"] li,
+[dir="rtl"] ul,
+[dir="rtl"] ol,
+[dir="rtl"] td,
+[dir="rtl"] th,
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select,
+[dir="rtl"] button,
+[dir="rtl"] label,
+[dir="rtl"] small,
+[dir="rtl"] strong,
+[dir="rtl"] em,
+[dir="rtl"] b,
+[dir="rtl"] i:not(.bi):not([class*="bi-"]),
+[dir="rtl"] blockquote,
+[dir="rtl"] cite,
+[dir="rtl"] code,
+[dir="rtl"] pre {
+    font-family: 'ElMessiri', sans-serif !important;
+}
+
+/* ========================================
+   HEADINGS - ElMessiri with Regular Weight
+======================================== */
+
+/* All heading elements and heading classes */
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] h4,
+html[dir="rtl"] h5,
+html[dir="rtl"] h6,
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6,
+[dir="rtl"] .section-title,
+[dir="rtl"] .hero-title,
+[dir="rtl"] .hero-main-title,
+[dir="rtl"] .title-line-1,
+[dir="rtl"] .title-line-2,
+[dir="rtl"] .text-gold,
+[dir="rtl"] .text-cream,
+[dir="rtl"] .page-title,
+[dir="rtl"] .card-title,
+[dir="rtl"] .lead-text,
+[dir="rtl"] .feature-box h4,
+[dir="rtl"] .feature-card h3,
+[dir="rtl"] .feature-card h4,
+[dir="rtl"] .approach-title,
+[dir="rtl"] .advantage-title,
+[dir="rtl"] .philosophy-card-title,
+[dir="rtl"] .about-mvv-card h3,
+[dir="rtl"] .value-card h4,
+[dir="rtl"] .mission-vision-card h3,
+[dir="rtl"] .differentiator-card h4,
+[dir="rtl"] .clientele-card h4,
+[dir="rtl"] .why-card h3,
+[dir="rtl"] .why-choose-card h3,
+[dir="rtl"] .team-text h2,
+[dir="rtl"] .cta-content h2,
+[dir="rtl"] .contact-hero-title,
+[dir="rtl"] .contact-hero-subtitle,
+[dir="rtl"] .form-title,
+[dir="rtl"] .form-subtitle,
+[dir="rtl"] .services-title-elegant,
+[dir="rtl"] .service-title-elegant,
+[dir="rtl"] .philosophy-main-title,
+[dir="rtl"] .philosophy-subtitle {
+    font-family: 'ElMessiri', sans-serif !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+}
+
+/* ========================================
+   CRITICAL: Preserve Bootstrap Icons
+   Icons MUST use Bootstrap Icons font
+   HIGHEST PRIORITY - Must override everything
+======================================== */
+
+/* Highest specificity for Bootstrap Icons - Must override ElMessiri and universal rules */
+html[dir="rtl"] i.bi,
+html[dir="rtl"] i[class*="bi-"],
+html[dir="rtl"] .bi,
+html[dir="rtl"] [class*="bi-"],
+html[dir="rtl"] i[class^="bi-"],
+html[dir="rtl"] [class^="bi-"],
+[dir="rtl"] i.bi,
+[dir="rtl"] i[class*="bi-"],
+[dir="rtl"] .bi,
+[dir="rtl"] [class*="bi-"],
+[dir="rtl"] i[class^="bi-"],
+[dir="rtl"] [class^="bi-"],
+body[dir="rtl"] i.bi,
+body[dir="rtl"] i[class*="bi-"],
+body[dir="rtl"] .bi,
+body[dir="rtl"] [class*="bi-"],
+body[dir="rtl"] i[class^="bi-"],
+body[dir="rtl"] [class^="bi-"],
+html[dir="rtl"] .social-icon i,
+html[dir="rtl"] .social-icon i.bi,
+html[dir="rtl"] .social-icon i[class*="bi-"],
+html[dir="rtl"] .social-icon i[class^="bi-"],
+[dir="rtl"] .social-icon i,
+[dir="rtl"] .social-icon i.bi,
+[dir="rtl"] .social-icon i[class*="bi-"],
+[dir="rtl"] .social-icon i[class^="bi-"],
+html[dir="rtl"] .footer-social-link i,
+html[dir="rtl"] .footer-social-link i.bi,
+html[dir="rtl"] .footer-social-link i[class*="bi-"],
+html[dir="rtl"] .footer-social-link i[class^="bi-"],
+[dir="rtl"] .footer-social-link i,
+[dir="rtl"] .footer-social-link i.bi,
+[dir="rtl"] .footer-social-link i[class*="bi-"],
+[dir="rtl"] .footer-social-link i[class^="bi-"],
+html[dir="rtl"] .footer-contact-item i,
+html[dir="rtl"] .footer-contact-item i.bi,
+html[dir="rtl"] .footer-contact-item i[class*="bi-"],
+html[dir="rtl"] .footer-contact-item i[class^="bi-"],
+[dir="rtl"] .footer-contact-item i,
+[dir="rtl"] .footer-contact-item i.bi,
+[dir="rtl"] .footer-contact-item i[class*="bi-"],
+[dir="rtl"] .footer-contact-item i[class^="bi-"],
+html[dir="rtl"] a i.bi,
+html[dir="rtl"] a i[class*="bi-"],
+html[dir="rtl"] a i[class^="bi-"],
+html[dir="rtl"] a[class*="bi-"] i,
+html[dir="rtl"] a[class^="bi-"] i,
+[dir="rtl"] a i.bi,
+[dir="rtl"] a i[class*="bi-"],
+[dir="rtl"] a i[class^="bi-"],
+[dir="rtl"] a[class*="bi-"] i,
+[dir="rtl"] a[class^="bi-"] i,
+html[dir="rtl"] button i.bi,
+html[dir="rtl"] button i[class*="bi-"],
+html[dir="rtl"] button i[class^="bi-"],
+[dir="rtl"] button i.bi,
+[dir="rtl"] button i[class*="bi-"],
+[dir="rtl"] button i[class^="bi-"],
+html[dir="rtl"] .btn i.bi,
+html[dir="rtl"] .btn i[class*="bi-"],
+html[dir="rtl"] .btn i[class^="bi-"],
+[dir="rtl"] .btn i.bi,
+[dir="rtl"] .btn i[class*="bi-"],
+[dir="rtl"] .btn i[class^="bi-"],
+html[dir="rtl"] .contact-icon i,
+html[dir="rtl"] .contact-icon i.bi,
+html[dir="rtl"] .contact-icon i[class*="bi-"],
+html[dir="rtl"] .contact-icon i[class^="bi-"],
+[dir="rtl"] .contact-icon i,
+[dir="rtl"] .contact-icon i.bi,
+[dir="rtl"] .contact-icon i[class*="bi-"],
+[dir="rtl"] .contact-icon i[class^="bi-"],
+html[dir="rtl"] .feature-icon i,
+html[dir="rtl"] .feature-icon i.bi,
+html[dir="rtl"] .feature-icon i[class*="bi-"],
+html[dir="rtl"] .feature-icon i[class^="bi-"],
+[dir="rtl"] .feature-icon i,
+[dir="rtl"] .feature-icon i.bi,
+[dir="rtl"] .feature-icon i[class*="bi-"],
+[dir="rtl"] .feature-icon i[class^="bi-"],
+html[dir="rtl"] .icon-box i,
+html[dir="rtl"] .icon-box i.bi,
+html[dir="rtl"] .icon-box i[class*="bi-"],
+html[dir="rtl"] .icon-box i[class^="bi-"],
+[dir="rtl"] .icon-box i,
+[dir="rtl"] .icon-box i.bi,
+[dir="rtl"] .icon-box i[class*="bi-"],
+[dir="rtl"] .icon-box i[class^="bi-"],
+html[dir="rtl"] .top-bar i.bi,
+html[dir="rtl"] .top-bar i[class*="bi-"],
+html[dir="rtl"] .top-bar i[class^="bi-"],
+[dir="rtl"] .top-bar i.bi,
+[dir="rtl"] .top-bar i[class*="bi-"],
+[dir="rtl"] .top-bar i[class^="bi-"],
+html[dir="rtl"] .top-bar .social-icon i,
+html[dir="rtl"] .top-bar .social-icon i.bi,
+html[dir="rtl"] .top-bar .social-icon i[class*="bi-"],
+[dir="rtl"] .top-bar .social-icon i,
+[dir="rtl"] .top-bar .social-icon i.bi,
+[dir="rtl"] .top-bar .social-icon i[class*="bi-"] {
+    font-family: "bootstrap-icons", "Bootstrap Icons" !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-variant: normal !important;
+    text-transform: none !important;
+    line-height: 1 !important;
+    letter-spacing: normal !important;
+    word-wrap: normal !important;
+    white-space: nowrap !important;
+    direction: ltr !important;
+    speak: none !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-block !important;
+}
+
+/* ========================================
+   RTL LAYOUT ADJUSTMENTS
+======================================== */
+
 [dir="rtl"] body {
     text-align: right;
     direction: rtl;
