@@ -515,7 +515,7 @@ $pageDescription = $lang === 'ar'
     <section class="section process-section">
         <div class="container">
             <div class="text-center mb-5" data-aos="fade-up">
-                <h2 class="section-title"><?= $lang === 'ar' ? 'عملية العمل' : 'Our Process' ?></h2>
+                <h2 class="section-title"><?= $lang === 'ar' ? 'آلية عملنا' : 'Our Process' ?></h2>
                 <div class="divider mx-auto"></div>
                 <p class="lead-text">
                     <?= $lang === 'ar'

@@ -54,38 +54,38 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
         <!-- Background Image/Map -->
         <div class="hero-bg-container">
             <div class="map-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.5!2d46.675!3d24.713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjTCsDQyJzQ2LjgiTiA0NsKwNDAnMzAuMCJF!5e0!3m2!1sen!2s!4v1234567890!5m2!1sen!2s&q=Prince+Mohammed+Ibn+Salman+Ibn+Abdulaziz+Rd,+Al+Falah+District,+Riyadh,+Saudi+Arabia" 
-                    width="100%" 
-                    height="100%" 
-                    style="border:0;" 
-                    allowfullscreen="" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade"
-                    title="Niche Society Location - Prince Mohammed Ibn Salman Ibn Abdulaziz Rd, Al Falah District, Riyadh">
-                </iframe>
-            </div>
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.5!2d46.675!3d24.713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjTCsDQyJzQ2LjgiTiA0NsKwNDAnMzAuMCJF!5e0!3m2!1sen!2s!4v1234567890!5m2!1sen!2s&q=Prince+Mohammed+Ibn+Salman+Ibn+Abdulaziz+Rd,+Al+Falah+District,+Riyadh,+Saudi+Arabia" 
+                width="100%" 
+                height="100%" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Niche Society Location - Prince Mohammed Ibn Salman Ibn Abdulaziz Rd, Al Falah District, Riyadh">
+            </iframe>
+        </div>
             <div class="hero-black-overlay"></div>
         </div>
         
         <!-- Hero Content -->
         <div class="hero-content">
-            <div class="container">
+        <div class="container">
                 <div class="row">
                     <div class="col-lg-9">
                         <!-- Title -->
-                        <div class="hero-text-animated">
+                <div class="hero-text-animated">
                             <h1 class="hero-main-title">
-                                <?= $lang === 'ar' ? 'تواصل معنا' : 'Contact Us' ?>
-                            </h1>
+                        <?= $lang === 'ar' ? 'تواصل معنا' : 'Contact Us' ?>
+                    </h1>
                             
                             <!-- Subtitle -->
                             <p class="hero-subtitle">
-                                <?= $lang === 'ar' 
-                                    ? 'نحن هنا لمساعدتك. تواصل معنا اليوم للحصول على استشارة مجانية'
-                                    : 'We\'re here to help. Contact us today for a free consultation'
-                                ?>
-                            </p>
+                        <?= $lang === 'ar' 
+                            ? 'نحن هنا لمساعدتك. تواصل معنا اليوم للحصول على استشارة مجانية'
+                            : 'We\'re here to help. Contact us today for a free consultation'
+                        ?>
+                    </p>
                         </div>
                     </div>
                 </div>

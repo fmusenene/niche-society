@@ -59,6 +59,38 @@ a.btn-primary.btn-lg {
     box-shadow: 0 2px 8px rgba(96, 34, 52, 0.2) !important;
 }
 
+/* Remove background highlight for the "Meet Our Team" CTA on homepage only */
+.team-section a.btn-primary.btn-primary--no-bg {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    color: #602234 !important;
+}
+.team-section a.btn-primary.btn-primary--no-bg *,
+.team-section a.btn-primary.btn-primary--no-bg svg,
+.team-section a.btn-primary.btn-primary--no-bg svg path {
+    color: #602234 !important;
+    stroke: #602234 !important;
+}
+.team-section a.btn-primary.btn-primary--no-bg:hover,
+.team-section a.btn-primary.btn-primary--no-bg:focus {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+    text-decoration: underline;
+    color: #602234 !important;
+}
+.team-section a.btn-primary.btn-primary--no-bg:hover *,
+.team-section a.btn-primary.btn-primary--no-bg:hover svg,
+.team-section a.btn-primary.btn-primary--no-bg:hover svg path,
+.team-section a.btn-primary.btn-primary--no-bg:focus *,
+.team-section a.btn-primary.btn-primary--no-bg:focus svg,
+.team-section a.btn-primary.btn-primary--no-bg:focus svg path {
+    color: #602234 !important;
+    stroke: #602234 !important;
+}
+
 .btn-primary:hover,
 .btn-primary:focus:hover,
 .btn-primary:active:hover,
@@ -823,6 +855,19 @@ h1.hero-main-title,
     text-rendering: optimizeLegibility;
 }
 
+/* Reduce font size for English hero text only */
+[dir="ltr"] .title-line-1,
+body:not([dir="rtl"]) .title-line-1,
+html:not([dir="rtl"]) .title-line-1 {
+    font-size: 44px !important;
+}
+
+[dir="ltr"] .title-line-2,
+body:not([dir="rtl"]) .title-line-2,
+html:not([dir="rtl"]) .title-line-2 {
+    font-size: 38px !important;
+}
+
 /* Ensure all text within title-line-1 has uniform styling */
 .title-line-1 *,
 .title-line-1 span,
@@ -869,6 +914,19 @@ h1.hero-main-title,
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+}
+
+/* Reduce font size for English hero text only */
+[dir="ltr"] .title-line-1,
+body:not([dir="rtl"]) .title-line-1,
+html:not([dir="rtl"]) .title-line-1 {
+    font-size: 44px !important;
+}
+
+[dir="ltr"] .title-line-2,
+body:not([dir="rtl"]) .title-line-2,
+html:not([dir="rtl"]) .title-line-2 {
+    font-size: 38px !important;
 }
 
 .text-gold,
@@ -10182,6 +10240,7 @@ select[name="service"] option {
 .story-visual-wrapper {
     text-align: center;
     position: relative;
+    margin-top: -30px; /* Lift the 25 badge and line slightly upward */
 }
 
 .story-badge-visual {
@@ -10191,10 +10250,10 @@ select[name="service"] option {
     justify-content: center;
     width: 200px;
     height: 200px;
-    background: linear-gradient(135deg, #602234, #4a1a29);
-    color: #fffaf3;
-    border-radius: 50%;
-    box-shadow: 0 15px 40px rgba(96, 34, 52, 0.3);
+    background: transparent; /* Remove maroon background behind 25 */
+    color: #602234;
+    border-radius: 0;
+    box-shadow: none;
     margin-bottom: 2rem;
 }
 
@@ -10304,7 +10363,7 @@ select[name="service"] option {
 
 /* Statistics Section - Professional */
 .about-stats-section-professional {
-    padding: 100px 0;
+    padding: 60px 0;
     position: relative;
     overflow: hidden;
 }
@@ -10323,7 +10382,7 @@ select[name="service"] option {
 .stat-card-professional {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    padding: 2.5rem 1.5rem;
+    padding: 1.4rem 1rem;
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
@@ -10339,10 +10398,10 @@ select[name="service"] option {
 }
 
 .stat-number-professional {
-    font-size: 3.5rem;
+    font-size: 2.6rem;
     font-weight: 300;
     color: #fffaf3;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
     line-height: 1;
 }
 

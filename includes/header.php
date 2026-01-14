@@ -38,7 +38,7 @@ $translations = loadTranslations($lang);
     <!-- Headline: Domine Regular | Bodytext: Arimo Regular | Arabic: ElMessiri Family -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Domine:wght@200;300;400;500;600;700&family=Arimo:wght@400;500;600;700&family=ElMessiri:wght@400;500;600;700&display=block" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Domine:wght@200;300;400;500;600;700&family=Arimo:wght@400;500;600;700&family=ElMessiri:wght@400;500;600;700&subset=arabic&display=swap" rel="stylesheet">
     
     <!-- Custom CSS (MUST load after Bootstrap to override) -->
     <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>/css/style.css?v=<?php echo time(); ?>">

@@ -118,6 +118,9 @@ $isArabic = ($lang === 'ar');
     overflow: auto;
     border-radius: 8px;
     margin: auto;
+    display: flex !important;
+    flex-direction: column !important;
+    align-self: center !important;
 }
 
 .iso-certificate-modal-close {
@@ -159,9 +162,39 @@ $isArabic = ($lang === 'ar');
 }
 
 @media (max-width: 768px) {
+    .iso-certificate-modal {
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 20px !important;
+    }
+    
     .iso-certificate-modal-content {
-        max-width: 95%;
-        max-height: 95vh;
+        max-width: 95% !important;
+        max-height: 90vh !important;
+        margin: auto !important;
+        position: relative !important;
+        top: 0 !important;
+        transform: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-self: center !important;
+    }
+    
+    .iso-certificate-modal-body {
+        padding: 15px;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 1 !important;
+        overflow: auto !important;
+    }
+    
+    .iso-certificate-image {
+        max-width: 100% !important;
+        max-height: calc(90vh - 60px) !important;
+        height: auto !important;
+        object-fit: contain !important;
+        margin: 0 auto !important;
     }
     
     .iso-certificate-modal-close {
@@ -170,10 +203,8 @@ $isArabic = ($lang === 'ar');
         width: 35px;
         height: 35px;
         font-size: 18px;
-    }
-    
-    .iso-certificate-modal-body {
-        padding: 15px;
+        position: absolute !important;
+        z-index: 10002 !important;
     }
 }
 

@@ -380,7 +380,7 @@ require_once 'includes/header.php';
                 </p>
                 <a href="contact.php" class="btn btn-primary btn-lg"><?php echo $lang === 'ar' ? 'احجز استشارتك المجانية' : 'Book Your Free Consultation'; ?></a>
                 <p class="mt-3">
-                    <small><i class="fas fa-phone"></i> <?php echo $lang === 'ar' ? 'أو اتصل بنا: ' : 'Or call us: '; ?>+966532447976</small>
+                    <small><i class="fas fa-phone"></i> <?php echo $lang === 'ar' ? 'أو اتصل بنا: ' : 'Or call us: '; ?><span dir="ltr"><?php echo formatNumber('+966532447976'); ?></span></small>
                 </p>
             </div>
         </div>

@@ -620,7 +620,7 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
                 <div class="section-badge"><?php echo t('team_badge', 'فريقنا'); ?></div>
                 <h2><?php echo t('team_title', 'محترفون ملتزمون بالتميز'); ?></h2>
                 <p><?php echo t('team_desc', 'خبراء متخصصون في إدارة الممتلكات الفاخرة والفعاليات الرفيعة. نعمل بصمت، ننفذ بدقة، ونسلم بتميز.'); ?></p>
-                <a href="javascript:void(0)" class="btn-primary">
+                <a href="javascript:void(0)" class="btn-primary btn-primary--no-bg">
                     <?php echo t('team_cta', 'تعرف على فريقنا'); ?>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M<?php echo getCurrentLang() === 'ar' ? '12 4L6 10L12 16' : '8 4L14 10L8 16'; ?>" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>

@@ -40,14 +40,14 @@ $pageDescription = $lang === 'ar'
     
     <!-- Hero Content -->
     <div class="hero-content">
-        <div class="container">
+    <div class="container">
             <div class="row">
                 <div class="col-lg-9">
                     <!-- Title -->
-                    <div class="hero-text-animated">
+            <div class="hero-text-animated">
                         <h1 class="hero-main-title">
-                            <?= $lang === 'ar' ? 'من نحن' : 'About Us' ?>
-                        </h1>
+                    <?= $lang === 'ar' ? 'من نحن' : 'About Us' ?>
+                </h1>
                     </div>
                 </div>
             </div>
@@ -146,12 +146,6 @@ $pageDescription = $lang === 'ar'
             <!-- Mission -->
             <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="mvv-card-professional">
-                    <div class="mvv-card-number"><?php echo formatNumber('01'); ?></div>
-                    <div class="mvv-card-corner top-left"></div>
-                    <div class="mvv-card-corner bottom-right"></div>
-                    <div class="mvv-card-icon">
-                        <i class="bi bi-bullseye"></i>
-                    </div>
                     <h3 class="mvv-card-title"><?= $lang === 'ar' ? 'الرسالة' : 'Our Mission' ?></h3>
                     <div class="mvv-card-underline"></div>
                     <p class="mvv-card-text">
@@ -165,12 +159,6 @@ $pageDescription = $lang === 'ar'
             <!-- Vision -->
             <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="mvv-card-professional">
-                    <div class="mvv-card-number"><?php echo formatNumber('02'); ?></div>
-                    <div class="mvv-card-corner top-left"></div>
-                    <div class="mvv-card-corner bottom-right"></div>
-                    <div class="mvv-card-icon">
-                        <i class="bi bi-eye-fill"></i>
-                    </div>
                     <h3 class="mvv-card-title"><?= $lang === 'ar' ? 'الرؤية' : 'Our Vision' ?></h3>
                     <div class="mvv-card-underline"></div>
                     <p class="mvv-card-text">
@@ -184,12 +172,6 @@ $pageDescription = $lang === 'ar'
             <!-- Values -->
             <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="mvv-card-professional">
-                    <div class="mvv-card-number"><?php echo formatNumber('03'); ?></div>
-                    <div class="mvv-card-corner top-left"></div>
-                    <div class="mvv-card-corner bottom-right"></div>
-                    <div class="mvv-card-icon">
-                        <i class="bi bi-gem"></i>
-                    </div>
                     <h3 class="mvv-card-title"><?= $lang === 'ar' ? 'قيمنا' : 'Our Values' ?></h3>
                     <div class="mvv-card-underline"></div>
                     <p class="mvv-card-text">
@@ -206,18 +188,9 @@ $pageDescription = $lang === 'ar'
 <!-- Our Story - Redesigned -->
 <section class="section about-story-section-professional">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-5 mb-5 mb-lg-0" data-aos="fade-right">
-                <div class="story-visual-wrapper">
-                    <div class="story-badge-visual">
-                        <span class="story-year"><?php echo formatNumber('25'); ?></span>
-                        <span class="story-year-label"><?= $lang === 'ar' ? 'عاماً' : 'Years' ?></span>
-                    </div>
-                    <div class="story-accent-line"></div>
-                </div>
-            </div>
-            <div class="col-lg-7" data-aos="fade-left">
-                <div class="story-content-professional">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8" data-aos="fade-up">
+                <div class="story-content-professional text-center">
                     <span class="section-badge-professional">
                         <i class="bi bi-book-fill"></i>
                         <?= $lang === 'ar' ? 'قصتنا' : 'Our Story' ?>
@@ -225,7 +198,7 @@ $pageDescription = $lang === 'ar'
                     <h2 class="section-title-professional">
                         <?= $lang === 'ar' ? '25 عاماً من التميز' : '25 Years of Excellence' ?>
                     </h2>
-                    <div class="divider-professional"></div>
+                    <div class="divider-professional mx-auto"></div>
                     <p class="lead-text-professional">
                         <?= $lang === 'ar'
                             ? 'بدأت نيش سوسيتي من شغف عميق بالتحدي ورغبة لا تتزعزع في خلق حلول حديثة تترجم أعلى معايير الجودة والدقة.'
@@ -406,7 +379,7 @@ $pageDescription = $lang === 'ar'
                             </div>
                             <div class="cert-detail-content">
                                 <strong><?= $lang === 'ar' ? 'رقم الشهادة:' : 'Certificate Number:' ?></strong>
-                                <span><?php echo formatNumber('25'); ?>EQQN<?php echo formatNumber('01'); ?></span>
+                                <span dir="ltr">25EQQN01</span>
                             </div>
                         </div>
                         <div class="cert-detail-item-professional">
@@ -415,7 +388,7 @@ $pageDescription = $lang === 'ar'
                             </div>
                             <div class="cert-detail-content">
                                 <strong><?= $lang === 'ar' ? 'صالحة حتى:' : 'Valid Until:' ?></strong>
-                                <span><?php echo formatNumber('2028'); ?>-<?php echo formatNumber('11'); ?>-<?php echo formatNumber('04'); ?></span>
+                                <span dir="ltr">2028-11-04</span>
                             </div>
                         </div>
                     </div>
