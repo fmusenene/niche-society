@@ -338,9 +338,12 @@ LIMIT 10;
 -- CREATE STORED PROCEDURES
 -- ========================================
 
-DELIMITER //
-
 -- Procedure: Log User Activity
+-- Note: Remove DEFINER clause if you don't have SET USER privileges
+-- Execute this procedure creation separately if needed
+
+DROP PROCEDURE IF EXISTS sp_log_activity;
+
 CREATE PROCEDURE sp_log_activity(
     IN p_user_id INT,
     IN p_action VARCHAR(100),
@@ -352,9 +355,14 @@ CREATE PROCEDURE sp_log_activity(
 BEGIN
     INSERT INTO activity_log (user_id, action, entity_type, entity_id, description, ip_address)
     VALUES (p_user_id, p_action, p_entity_type, p_entity_id, p_description, p_ip_address);
-END //
+END;
 
 -- Procedure: Get Service Statistics
+-- Note: Remove DEFINER clause if you don't have SET USER privileges
+-- Execute this procedure creation separately if needed
+
+DROP PROCEDURE IF EXISTS sp_get_service_stats;
+
 CREATE PROCEDURE sp_get_service_stats()
 BEGIN
     SELECT 
@@ -365,9 +373,7 @@ BEGIN
     FROM services
     WHERE status = 'active'
     GROUP BY category;
-END //
-
-DELIMITER ;
+END;
 
 -- ========================================
 -- CREATE INDEXES FOR PERFORMANCE

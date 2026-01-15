@@ -10774,7 +10774,506 @@ select[name="service"] option {
     }
 }
 
-/* Print Styles */
+/* ========================================
+   COMPREHENSIVE RESPONSIVE DESIGN
+   Covers ALL pages and elements
+   ======================================== */
+
+/* ========================================
+   MOBILE FIRST - Base Styles (0-767px)
+   ======================================== */
+
+/* Container adjustments for mobile */
+@media (max-width: 767.98px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    /* Typography scaling */
+    h1 {
+        font-size: 2rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    h2 {
+        font-size: 1.75rem !important;
+        line-height: 1.3 !important;
+    }
+    
+    h3 {
+        font-size: 1.5rem !important;
+        line-height: 1.4 !important;
+    }
+    
+    h4 {
+        font-size: 1.25rem !important;
+    }
+    
+    p, .lead-text {
+        font-size: 1rem !important;
+        line-height: 1.6 !important;
+    }
+    
+    /* Section padding reduction */
+    section {
+        padding: 40px 0 !important;
+    }
+    
+    .section {
+        padding: 40px 0 !important;
+    }
+    
+    /* Hero sections */
+    .hero-section,
+    .hero-premium,
+    .page-hero {
+        padding: 60px 0 !important;
+        min-height: auto !important;
+    }
+    
+    .hero-main-title {
+        font-size: 2rem !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.95rem !important;
+        padding: 0 15px !important;
+    }
+    
+    /* Navigation */
+    .navbar-nav {
+        text-align: center !important;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 12px 15px !important;
+        font-size: 1rem !important;
+    }
+    
+    /* Cards and grids */
+    .row {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+    
+    .row > [class*="col-"] {
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-bottom: 20px;
+    }
+    
+    /* Service cards */
+    .service-card,
+    .service-detail-section {
+        margin-bottom: 30px !important;
+    }
+    
+    .service-title {
+        font-size: 1.5rem !important;
+    }
+    
+    /* Forms */
+    .contact-form-wrapper,
+    .form-wrapper {
+        padding: 20px 15px !important;
+    }
+    
+    .form-control,
+    .form-select,
+    textarea.form-control {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 12px 15px !important;
+    }
+    
+    .btn {
+        width: 100% !important;
+        padding: 14px 20px !important;
+        font-size: 1rem !important;
+        margin-bottom: 10px;
+    }
+    
+    .btn-lg {
+        padding: 16px 24px !important;
+        font-size: 1.1rem !important;
+    }
+    
+    /* Statistics and numbers */
+    .stat-item,
+    .stat-card {
+        margin-bottom: 20px !important;
+        text-align: center !important;
+    }
+    
+    .stat-number {
+        font-size: 2rem !important;
+    }
+    
+    /* Images */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+    
+    .service-image img,
+    .about-image img {
+        width: 100% !important;
+        margin-bottom: 20px !important;
+    }
+    
+    /* Tables */
+    table {
+        display: block !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    /* Modals */
+    .modal-dialog {
+        margin: 10px !important;
+        max-width: calc(100% - 20px) !important;
+    }
+    
+    .modal-content {
+        padding: 20px 15px !important;
+    }
+    
+    /* Footer */
+    .footer-corporate {
+        padding: 30px 0 20px !important;
+    }
+    
+    .footer-corporate .row > [class*="col-"] {
+        margin-bottom: 30px !important;
+        text-align: center !important;
+    }
+    
+    /* Blog and content pages */
+    .blog-post-card,
+    .post-card {
+        margin-bottom: 30px !important;
+    }
+    
+    .blog-sidebar {
+        margin-top: 40px !important;
+    }
+    
+    /* About page specific */
+    .about-modal-section {
+        padding: 40px 0 !important;
+    }
+    
+    .ceo-card-small {
+        margin-bottom: 30px !important;
+    }
+    
+    /* Services page specific */
+    .services-intro-section {
+        padding: 40px 0 !important;
+    }
+    
+    .process-step {
+        margin-bottom: 30px !important;
+        text-align: center !important;
+    }
+    
+    /* Contact page specific */
+    .contact-info-card {
+        margin-bottom: 30px !important;
+    }
+    
+    /* Philosophy/Values cards */
+    .philosophy-card,
+    .philosophy-item {
+        margin-bottom: 30px !important;
+    }
+    
+    /* ISO banner */
+    .iso-banner {
+        padding: 20px 0 !important;
+    }
+    
+    .iso-grid {
+        gap: 15px !important;
+    }
+    
+    .iso-item {
+        padding: 10px 5px !important;
+    }
+    
+    /* Team section */
+    .team-section {
+        padding: 40px 0 !important;
+    }
+    
+    .team-content {
+        flex-direction: column !important;
+    }
+    
+    .team-image {
+        margin-top: 30px !important;
+    }
+    
+    /* CTA sections */
+    .cta-section,
+    .final-cta-section {
+        padding: 40px 0 !important;
+        text-align: center !important;
+    }
+    
+    .cta-actions {
+        flex-direction: column !important;
+    }
+    
+    .cta-actions .btn {
+        width: 100% !important;
+        margin: 5px 0 !important;
+    }
+}
+
+/* ========================================
+   TABLET STYLES (768px - 991px)
+   ======================================== */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .container {
+        max-width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    /* Typography */
+    h1 {
+        font-size: 2.5rem !important;
+    }
+    
+    h2 {
+        font-size: 2rem !important;
+    }
+    
+    h3 {
+        font-size: 1.75rem !important;
+    }
+    
+    /* Section padding */
+    section {
+        padding: 60px 0 !important;
+    }
+    
+    /* Hero sections */
+    .hero-section,
+    .hero-premium {
+        padding: 80px 0 !important;
+    }
+    
+    .hero-main-title {
+        font-size: 2.5rem !important;
+    }
+    
+    /* Grid adjustments */
+    .row > [class*="col-md-"] {
+        margin-bottom: 30px;
+    }
+    
+    /* Service cards - 2 columns */
+    .service-card {
+        margin-bottom: 30px;
+    }
+    
+    /* Forms */
+    .contact-form-wrapper {
+        padding: 30px !important;
+    }
+    
+    /* Statistics - 2 columns */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px !important;
+    }
+    
+    /* Footer - 2 columns */
+    .footer-corporate .row > [class*="col-lg-"] {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+        margin-bottom: 30px;
+    }
+}
+
+/* ========================================
+   SMALL MOBILE (0 - 480px)
+   ======================================== */
+@media (max-width: 480px) {
+    /* Even smaller typography */
+    h1 {
+        font-size: 1.75rem !important;
+    }
+    
+    h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    h3 {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Reduced padding */
+    section {
+        padding: 30px 0 !important;
+    }
+    
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    /* Hero sections */
+    .hero-section {
+        padding: 40px 0 !important;
+    }
+    
+    .hero-main-title {
+        font-size: 1.5rem !important;
+    }
+    
+    .title-line-1 {
+        font-size: 1.5rem !important;
+    }
+    
+    .title-line-2 {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Buttons */
+    .btn {
+        padding: 12px 15px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Cards */
+    .card,
+    .service-card,
+    .philosophy-card {
+        padding: 15px !important;
+    }
+    
+    /* Forms */
+    .form-control {
+        padding: 10px 12px !important;
+        font-size: 16px !important;
+    }
+    
+    /* Statistics */
+    .stat-number {
+        font-size: 1.75rem !important;
+    }
+    
+    /* ISO banner - stack vertically */
+    .iso-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    /* Footer */
+    .footer-corporate {
+        padding: 25px 0 15px !important;
+    }
+    
+    .footer-corporate .row > [class*="col-"] {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 25px !important;
+    }
+}
+
+/* ========================================
+   LARGE DESKTOP (1200px+)
+   ======================================== */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1200px;
+    }
+    
+    /* Optimal spacing for large screens */
+    section {
+        padding: 100px 0;
+    }
+    
+    .hero-section {
+        padding: 120px 0;
+    }
+}
+
+/* ========================================
+   LANDSCAPE ORIENTATION (Mobile)
+   ======================================== */
+@media (max-width: 767.98px) and (orientation: landscape) {
+    .hero-section {
+        padding: 40px 0 !important;
+        min-height: auto !important;
+    }
+    
+    .hero-main-title {
+        font-size: 1.75rem !important;
+    }
+    
+    section {
+        padding: 30px 0 !important;
+    }
+}
+
+/* ========================================
+   TOUCH DEVICE OPTIMIZATIONS
+   ======================================== */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .btn {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+    
+    .nav-link {
+        padding: 15px 20px !important;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .btn:hover {
+        transform: none !important;
+    }
+    
+    /* Larger form inputs */
+    .form-control,
+    .form-select {
+        min-height: 44px !important;
+    }
+}
+
+/* ========================================
+   HIGH DPI DISPLAYS
+   ======================================== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* ========================================
+   ACCESSIBILITY - Reduced Motion
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
 @media print {
     .top-bar,
     .navbar,

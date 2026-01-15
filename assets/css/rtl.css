@@ -474,3 +474,118 @@ html[dir="rtl"] .top-bar .social-icon i[class*="bi-"],
 [dir="rtl"] .cta-actions {
     direction: rtl;
 }
+
+/* ========================================
+   RTL RESPONSIVE DESIGN
+   Comprehensive responsive styles for Arabic pages
+   ======================================== */
+
+/* Mobile (0-767px) */
+@media (max-width: 767.98px) {
+    [dir="rtl"] h1 {
+        font-size: 2rem !important;
+    }
+    
+    [dir="rtl"] h2 {
+        font-size: 1.75rem !important;
+    }
+    
+    [dir="rtl"] h3 {
+        font-size: 1.5rem !important;
+    }
+    
+    [dir="rtl"] h4 {
+        font-size: 1.25rem !important;
+    }
+    
+    [dir="rtl"] body {
+        line-height: 1.7 !important;
+    }
+    
+    [dir="rtl"] p {
+        line-height: 1.8 !important;
+    }
+    
+    /* Navigation adjustments */
+    [dir="rtl"] .navbar-nav {
+        text-align: right !important;
+    }
+    
+    [dir="rtl"] .nav-link {
+        padding-right: 15px !important;
+        padding-left: 15px !important;
+    }
+    
+    /* Forms */
+    [dir="rtl"] .form-control {
+        text-align: right !important;
+        padding-right: 15px !important;
+    }
+    
+    [dir="rtl"] .form-label {
+        text-align: right !important;
+    }
+    
+    /* Cards */
+    [dir="rtl"] .card-body {
+        text-align: right !important;
+        padding: 15px !important;
+    }
+    
+    /* Footer */
+    [dir="rtl"] .footer-corporate .row > [class*="col-"] {
+        text-align: right !important;
+    }
+    
+    /* Buttons */
+    [dir="rtl"] .btn {
+        text-align: center !important;
+    }
+    
+    [dir="rtl"] .btn i {
+        margin-left: 8px !important;
+        margin-right: 0 !important;
+    }
+}
+
+/* Tablet (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    [dir="rtl"] h1 {
+        font-size: 2.5rem !important;
+    }
+    
+    [dir="rtl"] h2 {
+        font-size: 2rem !important;
+    }
+    
+    [dir="rtl"] h3 {
+        font-size: 1.75rem !important;
+    }
+}
+
+/* Small Mobile (0-480px) */
+@media (max-width: 480px) {
+    [dir="rtl"] h1 {
+        font-size: 1.75rem !important;
+    }
+    
+    [dir="rtl"] h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    [dir="rtl"] h3 {
+        font-size: 1.25rem !important;
+    }
+    
+    [dir="rtl"] .hero-main-title {
+        font-size: 1.5rem !important;
+    }
+    
+    [dir="rtl"] .title-line-1 {
+        font-size: 1.5rem !important;
+    }
+    
+    [dir="rtl"] .title-line-2 {
+        font-size: 1.25rem !important;
+    }
+}

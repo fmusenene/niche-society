@@ -203,21 +203,46 @@ function sendEmailNotification($data, $lang) {
     $headers = [
         'MIME-Version: 1.0',
         'Content-type: text/html; charset=utf-8',
-        'From: Niche Society Website <noreply@niche-society.com>',
+        'From: Niche Society Website <' . CONTACT_EMAIL . '>',
         'Reply-To: ' . $data['email'],
-        'X-Mailer: PHP/' . phpversion()
+        'X-Mailer: PHP/' . phpversion(),
+        'X-Priority: 1',
+        'Importance: High'
     ];
     
-    $result = @mail($to, $subject, $message, implode("\r\n", $headers));
+    // Remove error suppression to see actual errors
+    $result = mail($to, $subject, $message, implode("\r\n", $headers));
     
-    // Log email sending result
+    // Enhanced logging for email sending result
     if (!$result) {
         $error = error_get_last();
-        error_log("Email notification failed to send to: $to");
-        error_log("Error details: " . ($error ? $error['message'] : 'Unknown error'));
-        error_log("Note: On localhost/XAMPP, PHP mail() requires SMTP configuration. Emails will work on production server.");
+        $errorMessage = "Email notification FAILED to send to: $to\n";
+        $errorMessage .= "Subject: $subject\n";
+        $errorMessage .= "From: " . CONTACT_EMAIL . "\n";
+        $errorMessage .= "Error details: " . ($error ? $error['message'] : 'Unknown error') . "\n";
+        $errorMessage .= "PHP mail() function returned: " . ($result ? 'true' : 'false') . "\n";
+        $errorMessage .= "Note: On localhost/XAMPP, PHP mail() requires SMTP configuration.\n";
+        $errorMessage .= "For production, ensure your server has a mail server configured.\n";
+        error_log($errorMessage);
+        
+        // Also log to a file for easier debugging
+        $logFile = __DIR__ . '/logs/email-errors.log';
+        if (!file_exists(__DIR__ . '/logs')) {
+            @mkdir(__DIR__ . '/logs', 0755, true);
+        }
+        @file_put_contents($logFile, date('Y-m-d H:i:s') . " - " . $errorMessage . "\n", FILE_APPEND);
     } else {
-        error_log("Email notification sent successfully to: $to");
+        $successMessage = "Email notification sent successfully to: $to\n";
+        $successMessage .= "Subject: $subject\n";
+        $successMessage .= "Time: " . date('Y-m-d H:i:s') . "\n";
+        error_log($successMessage);
+        
+        // Log success to file
+        $logFile = __DIR__ . '/logs/email-success.log';
+        if (!file_exists(__DIR__ . '/logs')) {
+            @mkdir(__DIR__ . '/logs', 0755, true);
+        }
+        @file_put_contents($logFile, date('Y-m-d H:i:s') . " - " . $successMessage . "\n", FILE_APPEND);
     }
     
     return $result;
@@ -382,12 +407,29 @@ try {
     $emailSent = sendEmailNotification($data, $lang);
     $autoReplySent = sendAutoReply($data['email'], $data['name'], $lang);
     
-    // Log email sending results (for debugging on localhost)
+    // Enhanced logging for email sending results
+    $emailLog = "=== Contact Form Email Status ===\n";
+    $emailLog .= "Time: " . date('Y-m-d H:i:s') . "\n";
+    $emailLog .= "Admin notification to " . CONTACT_EMAIL . ": " . ($emailSent ? 'SENT' : 'FAILED') . "\n";
+    $emailLog .= "Auto-reply to " . $data['email'] . ": " . ($autoReplySent ? 'SENT' : 'FAILED') . "\n";
+    
     if (!$emailSent || !$autoReplySent) {
-        error_log("Warning: Some emails failed to send. This is normal on localhost/XAMPP without SMTP configuration.");
-        error_log("Email notification sent: " . ($emailSent ? 'Yes' : 'No'));
-        error_log("Auto-reply sent: " . ($autoReplySent ? 'Yes' : 'No'));
+        $emailLog .= "WARNING: Some emails failed to send!\n";
+        if (!$emailSent) {
+            $emailLog .= "CRITICAL: Admin notification email failed. Check email server configuration.\n";
+        }
+        $emailLog .= "Note: On localhost/XAMPP, PHP mail() requires SMTP configuration.\n";
+        $emailLog .= "For production, ensure your server has a mail server configured.\n";
     }
+    
+    error_log($emailLog);
+    
+    // Also save to log file for easier debugging
+    $logFile = __DIR__ . '/logs/contact-form-emails.log';
+    if (!file_exists(__DIR__ . '/logs')) {
+        @mkdir(__DIR__ . '/logs', 0755, true);
+    }
+    @file_put_contents($logFile, $emailLog . "\n", FILE_APPEND);
 
     // 8. Log Success
     logSecurityEvent($pdo, 'contact_form_success', $ipAddress, 'Form submitted successfully');
