@@ -50,7 +50,7 @@ generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-hom
                                 <span class="title-line-1">إدارة <span class="text-gold">احترافية</span></span>
                                 <span class="title-line-2">لحياة <span class="text-cream">استثنائية</span></span>
                             <?php else: ?>
-                                <span class="title-line-1">Professional <span class="text-gold">Management</span></span>
+                                <span class="title-line-1">Professional Farahat <span class="text-gold">Management</span></span>
                                 <span class="title-line-2">For Exceptional <span class="text-cream">Lives</span></span>
                             <?php endif; ?>
                         </h1>
