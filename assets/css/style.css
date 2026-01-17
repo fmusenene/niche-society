@@ -2267,90 +2267,139 @@ a.btn-primary:hover span * {
     }
     
     .philosophy-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
     
     .philosophy-card {
-        padding: 35px 25px;
+        padding: 25px 20px;
+        position: relative;
     }
     
     .card-number {
-        font-size: 48px;
-        top: 12px;
-        right: 12px;
+        font-size: 32px !important;
+        top: 8px !important;
+        right: 8px !important;
+        opacity: 0.15 !important;
+        z-index: 0 !important;
     }
     
     [dir="rtl"] .card-number {
-        right: auto;
-        left: 12px;
+        right: auto !important;
+        left: 8px !important;
+    }
+    
+    .philosophy-content {
+        position: relative;
+        z-index: 2;
     }
     
     .card-corner {
-        width: 25px;
-        height: 25px;
+        width: 20px;
+        height: 20px;
     }
     
     .philosophy-card:hover .card-corner {
-        width: 35px;
-        height: 35px;
+        width: 30px;
+        height: 30px;
     }
     
     .philosophy-icon-art svg {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
     }
     
     .philosophy-card-title {
-        font-size: 24px;
-        margin-bottom: 10px;
+        font-size: 20px !important;
+        margin-bottom: 12px !important;
+        padding-right: 50px !important;
+        position: relative;
+        z-index: 2;
+    }
+    
+    [dir="rtl"] .philosophy-card-title {
+        padding-right: 0 !important;
+        padding-left: 50px !important;
     }
     
     .title-underline {
-        width: 50px;
-        margin-bottom: 20px;
+        width: 45px;
+        margin-bottom: 15px;
     }
     
     .philosophy-text {
-        font-size: 14px;
-        line-height: 1.8;
-        text-align: justify;
+        font-size: 13px !important;
+        line-height: 1.7 !important;
+        text-align: left;
         text-align-last: left;
         word-spacing: normal;
+    }
+    
+    [dir="rtl"] .philosophy-text {
+        text-align: right;
+        text-align-last: right;
     }
 }
 
 @media (max-width: 480px) {
     .philosophy-section {
-        padding: 50px 0;
+        padding: 40px 0;
     }
     
     .philosophy-main-title {
-        font-size: 28px;
+        font-size: 26px;
+    }
+    
+    .philosophy-subtitle {
+        font-size: 13px;
+    }
+    
+    .philosophy-grid {
+        gap: 18px;
     }
     
     .philosophy-card {
-        padding: 30px 20px;
+        padding: 22px 18px;
     }
     
     .card-number {
-        font-size: 42px;
+        font-size: 28px !important;
+        top: 6px !important;
+        right: 6px !important;
+        opacity: 0.12 !important;
     }
     
     [dir="rtl"] .card-number {
-        right: auto;
-        left: 12px;
+        right: auto !important;
+        left: 6px !important;
     }
     
     .philosophy-card-title {
-        font-size: 22px;
+        font-size: 18px !important;
+        margin-bottom: 10px !important;
+        padding-right: 45px !important;
+    }
+    
+    [dir="rtl"] .philosophy-card-title {
+        padding-right: 0 !important;
+        padding-left: 45px !important;
+    }
+    
+    .title-underline {
+        width: 40px;
+        margin-bottom: 12px;
     }
     
     .philosophy-text {
-        font-size: 13px;
-        text-align: justify;
+        font-size: 12px !important;
+        line-height: 1.6 !important;
+        text-align: left;
         text-align-last: left;
-        word-spacing: normal;
+    }
+    
+    [dir="rtl"] .philosophy-text {
+        text-align: right;
+        text-align-last: right;
     }
 }
 
