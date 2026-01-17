@@ -1,0 +1,20 @@
+# Protect RSS Aggregator from Public Access
+# Rename this file to .htaccess or add to existing .htaccess
+
+# Protect rss-feed-aggregator.php (only allow localhost)
+<Files "rss-feed-aggregator.php">
+    Order Deny,Allow
+    Deny from all
+    Allow from 127.0.0.1
+    Allow from ::1
+    # Uncomment and add your IP for remote access:
+    # Allow from YOUR.IP.ADDRESS
+</Files>
+
+# Alternative: Require HTTP Basic Auth
+# <Files "rss-feed-aggregator.php">
+#     AuthType Basic
+#     AuthName "RSS Aggregator Access"
+#     AuthUserFile /path/to/.htpasswd
+#     Require valid-user
+# </Files>

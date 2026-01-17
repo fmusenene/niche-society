@@ -114,7 +114,26 @@ $translations = loadTranslations($lang);
                         <?php echo t('nav_services', 'خدماتنا'); ?>
                     </a>
                 </li>
-                <!-- Success Stories and Blog navigation links removed as requested -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link nav-link-enhanced dropdown-toggle <?php echo (isActive('blog.php') || isActive('success-stories.php')) ? 'active' : ''; ?>" href="#" id="pagesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #602234 !important; padding: 8px 16px !important; font-size: 15px; font-weight: 500; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; cursor: pointer;">
+                        <?php echo t('nav_pages', 'الصفحات'); ?>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="pagesDropdown" style="background-color: #fffaf3 !important; border: 1px solid rgba(96, 34, 52, 0.15) !important; box-shadow: 0 4px 12px rgba(96, 34, 52, 0.15) !important; border-radius: 0 !important; padding: 8px 0 !important; margin-top: 8px !important;">
+                        <li>
+                            <a class="dropdown-item <?php echo isActive('blog.php'); ?>" href="<?php echo SITE_URL; ?>/blog.php" style="color: #602234 !important; padding: 10px 20px !important; font-size: 15px; font-weight: 500; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                                <i class="bi bi-newspaper" style="margin-<?php echo ($lang === 'ar') ? 'left' : 'right'; ?>: 8px;"></i>
+                                <?php echo t('nav_news', 'الأخبار'); ?>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider" style="border-color: rgba(96, 34, 52, 0.15) !important; margin: 8px 0 !important;"></li>
+                        <li>
+                            <a class="dropdown-item <?php echo isActive('success-stories.php'); ?>" href="<?php echo SITE_URL; ?>/success-stories.php" style="color: #602234 !important; padding: 10px 20px !important; font-size: 15px; font-weight: 500; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                                <i class="bi bi-trophy" style="margin-<?php echo ($lang === 'ar') ? 'left' : 'right'; ?>: 8px;"></i>
+                                <?php echo t('nav_success', 'قصص النجاح'); ?>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link nav-link-enhanced <?php echo isActive('contact.php'); ?>" href="<?php echo SITE_URL; ?>/contact.php" style="color: #602234 !important; padding: 8px 16px !important; font-size: 15px; font-weight: 500; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative;">
                         <?php echo t('nav_contact', 'اتصل بنا'); ?>

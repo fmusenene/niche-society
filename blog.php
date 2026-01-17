@@ -10,6 +10,9 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/functions/helpers.php';
 
+// Handle language switch
+handleLanguageSwitch();
+
 $lang = getCurrentLanguage();
 $t = getTranslations($lang);
 $dir = getTextDirection($lang);
@@ -57,10 +60,12 @@ $excerptCol = $lang === 'ar' ? 'excerpt_ar' : 'excerpt_en';
 
 $postsStmt = $pdo->prepare("
     SELECT id, slug, {$titleCol} as title, {$excerptCol} as excerpt, 
-           featured_image, category, published_at, views
+           featured_image, category, published_at, views as views_count, tags
     FROM blog_posts 
     WHERE {$whereSQL}
-    ORDER BY published_at DESC
+    ORDER BY 
+        CASE WHEN tags LIKE '%region:middle_east%' THEN 0 ELSE 1 END,
+        published_at DESC
     LIMIT {$postsPerPage} OFFSET {$offset}
 ");
 $postsStmt->execute($params);
@@ -84,12 +89,27 @@ $pageDescription = $lang === 'ar'
     <?php if ($lang === 'ar'): ?>
     <link rel="stylesheet" href="<?= url('assets/css/rtl.css') ?>">
     <?php endif; ?>
+    <style>
+        /* Force white text for active category links */
+        .sidebar-widget .category-list a.active,
+        .sidebar-widget ul.category-list li a.active {
+            background: #602234 !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+        }
+        .sidebar-widget .category-list a.active .count,
+        .sidebar-widget ul.category-list li a.active .count {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+    </style>
 </head>
 <body>
     <?php include __DIR__ . '/includes/header.php'; ?>
 
     <!-- Hero Section -->
-    <section class="page-hero" style="background-image: url('<?= url('assets/images/sunlit-library-escape-701x1024.jpg') ?>');">
+    <section class="page-hero" style="background-image: url('<?= url('assets/images/TEAM-scaled.jpg') ?>');">
         <div class="container">
             <div class="hero-content">
                 <h1 class="hero-title" data-aos="fade-up">
@@ -111,31 +131,21 @@ $pageDescription = $lang === 'ar'
             <div class="row">
                 <!-- Sidebar -->
                 <div class="col-lg-3 mb-5 mb-lg-0" data-aos="fade-right">
-                    <!-- Search Box -->
-                    <div class="sidebar-widget">
-                        <h3 class="widget-title"><?= $lang === 'ar' ? 'البحث' : 'Search' ?></h3>
-                        <form action="" method="GET" class="search-form">
-                            <?php if ($categoryFilter): ?>
-                            <input type="hidden" name="category" value="<?= $categoryFilter ?>">
-                            <?php endif; ?>
-                            <div class="search-input-group">
-                                <input 
-                                    type="text" 
-                                    name="search" 
-                                    class="form-control" 
-                                    placeholder="<?= $lang === 'ar' ? 'ابحث...' : 'Search...' ?>"
-                                    value="<?= htmlspecialchars($searchQuery) ?>"
-                                >
-                                <button type="submit" class="search-btn">
-                                    <i class="bi bi-search"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
                     <!-- Categories -->
                     <div class="sidebar-widget">
                         <h3 class="widget-title"><?= $lang === 'ar' ? 'التصنيفات' : 'Categories' ?></h3>
+                        <?php
+                        // Get categories with counts
+                        $categoriesWithCountsStmt = $pdo->prepare("
+                            SELECT category, COUNT(*) as count 
+                            FROM blog_posts 
+                            WHERE status = 'published' AND category != '' AND category IS NOT NULL 
+                            GROUP BY category 
+                            ORDER BY category
+                        ");
+                        $categoriesWithCountsStmt->execute();
+                        $categoriesWithCounts = $categoriesWithCountsStmt->fetchAll(PDO::FETCH_ASSOC);
+                        ?>
                         <ul class="category-list">
                             <li>
                                 <a href="<?= url('blog.php') ?>" class="<?= !$categoryFilter ? 'active' : '' ?>">
@@ -143,11 +153,12 @@ $pageDescription = $lang === 'ar'
                                     <span class="count"><?= $totalPosts ?></span>
                                 </a>
                             </li>
-                            <?php foreach ($categories as $category): ?>
+                            <?php foreach ($categoriesWithCounts as $cat): ?>
                             <li>
-                                <a href="<?= url('blog.php?category=' . urlencode($category)) ?>" 
-                                   class="<?= $categoryFilter == $category ? 'active' : '' ?>">
-                                    <?= htmlspecialchars($category) ?>
+                                <a href="<?= url('blog.php?category=' . urlencode($cat['category'])) ?>" 
+                                   class="<?= $categoryFilter == $cat['category'] ? 'active' : '' ?>">
+                                    <?= htmlspecialchars($cat['category']) ?>
+                                    <span class="count"><?= $cat['count'] ?></span>
                                 </a>
                             </li>
                             <?php endforeach; ?>
@@ -231,45 +242,71 @@ $pageDescription = $lang === 'ar'
                     </div>
                     <?php else: ?>
                     <!-- Posts Grid -->
-                    <div class="row">
-                        <?php foreach ($posts as $post): ?>
-                        <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up">
-                            <article class="blog-card">
-                                <div class="blog-card-image">
-                                    <?php if ($post['featured_image']): ?>
-                                    <img src="<?= url($post['featured_image']) ?>" alt="<?= htmlspecialchars($post['title']) ?>">
-                                    <?php else: ?>
-                                    <img src="<?= url('assets/images/niche-society-homepage-1-scaled.jpg') ?>" alt="<?= htmlspecialchars($post['title']) ?>">
-                                    <?php endif; ?>
-                                    <div class="blog-card-overlay">
-                                        <a href="<?= url('blog-post.php?slug=' . $post['slug']) ?>" class="read-more-btn">
-                                            <?= $lang === 'ar' ? 'اقرأ المزيد' : 'Read More' ?>
-                                            <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?>"></i>
-                                        </a>
+                    <div class="blog-posts-grid">
+                        <?php foreach ($posts as $post): 
+                            // Always use internal blog post URL (articles display on our website)
+                            $articleUrl = url('blog-post.php?slug=' . $post['slug']);
+                            
+                            // Fix image URL - handle various cases
+                            $defaultImage = url('assets/images/niche-society-homepage-1-scaled.jpg');
+                            $imageUrl = $defaultImage; // Default fallback
+                            
+                            if (!empty($post['featured_image'])) {
+                                $featuredImage = trim($post['featured_image']);
+                                // If it's an absolute URL (starts with http/https), use as-is
+                                if (preg_match('/^https?:\/\//i', $featuredImage)) {
+                                    $imageUrl = $featuredImage;
+                                } 
+                                // If it's a relative path, use url() helper
+                                elseif (!empty($featuredImage) && $featuredImage !== 'assets/images/niche-society-homepage-1-scaled.jpg') {
+                                    $imageUrl = url($featuredImage);
+                                }
+                            }
+                            
+                            // Format date for tag (e.g., "DECEMBER 12")
+                            $dateTag = strtoupper(date('F d', strtotime($post['published_at'])));
+                            
+                            // Get author name from tags if available, otherwise use default
+                            $authorName = 'Niche Society';
+                            if (!empty($post['tags']) && preg_match('/author:([^\s]+)/', $post['tags'], $matches)) {
+                                $authorName = $matches[1];
+                            }
+                        ?>
+                        <article class="blog-card-vertical" data-aos="fade-up">
+                                <div class="blog-card-image-wrapper">
+                                    <a href="<?= $articleUrl ?>">
+                                        <img src="<?= htmlspecialchars($imageUrl) ?>" 
+                                             alt="<?= htmlspecialchars($post['title']) ?>"
+                                             onerror="this.onerror=null; this.src='<?= $defaultImage ?>';"
+                                             loading="lazy"
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </a>
+                                    <div class="blog-date-tag">
+                                        <?= $dateTag ?>
                                     </div>
                                 </div>
                                 <div class="blog-card-content">
-                                    <div class="blog-card-meta">
-                                        <span class="date">
-                                            <i class="bi bi-calendar"></i>
-                                            <?= date('M d, Y', strtotime($post['published_at'])) ?>
-                                        </span>
-                                        <span class="views">
-                                            <i class="bi bi-eye"></i>
-                                            <?= $post['views_count'] ?>
-                                        </span>
-                                    </div>
                                     <h3 class="blog-card-title">
-                                        <a href="<?= url('blog-post.php?slug=' . $post['slug']) ?>">
+                                        <a href="<?= $articleUrl ?>">
                                             <?= htmlspecialchars($post['title']) ?>
                                         </a>
                                     </h3>
+                                    <div class="blog-card-meta">
+                                        <span class="author"><?= htmlspecialchars($authorName) ?></span>
+                                        <?php if ($post['category']): ?>
+                                        <span class="separator">/</span>
+                                        <span class="category"><?= htmlspecialchars($post['category']) ?></span>
+                                        <?php endif; ?>
+                                    </div>
                                     <p class="blog-card-excerpt">
                                         <?= htmlspecialchars($post['excerpt']) ?>
                                     </p>
+                                    <a href="<?= $articleUrl ?>" class="blog-read-more-link">
+                                        <?= $lang === 'ar' ? 'اقرأ المزيد' : 'Read More' ?>
+                                        <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?>"></i>
+                                    </a>
                                 </div>
                             </article>
-                        </div>
                         <?php endforeach; ?>
                     </div>
 
