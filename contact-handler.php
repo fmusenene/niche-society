@@ -320,10 +320,24 @@ function sendAutoReply($email, $name, $lang) {
 // ============================================
 
 try {
-    // Check if request is POST
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        $_SESSION['contact_error'] = 'Invalid request method';
-        header('Location: contact.php');
+    // Check if request is POST - improved check
+    $requestMethod = $_SERVER['REQUEST_METHOD'] ?? '';
+    if (strtoupper($requestMethod) !== 'POST') {
+        // Log the actual request method for debugging
+        error_log("Contact form received non-POST request. Method: " . $requestMethod);
+        error_log("Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'unknown'));
+        error_log("HTTP_X_REQUESTED_WITH: " . ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'not set'));
+        
+        $_SESSION['contact_error'] = 'Invalid request method. Please submit the form properly.';
+        header('Location: ' . url('contact.php'));
+        exit;
+    }
+    
+    // Additional check: ensure POST data exists
+    if (empty($_POST)) {
+        error_log("Contact form received POST request but POST data is empty");
+        $_SESSION['contact_error'] = 'Form data was not received. Please try again.';
+        header('Location: ' . url('contact.php'));
         exit;
     }
 

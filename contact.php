@@ -415,15 +415,26 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
+                    form.classList.add('was-validated');
                 } else {
-                    // Show loading state
+                    // Show loading state but don't prevent default submission
                     submitBtn.disabled = true;
-                    submitBtn.querySelector('.btn-text').style.display = 'none';
-                    submitBtn.querySelector('.btn-loading').style.display = 'inline-block';
-                    submitBtn.querySelector('.btn-icon').style.display = 'none';
+                    const btnText = submitBtn.querySelector('.btn-text');
+                    const btnLoading = submitBtn.querySelector('.btn-loading');
+                    const btnIcon = submitBtn.querySelector('.btn-icon');
+                    
+                    if (btnText) btnText.style.display = 'none';
+                    if (btnLoading) btnLoading.style.display = 'inline-block';
+                    if (btnIcon) btnIcon.style.display = 'none';
+                    
+                    // Ensure form method is POST
+                    if (form.method.toLowerCase() !== 'post') {
+                        form.method = 'POST';
+                    }
+                    
+                    // Allow the form to submit normally
+                    form.classList.add('was-validated');
                 }
-                
-                form.classList.add('was-validated');
             }, false);
 
             // Email validation
