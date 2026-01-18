@@ -26,477 +26,6 @@ if (empty($_SESSION['csrf_token'])) {
 require_once 'includes/header.php';
 ?>
 
-<style>
-/* Event Management Page - Company Profile Design - All Details */
-.event-management-page {
-    background: #F8F7F0 !important;
-}
-
-.event-management-page body,
-.event-management-page .service-detail-header,
-.event-management-page .section,
-.event-management-page .service-detail-section,
-.event-management-page .section.bg-light,
-.event-management-page .bg-light,
-.event-management-page .cta-section {
-    background: #F8F7F0 !important;
-    background-color: #F8F7F0 !important;
-}
-
-/* All Text Elements */
-.event-management-page .service-detail-title,
-.event-management-page .service-detail-subtitle,
-.event-management-page h1,
-.event-management-page h2,
-.event-management-page h3,
-.event-management-page h4,
-.event-management-page h5,
-.event-management-page h6,
-.event-management-page .section-title,
-.event-management-page .section-subtitle {
-    color: #2D6A6A !important;
-}
-
-.event-management-page p,
-.event-management-page .lead,
-.event-management-page .lead-text,
-.event-management-page li,
-.event-management-page ul,
-.event-management-page ol,
-.event-management-page div,
-.event-management-page span:not(.meta-badge),
-.event-management-page small {
-    color: #2D6A6A !important;
-}
-
-/* Badges and Meta Elements */
-.event-management-page .service-badge-header {
-    color: #2D6A6A !important;
-    border-color: #2D6A6A !important;
-}
-
-.event-management-page .meta-badge {
-    background: rgba(45, 106, 106, 0.1) !important;
-    color: #2D6A6A !important;
-    border: 1px solid rgba(45, 106, 106, 0.2) !important;
-}
-
-.event-management-page .meta-badge i {
-    color: #2D6A6A !important;
-}
-
-/* Buttons */
-.event-management-page .btn-primary,
-.event-management-page .btn-primary.btn-lg {
-    background-color: #2D6A6A !important;
-    border-color: #2D6A6A !important;
-    color: #F8F7F0 !important;
-}
-
-.event-management-page .btn-primary:hover,
-.event-management-page .btn-primary:focus,
-.event-management-page .btn-primary:active {
-    background-color: #245555 !important;
-    border-color: #245555 !important;
-    color: #F8F7F0 !important;
-}
-
-.event-management-page .back-button,
-.event-management-page .back-button-sticky {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .back-button:hover,
-.event-management-page .back-button-sticky:hover {
-    color: #245555 !important;
-}
-
-/* Dividers */
-.event-management-page .divider {
-    background: #2D6A6A !important;
-}
-
-/* Stats Box */
-.event-management-page .stat-box {
-    background: #F8F7F0 !important;
-    border-color: rgba(45, 106, 106, 0.2) !important;
-}
-
-.event-management-page .stat-box h3 {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .stat-box p {
-    color: #2D6A6A !important;
-    opacity: 0.8;
-}
-
-/* Cards */
-.event-management-page .feature-card,
-.event-management-page .event-type-card,
-.event-management-page .process-step,
-.event-management-page .benefit-item {
-    background: #F8F7F0 !important;
-    border-color: rgba(45, 106, 106, 0.2) !important;
-}
-
-.event-management-page .feature-card h3,
-.event-management-page .event-type-card h4,
-.event-management-page .process-step h4,
-.event-management-page .process-step .step-number {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .feature-card p,
-.event-management-page .event-type-card p,
-.event-management-page .process-step p {
-    color: #2D6A6A !important;
-    opacity: 0.9;
-}
-
-/* Benefits Section */
-.event-management-page .benefit-item h4 {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .benefit-item p {
-    color: #2D6A6A !important;
-    opacity: 0.9;
-}
-
-.event-management-page .benefit-item i {
-    color: #2D6A6A !important;
-}
-
-/* FAQ Section - Ultra Specific */
-.event-management-page .faq-question {
-    color: #2D6A6A !important;
-    background: #F8F7F0 !important;
-    border-color: rgba(45, 106, 106, 0.2) !important;
-}
-
-.event-management-page .faq-answer {
-    color: #2D6A6A !important;
-    opacity: 0.9;
-}
-
-.event-management-page .faq-answer p,
-.event-management-page .faq-answer div,
-.event-management-page .faq-answer span,
-.event-management-page .faq-answer * {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .faq-item {
-    border-color: rgba(45, 106, 106, 0.2) !important;
-}
-
-.event-management-page .faq-item * {
-    color: #2D6A6A !important;
-}
-
-/* CTA Section */
-.event-management-page .cta-section h2 {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .cta-section .lead,
-.event-management-page .cta-section p {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .cta-section small {
-    color: #2D6A6A !important;
-    opacity: 0.8;
-}
-
-.event-management-page .cta-section i {
-    color: #2D6A6A !important;
-}
-
-/* Service Image Wrapper */
-.event-management-page .service-image-wrapper {
-    border-color: rgba(45, 106, 106, 0.2) !important;
-}
-
-/* Icon Colors - More Specific */
-.event-management-page .feature-icon,
-.event-management-page .feature-icon i,
-.event-management-page .event-type-icon,
-.event-management-page .event-type-icon i,
-.event-management-page .feature-icon-img,
-.event-management-page img.feature-icon-img,
-.event-management-page img.event-type-icon-img {
-    color: #2D6A6A !important;
-    fill: #2D6A6A !important;
-}
-
-/* Section Subtitle - Must Override Default - Higher Specificity */
-.event-management-page .section .section-subtitle,
-.event-management-page .section-subtitle,
-.event-management-page .text-center .section-subtitle,
-.event-management-page .container .section-subtitle,
-.event-management-page div.section-subtitle {
-    color: #2D6A6A !important;
-}
-
-/* Lead Text - Must Override Default - Higher Specificity */
-.event-management-page .section .lead,
-.event-management-page .section p.lead,
-.event-management-page p.lead,
-.event-management-page .container .lead,
-.event-management-page div.lead {
-    color: #2D6A6A !important;
-}
-
-/* All Paragraph Text in Sections - Higher Specificity */
-.event-management-page .section p,
-.event-management-page .section div p,
-.event-management-page .container p,
-.event-management-page .row p,
-.event-management-page .col-lg-6 p,
-.event-management-page .col-md-6 p {
-    color: #2D6A6A !important;
-}
-
-/* Text in Container - Higher Specificity */
-.event-management-page .container p,
-.event-management-page .container .lead,
-.event-management-page .container .section-subtitle,
-.event-management-page .container .row p,
-.event-management-page .container .col-lg-6 p {
-    color: #2D6A6A !important;
-}
-
-/* Ensure all nested elements inherit colors properly */
-.event-management-page strong,
-.event-management-page b,
-.event-management-page em,
-.event-management-page i:not(.bi):not(.fas):not(.fa) {
-    color: #2D6A6A !important;
-}
-
-/* Feature Card Icon Images */
-.event-management-page .feature-card .feature-icon img,
-.event-management-page .feature-card img.feature-icon-img {
-    filter: none !important;
-    opacity: 1 !important;
-}
-
-/* Event Type Card Icon Images */
-.event-management-page .event-type-card .event-type-icon img,
-.event-management-page .event-type-card img.event-type-icon-img {
-    filter: none !important;
-    opacity: 1 !important;
-}
-
-/* Process Step Numbers - "How We Work" Section */
-.event-management-page .process-step .step-number {
-    color: #2D6A6A !important;
-    background: rgba(45, 106, 106, 0.1) !important;
-    border-color: rgba(45, 106, 106, 0.2) !important;
-}
-
-/* "How We Work" Section - All Text Must Be #2D6A6A */
-.event-management-page .process-step,
-.event-management-page .process-step *,
-.event-management-page .process-step .step-number,
-.event-management-page .process-step h1,
-.event-management-page .process-step h2,
-.event-management-page .process-step h3,
-.event-management-page .process-step h4,
-.event-management-page .process-step h5,
-.event-management-page .process-step h6,
-.event-management-page .process-step p,
-.event-management-page .process-step div,
-.event-management-page .process-step span,
-.event-management-page .process-step li,
-.event-management-page .row .process-step *,
-.event-management-page .col-md-6 .process-step *,
-.event-management-page .col-lg-3 .process-step * {
-    color: #2D6A6A !important;
-}
-
-/* Benefits List Icons */
-.event-management-page .benefits-list .benefit-item i.fas,
-.event-management-page .benefits-list .benefit-item i.fa-check-circle {
-    color: #2D6A6A !important;
-}
-
-/* FAQ Active State */
-.event-management-page .faq-item.active .faq-question {
-    color: #2D6A6A !important;
-    background: rgba(45, 106, 106, 0.05) !important;
-}
-
-/* CTA Section Button Icon */
-.event-management-page .cta-section .btn-primary i {
-    color: #F8F7F0 !important;
-}
-
-/* Links (if any text links) */
-.event-management-page a:not(.btn-primary):not(.back-button):not(.back-button-sticky) {
-    color: #2D6A6A !important;
-}
-
-.event-management-page a:not(.btn-primary):not(.back-button):not(.back-button-sticky):hover {
-    color: #245555 !important;
-}
-
-/* Override any inline styles or more specific selectors */
-.event-management-page .section.bg-light h2,
-.event-management-page .section.bg-light .section-title,
-.event-management-page .section.bg-light .section-subtitle,
-.event-management-page .section.bg-light p,
-.event-management-page .section.bg-light .lead {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .section:not(.bg-light) h2,
-.event-management-page .section:not(.bg-light) .section-title,
-.event-management-page .section:not(.bg-light) .section-subtitle,
-.event-management-page .section:not(.bg-light) p,
-.event-management-page .section:not(.bg-light) .lead {
-    color: #2D6A6A !important;
-}
-
-/* Force all card content text - Remove inherit, use explicit colors */
-.event-management-page .feature-card,
-.event-management-page .event-type-card,
-.event-management-page .process-step {
-    color: #2D6A6A !important;
-}
-
-/* Explicitly override any inherited colors for all card children */
-.event-management-page .feature-card h3,
-.event-management-page .feature-card h4,
-.event-management-page .feature-card h5,
-.event-management-page .feature-card h6,
-.event-management-page .feature-card p,
-.event-management-page .feature-card div,
-.event-management-page .feature-card span,
-.event-management-page .row .feature-card h3,
-.event-management-page .row .feature-card p,
-.event-management-page .col-md-6 .feature-card h3,
-.event-management-page .col-md-6 .feature-card p,
-.event-management-page .col-lg-4 .feature-card h3,
-.event-management-page .col-lg-4 .feature-card p {
-    color: #2D6A6A !important;
-}
-
-/* "What We Offer" Section - Ultra Specific Selectors */
-.event-management-page .section:not(.bg-light) .text-center .section-title,
-.event-management-page .section:not(.bg-light) .text-center h2.section-title,
-.event-management-page .section:not(.bg-light) .mb-5 .section-title,
-.event-management-page .section:not(.bg-light) .section-title {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .section:not(.bg-light) .text-center .section-subtitle,
-.event-management-page .section:not(.bg-light) .text-center p.section-subtitle,
-.event-management-page .section:not(.bg-light) .mb-5 .section-subtitle,
-.event-management-page .section:not(.bg-light) p.section-subtitle {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .event-type-card h3,
-.event-management-page .event-type-card h4,
-.event-management-page .event-type-card h5,
-.event-management-page .event-type-card h6,
-.event-management-page .event-type-card p,
-.event-management-page .event-type-card div,
-.event-management-page .event-type-card span {
-    color: #2D6A6A !important;
-}
-
-.event-management-page .process-step h3,
-.event-management-page .process-step h4,
-.event-management-page .process-step h5,
-.event-management-page .process-step h6,
-.event-management-page .process-step p,
-.event-management-page .process-step div,
-.event-management-page .process-step span {
-    color: #2D6A6A !important;
-}
-
-/* Universal Text Color Override - Catches ALL Text Elements */
-.event-management-page * {
-    color: #2D6A6A !important;
-}
-
-/* Exceptions - Keep these as they are */
-.event-management-page .btn-primary,
-.event-management-page .btn-primary *,
-.event-management-page .meta-badge span:first-child,
-.event-management-page img,
-.event-management-page svg,
-.event-management-page .feature-icon-img,
-.event-management-page .event-type-icon-img {
-    /* Don't override - let specific rules handle these */
-}
-
-/* Re-apply specific colors after universal override */
-.event-management-page .btn-primary,
-.event-management-page .btn-primary.btn-lg,
-.event-management-page .btn-primary * {
-    color: #F8F7F0 !important;
-}
-
-.event-management-page img,
-.event-management-page svg {
-    /* Images keep their natural colors */
-    color: initial !important;
-}
-
-/* Force all card text explicitly */
-.event-management-page .feature-card *:not(img):not(svg),
-.event-management-page .event-type-card *:not(img):not(svg),
-.event-management-page .process-step *:not(img):not(svg),
-.event-management-page .benefit-item *:not(img):not(svg) {
-    color: #2D6A6A !important;
-}
-
-/* All headings in cards */
-.event-management-page .feature-card h1,
-.event-management-page .feature-card h2,
-.event-management-page .feature-card h3,
-.event-management-page .feature-card h4,
-.event-management-page .feature-card h5,
-.event-management-page .feature-card h6,
-.event-management-page .event-type-card h1,
-.event-management-page .event-type-card h2,
-.event-management-page .event-type-card h3,
-.event-management-page .event-type-card h4,
-.event-management-page .event-type-card h5,
-.event-management-page .event-type-card h6,
-.event-management-page .process-step h1,
-.event-management-page .process-step h2,
-.event-management-page .process-step h3,
-.event-management-page .process-step h4,
-.event-management-page .process-step h5,
-.event-management-page .process-step h6 {
-    color: #2D6A6A !important;
-}
-
-/* All text content in cards */
-.event-management-page .feature-card p,
-.event-management-page .feature-card div,
-.event-management-page .feature-card span,
-.event-management-page .feature-card li,
-.event-management-page .event-type-card p,
-.event-management-page .event-type-card div,
-.event-management-page .event-type-card span,
-.event-management-page .event-type-card li,
-.event-management-page .process-step p,
-.event-management-page .process-step div,
-.event-management-page .process-step span,
-.event-management-page .process-step li {
-    color: #2D6A6A !important;
-}
-</style>
-
-<div class="event-management-page">
-
 <!-- Sticky Back Button -->
 <a href="<?= url('services.php') ?>#service-3" class="back-button back-button-sticky">
     <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-right' : 'arrow-left' ?>"></i>
@@ -585,63 +114,63 @@ require_once 'includes/header.php';
             <?php
             $features = [
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:calendar-multiple-check.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:calendar-multiple-check.svg?color=%23602234',
                     'title_en' => 'Strategic Planning',
                     'title_ar' => 'التخطيط الاستراتيجي',
                     'desc_en' => 'Comprehensive event planning including timeline development, budget management, and contingency planning.',
                     'desc_ar' => 'تخطيط شامل للفعاليات يشمل تطوير الجدول الزمني وإدارة الميزانية والتخطيط للطوارئ.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:palette.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:palette.svg?color=%23602234',
                     'title_en' => 'Creative Design',
                     'title_ar' => 'التصميم الإبداعي',
                     'desc_en' => 'Custom theme development, décor design, floral arrangements, and visual aesthetics that reflect your style.',
                     'desc_ar' => 'تطوير موضوع مخصص، تصميم الديكور، ترتيبات الزهور، والجماليات البصرية التي تعكس أسلوبك.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:silverware-fork-knife.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:silverware-fork-knife.svg?color=%23602234',
                     'title_en' => 'Culinary Excellence',
                     'title_ar' => 'التميز في المأكولات',
                     'desc_en' => 'World-class catering services, custom menus, dietary accommodations, and presentation that exceeds expectations.',
                     'desc_ar' => 'خدمات تقديم طعام عالمية المستوى، قوائم مخصصة، استيعابات غذائية، وعرض يتجاوز التوقعات.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:account-network.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:account-network.svg?color=%23602234',
                     'title_en' => 'Vendor Management',
                     'title_ar' => 'إدارة الموردين',
                     'desc_en' => 'Coordination with trusted vendors, suppliers, and service providers to ensure seamless execution.',
                     'desc_ar' => 'التنسيق مع الموردين والمزودين ومقدمي الخدمات الموثوقين لضمان تنفيذ سلس.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:microphone.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:microphone.svg?color=%23602234',
                     'title_en' => 'Audio-Visual Production',
                     'title_ar' => 'الإنتاج السمعي البصري',
                     'desc_en' => 'State-of-the-art sound systems, lighting design, video production, and technical support.',
                     'desc_ar' => 'أنظمة صوتية حديثة، تصميم الإضاءة، إنتاج الفيديو، والدعم الفني.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:account-tie.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:account-tie.svg?color=%23602234',
                     'title_en' => 'Protocol & Etiquette',
                     'title_ar' => 'البروتوكول والإتيكيت',
                     'desc_en' => 'Royal protocol adherence, guest management, seating arrangements, and formal ceremony coordination.',
                     'desc_ar' => 'الالتزام بالبروتوكول الملكي، إدارة الضيوف، ترتيبات الجلوس، وتنسيق المراسم الرسمية.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:shield-check.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:shield-check.svg?color=%23602234',
                     'title_en' => 'Security & Safety',
                     'title_ar' => 'الأمن والسلامة',
                     'desc_en' => 'Comprehensive security planning, access control, emergency protocols, and guest safety measures.',
                     'desc_ar' => 'تخطيط أمني شامل، التحكم في الوصول، بروتوكولات الطوارئ، وإجراءات سلامة الضيوف.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:handshake.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:handshake.svg?color=%23602234',
                     'title_en' => 'Guest Services',
                     'title_ar' => 'خدمات الضيوف',
                     'desc_en' => 'Personalized guest assistance, VIP treatment, transportation coordination, and hospitality management.',
                     'desc_ar' => 'مساعدة شخصية للضيوف، معاملة VIP، تنسيق النقل، وإدارة الضيافة.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:clipboard-check.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:clipboard-check.svg?color=%23602234',
                     'title_en' => 'Day-of Coordination',
                     'title_ar' => 'التنسيق يوم الفعالية',
                     'desc_en' => 'On-site event management, real-time problem solving, and seamless execution oversight.',
@@ -685,28 +214,28 @@ require_once 'includes/header.php';
             <?php
             $eventTypes = [
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:crown.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:crown.svg?color=%23602234',
                     'title_en' => 'Royal & Official Events',
                     'title_ar' => 'الفعاليات الملكية والرسمية',
                     'desc_en' => 'State ceremonies, royal galas, diplomatic receptions, and official celebrations.',
                     'desc_ar' => 'المراسم الرسمية، الحفلات الملكية، الاستقبالات الدبلوماسية، والاحتفالات الرسمية.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:heart.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:heart.svg?color=%23602234',
                     'title_en' => 'Private Celebrations',
                     'title_ar' => 'الاحتفالات الخاصة',
                     'desc_en' => 'Weddings, anniversaries, birthdays, and intimate family gatherings with complete privacy.',
                     'desc_ar' => 'الأعراس، الذكريات، أعياد الميلاد، والتجمعات العائلية الحميمة بخصوصية تامة.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:briefcase.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:briefcase.svg?color=%23602234',
                     'title_en' => 'Corporate Events',
                     'title_ar' => 'الفعاليات التجارية',
                     'desc_en' => 'Product launches, conferences, corporate galas, and business networking events.',
                     'desc_ar' => 'إطلاق المنتجات، المؤتمرات، الحفلات التجارية، وفعاليات التواصل التجاري.'
                 ],
                 [
-                    'icon_url' => 'https://api.iconify.design/mdi:gift.svg?color=%232D6A6A',
+                    'icon_url' => 'https://api.iconify.design/mdi:gift.svg?color=%23602234',
                     'title_en' => 'Charity & Fundraising',
                     'title_ar' => 'الفعاليات الخيرية وجمع التبرعات',
                     'desc_en' => 'Charity galas, fundraising dinners, and philanthropic events with maximum impact.',
@@ -958,8 +487,6 @@ function toggleFAQ(button) {
     }
 })();
 </script>
-
-</div><!-- End event-management-page wrapper -->
 
 <?php require_once 'includes/footer.php'; ?>
 

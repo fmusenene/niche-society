@@ -267,50 +267,59 @@ $pageDescription = $lang === 'ar'
         </div>
     </section>
 
-    <!-- Service 3: Event Management - Company Profile Design -->
-    <section id="service-3" class="event-management-section" style="background: #F8F7F0; padding: 60px 0;">
+    <!-- Service 3: Event Management -->
+    <section id="service-3" class="service-detail-section bg-white">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <div class="event-management-image">
+                <div class="col-lg-6 order-lg-2" data-aos="fade-left">
+                    <div class="service-image">
                         <img src="<?= url('assets/images/service-5.jpg') ?>" alt="<?= $lang === 'ar' ? 'تنظيم الفعاليات' : 'Event Management' ?>" class="img-fluid">
+                        <div class="service-badge"><?php echo formatNumber('03'); ?></div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <h2 class="event-management-title" style="color: #2D6A6A; font-size: 28px; font-weight: 700; margin-bottom: 20px;"><?= $lang === 'ar' ? 'تنظيم الفعاليات:' : 'Event Management:' ?></h2>
-                    <p class="event-management-intro" style="color: #2D6A6A; font-size: 16px; line-height: 1.8; margin-bottom: 20px;">
+                <div class="col-lg-6 order-lg-1" data-aos="fade-right">
+                    <div class="service-header-mobile">
+                        <div class="service-icon">
+                            <i class="bi bi-calendar-event"></i>
+                        </div>
+                        <h2 class="service-title">
+                            <?= $lang === 'ar' ? 'تنظيم الفعاليات' : 'Event Management' ?>
+                        </h2>
+                    </div>
+                    <div class="divider"></div>
+                    <p class="lead-text">
                         <?= $lang === 'ar'
-                            ? 'نقوم بإدارة كل التفاصيل من خلال تصميم الأنظمة، تنسيق الفرق، والحفاظ على التميز في الإعدادات السكنية والفعاليات، مما يضمن أداءً سلساً وهادئاً ومتطوراً.'
-                            : 'We manage every detail by designing systems, coordinating teams, and maintaining excellence in both residential and event settings, ensuring smooth, discreet, and elevated performance.'
+                            ? 'تخطيط وتنفيذ فعاليات استثنائية من الألف إلى الياء بأعلى معايير الاحترافية.'
+                            : 'Planning and executing exceptional events from A to Z with the highest standards of professionalism.'
                         ?>
                     </p>
-                    <ul class="event-management-list" style="color: #2D6A6A; font-size: 16px; line-height: 2; list-style: none; padding-left: 0;">
-                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                            <span style="position: absolute; left: 0;">•</span>
-                            <?= $lang === 'ar' ? 'التخطيط للاحتفالات الخاصة والفعاليات المتنوعة.' : 'Planning private celebrations & various events.' ?>
+                    <ul class="service-features-list">
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'التخطيط الاستراتيجي والتصميم الإبداعي' : 'Strategic planning and creative design' ?></span>
                         </li>
-                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                            <span style="position: absolute; left: 0;">•</span>
-                            <?= $lang === 'ar' ? 'اختيار المكان والتصميم المتكامل.' : 'Venue sourcing & integrated styling.' ?>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'إدارة الموردين والتنسيق الكامل' : 'Vendor management and full coordination' ?></span>
                         </li>
-                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                            <span style="position: absolute; left: 0;">•</span>
-                            <?= $lang === 'ar' ? 'إدارة تجربة الضيوف.' : 'Guest experience management.' ?>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'التنفيذ المثالي يوم الفعالية' : 'Flawless execution on event day' ?></span>
                         </li>
-                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                            <span style="position: absolute; left: 0;">•</span>
-                            <?= $lang === 'ar' ? 'البروتوكول والتعامل مع VIP.' : 'Protocol & VIP handling.' ?>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'إدارة الضيوف والبروتوكول' : 'Guest management and protocol' ?></span>
                         </li>
-                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                            <span style="position: absolute; left: 0;">•</span>
-                            <?= $lang === 'ar' ? 'التعاون مع المخططين.' : 'Collaboration with planners.' ?>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'تقنيات الصوت والصورة المتقدمة' : 'Advanced audio-visual technology' ?></span>
                         </li>
-                        <li style="margin-bottom: 12px; padding-left: 25px; position: relative;">
-                            <span style="position: absolute; left: 0;">•</span>
-                            <?= $lang === 'ar' ? 'الهدايا المؤسسية وإعادة تصميم الهدايا.' : 'Corporate gifting & gift redesign.' ?>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'تقييم ما بعد الفعالية' : 'Post-event analysis and reporting' ?></span>
                         </li>
                     </ul>
-                    <a href="<?= url('service-event-management.php') ?>#service-3" class="btn btn-primary mt-3" style="background: #2D6A6A; border-color: #2D6A6A; color: #F8F7F0;">
+                    <a href="<?= url('service-event-management.php') ?>#service-3" class="btn btn-primary mt-3">
                         <?= $lang === 'ar' ? 'تفاصيل الخدمة' : 'Service Details' ?>
                         <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?>"></i>
                     </a>
@@ -503,7 +512,6 @@ $pageDescription = $lang === 'ar'
     </section>
 
     <!-- Service 7: Construction -->
-    <?php /*
     <section id="service-construction" class="service-detail-section bg-white">
         <div class="container">
             <div class="row align-items-center">
@@ -563,7 +571,6 @@ $pageDescription = $lang === 'ar'
             </div>
         </div>
     </section>
-    */ ?>
 
     <!-- Service Process -->
     <section class="section process-section">
