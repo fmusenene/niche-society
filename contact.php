@@ -193,7 +193,7 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
                         </div>
                         <?php endif; ?>
 
-                        <form id="contactForm" action="<?= url('contact-handler.php') ?>" method="POST" novalidate>
+                        <form id="contactForm" action="<?= url('contact-handler.php') ?>" method="POST" enctype="application/x-www-form-urlencoded" novalidate>
                             <!-- CSRF Token -->
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                             <input type="hidden" name="lang" value="<?= $lang ?>">

@@ -12381,6 +12381,202 @@ ul.category-list li a.active .count {
     font-size: 1.1rem;
 }
 
+/* ========================================
+   CONSTRUCTION SERVICE PAGE - CUSTOM DESIGN
+   Based on Arabic Company Profile Design
+   Colors: Light Beige Background (#F8F7F0), Dark Teal Text (#2D6A6A)
+   ======================================== */
+
+.construction-page {
+    background: #F8F7F0 !important;
+}
+
+.construction-page .section,
+.construction-page .service-detail-section {
+    background: #F8F7F0 !important;
+}
+
+.construction-page .service-detail-header {
+    background: #F8F7F0 !important;
+}
+
+.construction-page .service-detail-title,
+.construction-page h1,
+.construction-page h2,
+.construction-page h3,
+.construction-page h4,
+.construction-page .section-title {
+    color: #2D6A6A !important;
+}
+
+.construction-page p,
+.construction-page .lead,
+.construction-page .lead-text,
+.construction-page .service-detail-subtitle,
+.construction-page li,
+.construction-page span:not(.meta-badge) {
+    color: #2D6A6A !important;
+}
+
+.construction-page .construction-section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2D6A6A;
+    margin-bottom: 20px;
+}
+
+.construction-page .construction-section-intro {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #2D6A6A;
+    margin-bottom: 25px;
+}
+
+.construction-page .construction-subtitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2D6A6A;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.construction-page .construction-features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.construction-page .construction-features-list li {
+    padding: 8px 0;
+    padding-left: 25px;
+    position: relative;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #2D6A6A;
+}
+
+.construction-page .construction-features-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #2D6A6A;
+    font-size: 20px;
+    line-height: 1;
+}
+
+[dir="rtl"] .construction-page .construction-features-list li {
+    padding-left: 0;
+    padding-right: 25px;
+}
+
+[dir="rtl"] .construction-page .construction-features-list li::before {
+    left: auto;
+    right: 0;
+}
+
+.construction-page .construction-image-wrapper {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.construction-page .construction-image-wrapper img {
+    width: 100%;
+    height: auto;
+    border: 1px solid rgba(45, 106, 106, 0.1);
+}
+
+.construction-page .construction-service-section {
+    padding: 60px 0;
+}
+
+.construction-page .construction-content-column {
+    padding: 0 30px;
+}
+
+/* Service Badge - Teal Style */
+.construction-page .service-badge-header {
+    color: #2D6A6A !important;
+    border-color: #2D6A6A !important;
+}
+
+.construction-page .meta-badge {
+    background: rgba(45, 106, 106, 0.1) !important;
+    color: #2D6A6A !important;
+    border: 1px solid rgba(45, 106, 106, 0.2) !important;
+}
+
+.construction-page .meta-badge i {
+    color: #2D6A6A !important;
+}
+
+/* Buttons - Keep burgundy but make them work with the page */
+.construction-page .btn-primary {
+    background-color: #2D6A6A !important;
+    border-color: #2D6A6A !important;
+    color: #F8F7F0 !important;
+}
+
+.construction-page .btn-primary:hover {
+    background-color: #245555 !important;
+    border-color: #245555 !important;
+}
+
+.construction-page .back-button {
+    color: #2D6A6A !important;
+}
+
+.construction-page .back-button:hover {
+    color: #245555 !important;
+}
+
+/* Divider */
+.construction-page .divider {
+    background: #2D6A6A !important;
+}
+
+/* Stats Box */
+.construction-page .stat-box h3 {
+    color: #2D6A6A !important;
+}
+
+.construction-page .stat-box p {
+    color: #2D6A6A !important;
+    opacity: 0.8;
+}
+
+/* Responsive for Construction Page */
+@media (max-width: 991.98px) {
+    .construction-page .construction-service-section {
+        padding: 40px 0;
+    }
+    
+    .construction-page .construction-content-column {
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .construction-page .construction-service-section {
+        padding: 30px 0;
+    }
+    
+    .construction-page .construction-section-title {
+        font-size: 24px;
+    }
+    
+    .construction-page .construction-section-intro {
+        font-size: 15px;
+    }
+    
+    .construction-page .construction-subtitle {
+        font-size: 16px;
+    }
+    
+    .construction-page .construction-features-list li {
+        font-size: 14px;
+    }
+}
+
 /* Responsive styles for Success Stories */
 @media (max-width: 767.98px) {
     .success-story-card {

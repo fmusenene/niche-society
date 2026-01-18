@@ -1,0 +1,38 @@
+REQUIRED IMAGE FILES FOR CONSTRUCTION SERVICE PAGE
+====================================================
+
+Please place the following images in: assets/images/construction/
+
+1. civil-construction-worker.jpg
+   - Description: Construction worker on rebar grid (blue hard hat, dark jacket)
+   - Used in: Civil Construction Works section
+
+2. interior-finishes-worker.jpg
+   - Description: Worker from rear with paint cans (white hard hat, green tool belt)
+   - Used in: Interior Finishes section
+
+3. mep-boiler-room.jpg
+   - Description: Boiler room with blue control panel and piping systems
+   - Used in: MEP Systems section
+
+4. facilities-manager.jpg
+   - Description: Manager/engineer at desk with city skyline (traditional attire)
+   - Used in: Facilities Management section (if available, otherwise can use overview image)
+
+5. electrician-panel.jpg
+   - Description: Electrician working on electrical panel (white hard hat, yellow glasses)
+   - Used in: Maintenance section
+
+6. landscaper-sod.jpg
+   - Description: Landscaper installing sod (green cap, green overalls)
+   - Used in: Site Coordination / Landscaping section
+
+7. risk-management-worker.jpg
+   - Description: Worker with walkie-talkie (yellow hard hat, safety vest)
+   - Used in: Risk Management section
+
+8. construction-overview.jpg (Optional - for introduction section)
+   - Description: Triptych or overview of construction scenes
+   - Used in: Services Introduction section
+
+All images should be in JPG or PNG format and optimized for web use.

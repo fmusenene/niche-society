@@ -511,6 +511,67 @@ $pageDescription = $lang === 'ar'
         </div>
     </section>
 
+    <!-- Service 7: Construction -->
+    <section id="service-construction" class="service-detail-section bg-white">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="service-image">
+                        <img src="<?= url('assets/images/construction/construction.png') ?>" alt="<?= $lang === 'ar' ? 'أعمال البناء والإنشاءات' : 'Construction Services' ?>" class="img-fluid">
+                        <div class="service-badge"><?php echo formatNumber('07'); ?></div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="service-header-mobile">
+                        <div class="service-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <h2 class="service-title">
+                            <?= $lang === 'ar' ? 'أعمال البناء والإنشاءات' : 'Construction Services' ?>
+                        </h2>
+                    </div>
+                    <div class="divider"></div>
+                    <p class="lead-text">
+                        <?= $lang === 'ar'
+                            ? 'خدمات بناء وإنشاءات متكاملة من الأساس إلى التسليم وفق أعلى المعايير والممارسات العالمية.'
+                            : 'Integrated construction services from foundation to handover according to the highest standards and international best practices.'
+                        ?>
+                    </p>
+                    <ul class="service-features-list">
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'أعمال البناء المدني والتشطيبات' : 'Civil construction and finishing works' ?></span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'أنظمة الميكانيكا والكهرباء والسباكة (MEP)' : 'MEP (Mechanical, Electrical, Plumbing) systems' ?></span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'إدارة المرافق والصيانة' : 'Facilities management and maintenance' ?></span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'تنسيق المواقع والمناظر الطبيعية' : 'Site coordination and landscaping' ?></span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'إدارة المخاطر والسلامة' : 'Risk management and safety' ?></span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><?= $lang === 'ar' ? 'التخطيط والتنفيذ الشامل' : 'Comprehensive planning and execution' ?></span>
+                        </li>
+                    </ul>
+                    <a href="<?= url('service-construction.php') ?>#service-construction" class="btn btn-primary mt-3">
+                        <?= $lang === 'ar' ? 'تفاصيل الخدمة' : 'Service Details' ?>
+                        <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?>"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Service Process -->
     <section class="section process-section">
         <div class="container">

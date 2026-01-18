@@ -320,13 +320,30 @@ function sendAutoReply($email, $name, $lang) {
 // ============================================
 
 try {
-    // Check if request is POST - improved check
+    // Check if request is POST - improved check with multiple fallbacks
+    // Some servers/proxies/CDNs might modify REQUEST_METHOD, so we check POST data first
     $requestMethod = $_SERVER['REQUEST_METHOD'] ?? '';
-    if (strtoupper($requestMethod) !== 'POST') {
-        // Log the actual request method for debugging
-        error_log("Contact form received non-POST request. Method: " . $requestMethod);
-        error_log("Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'unknown'));
-        error_log("HTTP_X_REQUESTED_WITH: " . ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'not set'));
+    $hasPostData = !empty($_POST);
+    
+    // Primary check: If we have POST data, treat it as a POST request
+    // This handles cases where proxies/CDNs might change REQUEST_METHOD
+    if (!$hasPostData && strtoupper($requestMethod) !== 'POST') {
+        // Log detailed debugging information
+        $debugInfo = [
+            'REQUEST_METHOD' => $requestMethod,
+            'REQUEST_URI' => $_SERVER['REQUEST_URI'] ?? 'unknown',
+            'HTTP_X_REQUESTED_WITH' => $_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'not set',
+            'HTTP_X_HTTP_METHOD_OVERRIDE' => $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] ?? 'not set',
+            'POST_data_exists' => $hasPostData,
+            'POST_keys' => array_keys($_POST ?? []),
+            'SERVER_NAME' => $_SERVER['SERVER_NAME'] ?? 'unknown',
+            'HTTP_HOST' => $_SERVER['HTTP_HOST'] ?? 'unknown',
+            'CONTENT_TYPE' => $_SERVER['CONTENT_TYPE'] ?? 'not set',
+            'CONTENT_LENGTH' => $_SERVER['CONTENT_LENGTH'] ?? 'not set',
+            'HTTP_REFERER' => $_SERVER['HTTP_REFERER'] ?? 'not set'
+        ];
+        
+        error_log("Contact form received non-POST request. Debug info: " . json_encode($debugInfo, JSON_PRETTY_PRINT));
         
         $_SESSION['contact_error'] = 'Invalid request method. Please submit the form properly.';
         header('Location: ' . url('contact.php'));
@@ -334,8 +351,13 @@ try {
     }
     
     // Additional check: ensure POST data exists
-    if (empty($_POST)) {
+    if (!$hasPostData) {
         error_log("Contact form received POST request but POST data is empty");
+        error_log("REQUEST_METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'not set'));
+        error_log("Content-Type: " . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
+        error_log("Content-Length: " . ($_SERVER['CONTENT_LENGTH'] ?? 'not set'));
+        error_log("HTTP_REFERER: " . ($_SERVER['HTTP_REFERER'] ?? 'not set'));
+        
         $_SESSION['contact_error'] = 'Form data was not received. Please try again.';
         header('Location: ' . url('contact.php'));
         exit;
