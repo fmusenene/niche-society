@@ -512,6 +512,7 @@ $pageDescription = $lang === 'ar'
     </section>
 
     <!-- Service 7: Construction -->
+    <?php /*
     <section id="service-construction" class="service-detail-section bg-white">
         <div class="container">
             <div class="row align-items-center">
@@ -571,6 +572,7 @@ $pageDescription = $lang === 'ar'
             </div>
         </div>
     </section>
+    */ ?>
 
     <!-- Service Process -->
     <section class="section process-section">
