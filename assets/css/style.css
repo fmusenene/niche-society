@@ -5014,6 +5014,16 @@ img,
     margin: 0;
 }
 
+/* Navbar Logo - Base Size for Desktop */
+.navbar-brand img,
+.navbar-logo {
+    height: 50px !important;
+    width: auto !important;
+    max-height: 50px !important;
+    max-width: 200px !important;
+    object-fit: contain !important;
+}
+
 /* Ensure section is visible */
 .section.bg-burgundy {
     background-color: #602234 !important;
@@ -8795,6 +8805,19 @@ ul.category-list li a.active .count {
     }
 }
 
+/* Mobile Devices - All sizes up to 767px */
+@media (max-width: 767px) {
+    .navbar-brand img,
+    .navbar-logo,
+    .navbar-brand .navbar-logo,
+    a.navbar-brand img {
+        height: 30px !important;
+        max-height: 30px !important;
+        max-width: 120px !important;
+        width: auto !important;
+    }
+}
+
 /* Small Devices (Landscape Phones) - 576px to 767px */
 @media (min-width: 576px) and (max-width: 767px) {
     .container {
@@ -8803,8 +8826,10 @@ ul.category-list li a.active .count {
     }
     
     /* Navigation */
-    .navbar-brand img {
-        height: 35px;
+    .navbar-brand img,
+    .navbar-logo {
+        height: 30px !important;
+        max-height: 30px !important;
     }
     
     .nav-link-enhanced {
@@ -8891,8 +8916,10 @@ ul.category-list li a.active .count {
         margin-right: 15px !important;
     }
     
-    .navbar-brand img {
-        height: 32px;
+    .navbar-brand img,
+    .navbar-logo {
+        height: 30px !important;
+        max-height: 30px !important;
     }
     
     .navbar-toggler {

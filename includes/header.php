@@ -85,7 +85,7 @@ $translations = loadTranslations($lang);
     <div class="container">
         <!-- Logo -->
         <a class="navbar-brand" href="<?php echo SITE_URL; ?>/index.php" style="padding: 0; margin-right: 40px;" aria-label="<?php echo SITE_NAME; ?> - Home">
-            <img src="<?php echo ASSETS_URL; ?>/images/logo.png" alt="<?php echo SITE_NAME; ?> Logo" style="height: 50px; width: auto; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+            <img src="<?php echo ASSETS_URL; ?>/images/logo.png" alt="<?php echo SITE_NAME; ?> Logo" class="navbar-logo" style="width: auto; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
         </a>
         
         <!-- Mobile Toggle -->
