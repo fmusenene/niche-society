@@ -168,7 +168,7 @@ require_once 'includes/header.php';
     color: #2D6A6A !important;
 }
 
-/* FAQ Section */
+/* FAQ Section - Ultra Specific */
 .event-management-page .faq-question {
     color: #2D6A6A !important;
     background: #F8F7F0 !important;
@@ -180,8 +180,19 @@ require_once 'includes/header.php';
     opacity: 0.9;
 }
 
+.event-management-page .faq-answer p,
+.event-management-page .faq-answer div,
+.event-management-page .faq-answer span,
+.event-management-page .faq-answer * {
+    color: #2D6A6A !important;
+}
+
 .event-management-page .faq-item {
     border-color: rgba(45, 106, 106, 0.2) !important;
+}
+
+.event-management-page .faq-item * {
+    color: #2D6A6A !important;
 }
 
 /* CTA Section */
@@ -279,11 +290,31 @@ require_once 'includes/header.php';
     opacity: 1 !important;
 }
 
-/* Process Step Numbers */
+/* Process Step Numbers - "How We Work" Section */
 .event-management-page .process-step .step-number {
     color: #2D6A6A !important;
     background: rgba(45, 106, 106, 0.1) !important;
     border-color: rgba(45, 106, 106, 0.2) !important;
+}
+
+/* "How We Work" Section - All Text Must Be #2D6A6A */
+.event-management-page .process-step,
+.event-management-page .process-step *,
+.event-management-page .process-step .step-number,
+.event-management-page .process-step h1,
+.event-management-page .process-step h2,
+.event-management-page .process-step h3,
+.event-management-page .process-step h4,
+.event-management-page .process-step h5,
+.event-management-page .process-step h6,
+.event-management-page .process-step p,
+.event-management-page .process-step div,
+.event-management-page .process-step span,
+.event-management-page .process-step li,
+.event-management-page .row .process-step *,
+.event-management-page .col-md-6 .process-step *,
+.event-management-page .col-lg-3 .process-step * {
+    color: #2D6A6A !important;
 }
 
 /* Benefits List Icons */
@@ -385,6 +416,81 @@ require_once 'includes/header.php';
 .event-management-page .process-step p,
 .event-management-page .process-step div,
 .event-management-page .process-step span {
+    color: #2D6A6A !important;
+}
+
+/* Universal Text Color Override - Catches ALL Text Elements */
+.event-management-page * {
+    color: #2D6A6A !important;
+}
+
+/* Exceptions - Keep these as they are */
+.event-management-page .btn-primary,
+.event-management-page .btn-primary *,
+.event-management-page .meta-badge span:first-child,
+.event-management-page img,
+.event-management-page svg,
+.event-management-page .feature-icon-img,
+.event-management-page .event-type-icon-img {
+    /* Don't override - let specific rules handle these */
+}
+
+/* Re-apply specific colors after universal override */
+.event-management-page .btn-primary,
+.event-management-page .btn-primary.btn-lg,
+.event-management-page .btn-primary * {
+    color: #F8F7F0 !important;
+}
+
+.event-management-page img,
+.event-management-page svg {
+    /* Images keep their natural colors */
+    color: initial !important;
+}
+
+/* Force all card text explicitly */
+.event-management-page .feature-card *:not(img):not(svg),
+.event-management-page .event-type-card *:not(img):not(svg),
+.event-management-page .process-step *:not(img):not(svg),
+.event-management-page .benefit-item *:not(img):not(svg) {
+    color: #2D6A6A !important;
+}
+
+/* All headings in cards */
+.event-management-page .feature-card h1,
+.event-management-page .feature-card h2,
+.event-management-page .feature-card h3,
+.event-management-page .feature-card h4,
+.event-management-page .feature-card h5,
+.event-management-page .feature-card h6,
+.event-management-page .event-type-card h1,
+.event-management-page .event-type-card h2,
+.event-management-page .event-type-card h3,
+.event-management-page .event-type-card h4,
+.event-management-page .event-type-card h5,
+.event-management-page .event-type-card h6,
+.event-management-page .process-step h1,
+.event-management-page .process-step h2,
+.event-management-page .process-step h3,
+.event-management-page .process-step h4,
+.event-management-page .process-step h5,
+.event-management-page .process-step h6 {
+    color: #2D6A6A !important;
+}
+
+/* All text content in cards */
+.event-management-page .feature-card p,
+.event-management-page .feature-card div,
+.event-management-page .feature-card span,
+.event-management-page .feature-card li,
+.event-management-page .event-type-card p,
+.event-management-page .event-type-card div,
+.event-management-page .event-type-card span,
+.event-management-page .event-type-card li,
+.event-management-page .process-step p,
+.event-management-page .process-step div,
+.event-management-page .process-step span,
+.event-management-page .process-step li {
     color: #2D6A6A !important;
 }
 </style>
