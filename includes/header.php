@@ -21,9 +21,9 @@ $translations = loadTranslations($lang);
     ?>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo ASSETS_URL; ?>/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="<?php echo ASSETS_URL; ?>/images/favicon-192x192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo ASSETS_URL; ?>/images/favicon-180x180.png">
+    <link rel="icon" type="image/png" href="<?php echo ASSETS_URL; ?>/images/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="<?php echo ASSETS_URL; ?>/images/favicon.png">
+    <link rel="apple-touch-icon" href="<?php echo ASSETS_URL; ?>/images/favicon.png">
     
     <!-- Bootstrap 5 CSS (minimal, for grid only) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -85,7 +85,7 @@ $translations = loadTranslations($lang);
     <div class="container">
         <!-- Logo -->
         <a class="navbar-brand" href="<?php echo SITE_URL; ?>/index.php" style="padding: 0; margin-right: 40px;" aria-label="<?php echo SITE_NAME; ?> - Home">
-            <img src="<?php echo ASSETS_URL; ?>/images/logo.png" alt="<?php echo SITE_NAME; ?> Logo" style="height: 40px; width: auto; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+            <img src="<?php echo ASSETS_URL; ?>/images/logo.png" alt="<?php echo SITE_NAME; ?> Logo" style="height: 50px; width: auto; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
         </a>
         
         <!-- Mobile Toggle -->
