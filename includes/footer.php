@@ -29,11 +29,12 @@ $isArabic = ($lang === 'ar');
 }
 
 .footer-logo-img {
-    height: 28px!important;
+    height: 120px!important;
     margin-bottom: 12px!important;
     filter: brightness(1.2);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    width: auto!important;
 }
 
 .footer-logo-img:hover {
@@ -401,7 +402,7 @@ $isArabic = ($lang === 'ar');
     }
     
     .footer-logo-img {
-        height: 30px !important;
+        height: 100px !important;
         margin-bottom: 20px !important;
     }
     
@@ -448,7 +449,7 @@ $isArabic = ($lang === 'ar');
     }
     
     .footer-logo-img {
-        height: 28px !important;
+        height: 80px !important;
         margin-bottom: 18px !important;
     }
     
@@ -559,7 +560,7 @@ $isArabic = ($lang === 'ar');
     }
     
     .footer-logo-img {
-        height: 26px !important;
+        height: 70px !important;
     }
     
     .footer-description {
@@ -608,9 +609,6 @@ $isArabic = ($lang === 'ar');
         <div class="row g-5">
             <!-- Company Info -->
             <div class="col-lg-4 col-md-6">
-                <img src="<?php echo ASSETS_URL; ?>/images/logo-light.png" 
-                     alt="<?php echo SITE_NAME; ?>" 
-                     class="footer-logo-img">
                 <p class="footer-description">
                     <?php echo $isArabic 
                         ? 'نيش سوسايتي - الريادة في خدمات الإدارة الفاخرة منذ 25 عاماً. نقدم حلولاً متكاملة لإدارة الممتلكات والفعاليات مع أعلى معايير الجودة والسرية.'
