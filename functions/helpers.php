@@ -294,20 +294,26 @@ function generateMetaTags($title, $description, $keywords = '', $image = '') {
         echo "<meta name='keywords' content='" . sanitize($keywords) . "'>\n";
     }
     
+    // Default logo for organization branding
+    $logoUrl = ASSETS_URL . "/images/Logo 1.jpg";
+    
     // Open Graph
     echo "<meta property='og:title' content='$title'>\n";
     echo "<meta property='og:description' content='$description'>\n";
     echo "<meta property='og:type' content='website'>\n";
     echo "<meta property='og:url' content='" . SITE_URL . getCurrentUrl() . "'>\n";
-    
-    if ($image) {
-        echo "<meta property='og:image' content='" . ASSETS_URL . "/images/$image'>\n";
-    }
+    echo "<meta property='og:image' content='" . ($image ? ASSETS_URL . "/images/$image" : $logoUrl) . "'>\n";
+    echo "<meta property='og:image:width' content='1200'>\n";
+    echo "<meta property='og:image:height' content='630'>\n";
+    echo "<meta property='og:image:alt' content='" . SITE_NAME . " Logo'>\n";
+    echo "<meta property='og:site_name' content='" . SITE_NAME . "'>\n";
     
     // Twitter Card
     echo "<meta name='twitter:card' content='summary_large_image'>\n";
     echo "<meta name='twitter:title' content='$title'>\n";
     echo "<meta name='twitter:description' content='$description'>\n";
+    echo "<meta name='twitter:image' content='" . ($image ? ASSETS_URL . "/images/$image" : $logoUrl) . "'>\n";
+    echo "<meta name='twitter:image:alt' content='" . SITE_NAME . " Logo'>\n";
 }
 
 /**
