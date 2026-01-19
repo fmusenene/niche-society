@@ -17,7 +17,7 @@ $pageKeywords = t('home_keywords', 'إدارة فاخرة، إدارة ممتل�
 
 include __DIR__ . '/includes/header.php';
 
-generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'niche-society-homepage-1-scaled.jpg');
+generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'Logo 1.jpg');
 ?>
 
 <!-- Main Content -->

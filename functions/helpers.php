@@ -294,8 +294,8 @@ function generateMetaTags($title, $description, $keywords = '', $image = '') {
         echo "<meta name='keywords' content='" . sanitize($keywords) . "'>\n";
     }
     
-    // Default logo for organization branding
-    $logoUrl = ASSETS_URL . "/images/Logo 1.jpg";
+    // Default logo for organization branding (URL encoded for spaces)
+    $logoUrl = ASSETS_URL . "/images/" . urlencode('Logo 1.jpg');
     
     // Open Graph
     echo "<meta property='og:title' content='$title'>\n";

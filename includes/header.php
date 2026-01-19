@@ -27,8 +27,8 @@ $translations = loadTranslations($lang);
         "@type": "Organization",
         "name": "<?php echo SITE_NAME; ?>",
         "url": "<?php echo SITE_URL; ?>",
-        "logo": "<?php echo ASSETS_URL; ?>/images/Logo 1.jpg",
-        "image": "<?php echo ASSETS_URL; ?>/images/Logo 1.jpg",
+        "logo": "<?php echo ASSETS_URL; ?>/images/<?php echo urlencode('Logo 1.jpg'); ?>",
+        "image": "<?php echo ASSETS_URL; ?>/images/<?php echo urlencode('Logo 1.jpg'); ?>",
         "description": "<?php echo $isArabic ? 'نيش سوسايتي - الريادة في خدمات الإدارة الفاخرة منذ 25 عاماً' : 'Niche Society - Leading luxury management services for 25 years'; ?>",
         "contactPoint": {
             "@type": "ContactPoint",
