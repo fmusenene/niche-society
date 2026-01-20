@@ -32,7 +32,10 @@ cache/
 *.cache
 
 # Composer (if you add it later)
+# Ignore vendor by default, but keep vendored PHPMailer (manual install)
 vendor/
+!vendor/PHPMailer/
+!vendor/PHPMailer/**
 composer.lock
 
 # Node modules (if you add npm later)
