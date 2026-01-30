@@ -31,6 +31,8 @@ body[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):no
 body[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr)::before,
 body[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr)::after {
     font-family: 'ElMessiri', sans-serif !important;
+    /* Prevent Arabic word breaking project-wide: letter-spacing breaks cursive joining */
+    letter-spacing: 0 !important;
 }
 
 /* Exceptions: keep explicit English content and phone numbers in Arimo */
