@@ -10,29 +10,43 @@
     # RewriteCond %{HTTPS} off
     # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
     
-    # Prevent access to sensitive files
-    <FilesMatch "^(config\.php|database\.php|\.env|\.git|composer\.(json|lock))$">
+</IfModule>
+
+# Prevent access to sensitive files (Apache 2.4 compatible)
+<FilesMatch "^(config\.php|database\.php|\.env|\.git|composer\.(json|lock))$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
         Order allow,deny
         Deny from all
-    </FilesMatch>
-    
-    # Allow POST requests to contact-handler.php (important for form submissions)
-    <Files "contact-handler.php">
-        # Ensure POST requests are allowed
-        <LimitExcept POST>
-            Order allow,deny
-            Deny from all
-        </LimitExcept>
-    </Files>
-    
-    # Protect RSS Aggregator (from .htaccess-rss-protection template)
-    <Files "rss-feed-aggregator.php">
+    </IfModule>
+</FilesMatch>
+
+# Contact form handler - must be reachable for form POST (fixes 403 on cPanel)
+<Files "contact-handler.php">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</Files>
+
+# Protect RSS Aggregator - cron/localhost only (Apache 2.4 compatible)
+<Files "rss-feed-aggregator.php">
+    <IfModule mod_authz_core.c>
+        Require all denied
+        Require ip 127.0.0.1 ::1
+    </IfModule>
+    <IfModule !mod_authz_core.c>
         Order Deny,Allow
         Deny from all
         Allow from 127.0.0.1
         Allow from ::1
-    </Files>
-</IfModule>
+    </IfModule>
+</Files>
 
 # PHP Settings
 <IfModule mod_php.c>
