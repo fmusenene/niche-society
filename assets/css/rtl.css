@@ -294,6 +294,38 @@ html[dir="rtl"] .top-bar .social-icon i[class*="bi-"],
 }
 
 /* ========================================
+   ARABIC TEXT - PREVENT BROKEN / DISCONNECTED WORDS
+   letter-spacing and text-transform break Arabic cursive joining.
+   Keep words (e.g. خدماتنا) on one line and connected.
+======================================== */
+
+/* Services badge and similar: no letter-spacing, no uppercase, keep word together */
+[dir="rtl"] .services-badge-elegant,
+html[lang="ar"] .services-badge-elegant {
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+}
+
+/* Nav and footer links with Arabic: keep words together */
+[dir="rtl"] .nav-link-enhanced,
+[dir="rtl"] .navbar-nav .nav-link,
+html[lang="ar"] .nav-link-enhanced,
+html[lang="ar"] .navbar-nav .nav-link {
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+/* Section badges in Arabic */
+[dir="rtl"] .section-badge,
+html[lang="ar"] .section-badge {
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+/* ========================================
    RTL LAYOUT ADJUSTMENTS
 ======================================== */
 
