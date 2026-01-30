@@ -16,20 +16,20 @@
    This ensures the exact font shown in typography guidelines with circular dots
 ======================================== */
 
-/* Universal rule for ALL elements in RTL - Exclude Bootstrap Icons and English content */
-/* CRITICAL: Use ONLY ElMessiri for Arabic text - no fallback fonts */
-/* This ensures the exact font shown in typography guidelines with circular dots */
+/* Universal rule for ALL elements when Arabic - Exclude Bootstrap Icons and explicit English */
+/* CRITICAL: Use ONLY ElMessiri for every Arabic word and number (local font: assets/fonts/ElMessiri-VariableFont_wght.ttf) */
 html[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr),
 html[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr)::before,
 html[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr)::after,
+html[lang="ar"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr),
+html[lang="ar"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr)::before,
+html[lang="ar"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr)::after,
 [dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr),
 [dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr)::before,
 [dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr)::after,
 body[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr),
 body[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr)::before,
 body[dir="rtl"] *:not(.bi):not([class*="bi-"]):not(i.bi):not(i[class*="bi-"]):not(.en):not(.phone-number-ltr)::after {
-    /* Use ONLY ElMessiri for Arabic text - exact font as shown in typography guidelines */
-    /* This font has circular dots (not square) as shown in the design reference */
     font-family: 'ElMessiri', sans-serif !important;
 }
 

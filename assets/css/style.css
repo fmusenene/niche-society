@@ -31,6 +31,15 @@
     font-display: swap;
 }
 
+/* Arabic typeface: ElMessiri (used when lang=ar / dir=rtl) */
+@font-face {
+    font-family: 'ElMessiri';
+    src: url('../fonts/ElMessiri-VariableFont_wght.ttf') format('truetype');
+    font-weight: 200 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 * {
     margin: 0;
     padding: 0;
