@@ -11,6 +11,8 @@
  * - Database storage
  */
 
+ob_start();
+
 // Start session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -19,6 +21,15 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/functions/helpers.php';
+
+// Redirect back to contact page with anchor so success/error message is visible
+$redirectToContact = function () {
+    session_write_close();
+    if (ob_get_level()) ob_end_clean();
+    header('HTTP/1.1 302 Found');
+    header('Location: ' . url('contact.php') . '#contact-form');
+    exit;
+};
 
 // Load SMTP config if present (for cPanel / reliable email delivery)
 if (file_exists(__DIR__ . '/config/email.php')) {
@@ -365,8 +376,7 @@ try {
         error_log("Contact form received non-POST request. Debug info: " . json_encode($debugInfo, JSON_PRETTY_PRINT));
         
         $_SESSION['contact_error'] = 'Invalid request method. Please submit the form properly.';
-        header('Location: ' . url('contact.php'));
-        exit;
+        $redirectToContact();
     }
     
     // Additional check: ensure POST data exists
@@ -378,8 +388,7 @@ try {
         error_log("HTTP_REFERER: " . ($_SERVER['HTTP_REFERER'] ?? 'not set'));
         
         $_SESSION['contact_error'] = 'Form data was not received. Please try again.';
-        header('Location: ' . url('contact.php'));
-        exit;
+        $redirectToContact();
     }
 
     $lang = $_POST['lang'] ?? 'en';
@@ -392,8 +401,7 @@ try {
         $_SESSION['contact_error'] = $lang === 'ar' 
             ? 'فشل التحقق الأمني. يرجى المحاولة مرة أخرى' 
             : 'Security verification failed. Please try again';
-        header('Location: contact.php');
-        exit;
+        $redirectToContact();
     }
 
     // 2. Honeypot Check (spam prevention)
@@ -402,8 +410,7 @@ try {
         $_SESSION['contact_error'] = $lang === 'ar' 
             ? 'تم اكتشاف محاولة غير صحيحة' 
             : 'Invalid submission detected';
-        header('Location: contact.php');
-        exit;
+        $redirectToContact();
     }
 
     // 3. Rate Limiting Check
@@ -412,8 +419,7 @@ try {
         $_SESSION['contact_error'] = $lang === 'ar' 
             ? 'لقد تجاوزت الحد المسموح من المحاولات. يرجى المحاولة بعد ساعة' 
             : 'You have exceeded the maximum number of submissions. Please try again in an hour';
-        header('Location: contact.php');
-        exit;
+        $redirectToContact();
     }
 
     // 4. Sanitize Input
@@ -433,8 +439,7 @@ try {
         $_SESSION['contact_error'] = $lang === 'ar' 
             ? 'يرجى التحقق من البيانات المدخلة: ' . implode(', ', $errors)
             : 'Please check your input: ' . implode(', ', $errors);
-        header('Location: contact.php');
-        exit;
+        $redirectToContact();
     }
 
     // 6. Save to Database
@@ -508,9 +513,7 @@ try {
             : 'Your message was saved. We couldn\'t send the confirmation email right now; we will still try to get back to you. Please ensure SMTP is set up on the server (see docs/CPANEL-CONTACT-FORM-EMAIL-SETUP.md).';
     }
 
-    // Redirect back to contact page
-    header('Location: contact.php');
-    exit;
+    $redirectToContact();
 
 } catch (PDOException $e) {
     // Database error - log detailed error
@@ -533,8 +536,7 @@ try {
     $_SESSION['contact_error'] = $lang === 'ar' 
         ? 'حدث خطأ أثناء معالجة طلبك. يرجى المحاولة لاحقاً'
         : 'An error occurred while processing your request. Please try again later';
-    header('Location: contact.php');
-    exit;
+    $redirectToContact();
 
 } catch (Exception $e) {
     // General error - log detailed error
@@ -557,6 +559,5 @@ try {
     $_SESSION['contact_error'] = $lang === 'ar' 
         ? 'حدث خطأ غير متوقع. يرجى المحاولة لاحقاً'
         : 'An unexpected error occurred. Please try again later';
-    header('Location: contact.php');
-    exit;
+    $redirectToContact();
 }

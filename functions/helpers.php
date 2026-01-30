@@ -223,8 +223,8 @@ function isActive($page) {
     if ($page === 'index.php') {
         $requestUri = $_SERVER['REQUEST_URI'] ?? '';
         $requestPath = parse_url($requestUri, PHP_URL_PATH);
-        $requestPath = rtrim($requestPath, '/');
-        $basePath = rtrim(parse_url(SITE_URL, PHP_URL_PATH), '/');
+        $requestPath = rtrim((string)($requestPath ?? ''), '/');
+        $basePath = rtrim((string)(parse_url(SITE_URL, PHP_URL_PATH) ?? ''), '/');
         
         // If we're on root or index.php, it's active
         if ($current === 'index.php' || 

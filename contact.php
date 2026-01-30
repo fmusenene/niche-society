@@ -167,7 +167,7 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
                 </div>
 
                 <!-- Contact Form -->
-                <div class="col-lg-7" data-aos="fade-left">
+                <div class="col-lg-7" data-aos="fade-left" id="contact-form">
                     <div class="contact-form-wrapper">
                         <h3 class="form-title">
                             <?= $lang === 'ar' ? 'أرسل لنا رسالة' : 'Send Us a Message' ?>
