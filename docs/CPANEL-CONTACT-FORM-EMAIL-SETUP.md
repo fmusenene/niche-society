@@ -1,129 +1,176 @@
-# Step-by-step: Contact form & auto-reply on cPanel
+# Step-by-step: Contact form email & auto-reply on cPanel (SMTP)
 
-Your site already has:
+This guide gets the contact form working **cleanly** on cPanel so that:
 
-1. **Contact form** at [https://niche-society.com/contact.php](https://niche-society.com/contact.php) that posts to `contact-handler.php`.
-2. **Two emails** when someone submits:
-   - **You** receive the message at `info@niche-society.com`.
-   - **The sender** receives an automatic “Thank you” reply (in Arabic or English).
+1. **You** receive every message at `info@niche-society.com`.
+2. **The sender** sees a clear on-page message (success or problem).
+3. **The sender** receives an automatic “Thank you” email (and is told to check spam if needed).
 
-For this to work on cPanel, the server must be able to send email. Follow the steps below.
-
----
-
-## What happens when someone submits the form
-
-1. Form is sent to `contact-handler.php`.
-2. Handler validates input, saves to the `contact_forms` table, then:
-   - Sends **one email** to `info@niche-society.com` (the message details).
-   - Sends **one email** to the sender’s address (auto-reply: “Thank you for contacting us…”).
-3. User is redirected back to the contact page with a success message.
-
-No code change is needed for this flow. You only need to configure email on cPanel.
+The site uses **SMTP** when you configure it. SMTP is more reliable than PHP `mail()` on cPanel.
 
 ---
 
-## Step 1: Create the email account on cPanel (if it doesn’t exist)
+## What the sender sees
+
+- **Success (emails sent):**  
+  *“Thank you! We have received your message and sent a confirmation to your email. Check your spam folder if you don’t see it. We will get back to you as soon as possible.”*
+
+- **Success (message saved, confirmation email failed):**  
+  *“Thank you! We have received your message. We couldn’t send the confirmation email to your inbox; we will still get back to you as soon as possible.”*
+
+- **Error (e.g. validation):**  
+  A clear message explaining what to fix (e.g. invalid email, missing privacy agreement).
+
+So the sender is **always notified** on the page whether the message was received and whether a confirmation email was sent.
+
+---
+
+## Step 1: Create the email account on cPanel
 
 1. Log in to **cPanel**.
-2. Open **Email** → **Email Accounts**.
+2. Go to **Email** → **Email Accounts**.
 3. Click **Create**.
-4. Create an account for the address your site uses:
-   - **Username:** `info` (or the part before @).
-   - **Domain:** `niche-society.com` (select your domain).
-   - **Password:** Set a strong password (you can use “Generate” and save it).
+4. Create the address your site will use to send (and receive) contact messages:
+   - **Username:** `info` (so the address is `info@yourdomain.com`).
+   - **Domain:** Select your domain (e.g. `niche-society.com`).
+   - **Password:** Set a strong password. Click **Generate**, copy it, and save it somewhere safe (you will use it in Step 3).
 5. Click **Create**.
 
-You don’t need to check this inbox for the script to *send*; having the account helps the server accept sending from `info@niche-society.com`. You will use this inbox to read the messages that the form sends to you.
+You will use this inbox to read the messages that the form sends to you. The same account is used to **send** the notification to you and the auto-reply to the sender.
 
 ---
 
-## Step 2: Confirm config on the server
+## Step 2: Get SMTP details from cPanel
 
-On the server, open **File Manager** → your site folder (e.g. `public_html`) → `config/config.php`.
+1. In cPanel, stay in **Email** → **Email Accounts**.
+2. Find the account you created (e.g. `info@niche-society.com`) and click **Connect Devices** (or **More** → **Configure Email Client** / **Manual Settings**).
+3. Note the **Manual Settings** (or “SMTP” section). You need:
+   - **Incoming / Outgoing server:**  
+     Often `mail.niche-society.com` or `mail.yourdomain.com`. Some hosts use the domain only, e.g. `niche-society.com`. Write this down as **SMTP host**.
+   - **Ports:**
+     - **SSL:** 465 (recommended)
+     - **TLS:** 587  
+     Use **one** of these. 465 is common on cPanel.
+   - **Username:** `info@niche-society.com` (full email).
+   - **Password:** The same password you set in Step 1.
 
-Check that these match your domain and the email you created:
+Typical values:
+
+| Setting    | Example value              |
+|-----------|----------------------------|
+| SMTP host | `mail.niche-society.com`   |
+| Port      | `465` (SSL) or `587` (TLS) |
+| Username  | `info@niche-society.com`   |
+| Password  | (the one you set)          |
+
+---
+
+## Step 3: Create `config/email.php` on the server
+
+1. In cPanel **File Manager**, go to your site folder (e.g. `public_html`) and then into the **config** folder.
+2. You should see **email.php.example**.  
+   - If you don’t, upload it from your project: it’s in `config/email.php.example`.
+3. **Copy** `email.php.example` to a new file named **email.php** (same folder: `config/`).
+4. **Edit** `config/email.php` and set the values you noted in Step 2:
+
+```php
+define('SMTP_ENABLED', true);
+
+define('SMTP_HOST', 'mail.niche-society.com');   // Your host’s SMTP server
+define('SMTP_PORT', 465);                         // 465 for SSL, 587 for TLS
+define('SMTP_SECURE', 'ssl');                     // 'ssl' for 465, 'tls' for 587
+define('SMTP_USERNAME', 'info@niche-society.com');
+define('SMTP_PASSWORD', 'your-email-password');   // The password from Step 1
+define('SMTP_FROM_EMAIL', 'info@niche-society.com');
+define('SMTP_FROM_NAME', 'Niche Society');
+```
+
+5. **Save** the file.
+
+Important:
+
+- Use the **exact** SMTP host and port your host shows (e.g. `mail.niche-society.com`, port `465` or `587`).
+- Do **not** commit `config/email.php` to Git (it contains your password). It’s in `.gitignore`.
+
+---
+
+## Step 4: Confirm main config
+
+1. In **File Manager**, open **config/config.php** (same site).
+2. Ensure the contact address matches the email account you use for SMTP:
 
 ```php
 define('CONTACT_EMAIL', 'info@niche-society.com');
 define('MAIL_FROM', 'info@niche-society.com');
 ```
 
-If your contact address is different, change both to that address (and use the same address in Step 1). Save the file.
+3. Save if you changed anything.
 
 ---
 
-## Step 3: Make sure the form and handler are on the server
+## Step 5: Ensure these files exist on the server
 
-In File Manager, in the same folder as `index.php` and `contact.php`, confirm you have:
+In the **same folder** as `contact.php` and `contact-handler.php` (usually `public_html` or your site root), you should have:
 
 - `contact.php` – contact page with the form.
-- `contact-handler.php` – script that sends the two emails.
+- `contact-handler.php` – processes the form and sends both emails.
+- `config/email.php` – the file you created in Step 3.
+- `functions/mail-smtp.php` – SMTP helper (part of the project).
 
 The form already posts to `contact-handler.php`; no change needed there.
 
 ---
 
-## Step 4: Test the contact form
+## Step 6: Test the contact form
 
-1. Open **https://niche-society.com/contact.php** in a browser.
-2. Fill in:
+1. Open **https://niche-society.com/contact.php** (or your contact URL).
+2. Fill the form with **your own** email as “sender”:
    - Full Name  
-   - Email (use your own or a test address)  
+   - Email (your real address)  
    - Phone  
    - Service (any)  
    - Message (at least 10 characters)  
    - Check “I agree to the privacy policy”.
-3. Click **Send** (or “إرسال الرسالة” in Arabic).
+3. Click **Send** (or “إرسال الرسالة”).
 
 **Expected:**
 
-- You see a success message on the page.
-- You receive the message at **info@niche-society.com** (or whatever you set in `CONTACT_EMAIL`).
-- The **sender’s email** receives the automatic “Thank you for contacting us” reply.
+- You see the **success message** on the page (e.g. “Thank you! We have received your message and sent a confirmation to your email…”).
+- **Your inbox** (info@…) receives the contact message.
+- **The sender’s inbox** (the email you entered) receives the automatic “Thank you for contacting us” reply.  
+  If you don’t see it, check **spam/junk** and the success message (it tells the user to check spam).
 
-If one or both emails don’t arrive, go to Step 5.
+If something fails, go to Step 7.
 
 ---
 
-## Step 5: If emails don’t arrive (troubleshooting)
+## Step 7: If emails still don’t arrive
 
-**A. Check spam/junk**
+**A. Check the on-page message**
 
-- Check the Junk/Spam folder for both:
-  - `info@niche-society.com`
-  - The test sender address.
+- The contact page now shows different messages depending on what worked (message saved, confirmation sent or not). Use that to see if the script thinks it sent or not.
 
-**B. Check PHP mail on cPanel**
+**B. Check the log file**
 
-1. In cPanel, go to **Email** → **Email Deliverability** (or **Track Delivery**).
-2. Enter your domain (`niche-society.com`) and run the check.
-3. Fix any issues it reports (e.g. SPF/DKIM or “Relay Access Denied”).
+- On the server, open **logs/contact-form-emails.log** (in the same folder as `contact-handler.php`).
+- After a test submit it will say whether the “Admin notification” and “Auto-reply” were **SENT** or **FAILED**.  
+- If both are FAILED, SMTP is likely wrong or blocked.
 
-**C. Check that PHP is allowed to send mail**
+**C. Check SMTP settings**
 
-- Some hosts restrict `mail()` or require sending from a domain email.
-- Ensure the **From** address in your script is `info@niche-society.com` (already set via `CONTACT_EMAIL` / `MAIL_FROM` in config).
+- **Port:** 465 → `SMTP_SECURE` must be `'ssl'`. 587 → `SMTP_SECURE` must be `'tls'`.
+- **Host:** Some hosts use `mail.yourdomain.com`, others `yourdomain.com` or a different name. Use exactly what cPanel shows under “Manual Settings” / “Connect Devices”.
+- **Password:** No spaces; use the password you set for that email account. If you changed it in cPanel, update `config/email.php`.
 
-**D. Check logs on the server**
+**D. Email deliverability (cPanel)**
 
-After a test submit, check:
+1. In cPanel go to **Email** → **Email Deliverability** (or **Track Delivery**).
+2. Select your domain and run the check.
+3. Fix any issues it reports (e.g. SPF, DKIM, “Relay Access Denied”) so that outgoing mail is not blocked.
 
-- `logs/contact-form-emails.log` (in your site root, next to `contact-handler.php`)  
-  - It will say whether the “admin” email and “auto-reply” were SENT or FAILED.
-- `logs/email-errors.log` (if it exists) for PHP mail errors.
+**E. Firewall / host**
 
-**E. Use SMTP instead of PHP mail() (if your host requires it)**
-
-If the host says PHP `mail()` is disabled or unreliable, you need to send via SMTP:
-
-1. In cPanel, note **Email** → **Email Accounts** → **Connect Devices** (or **SMTP**) for `info@niche-society.com`:
-   - Server: often `mail.niche-society.com` or your host’s SMTP.
-   - Port: 465 (SSL) or 587 (TLS).
-   - Username: `info@niche-society.com`, Password: the one you set for that account.
-2. The code would need to be changed to use an SMTP library (e.g. PHPMailer) and these settings. If you want, we can add a small “SMTP mode” using PHPMailer and a config like `config/email.php` so you only fill in server, port, user, and password.
-
-For most cPanel accounts, Step 1 + correct `CONTACT_EMAIL`/`MAIL_FROM` is enough and both “message to you” and “auto-reply to sender” work without code changes.
+- Some hosts block outbound SMTP from shared hosting. If the log always says FAILED and the settings are correct, contact support and ask if they allow SMTP (port 465 or 587) for your account.
 
 ---
 
@@ -132,20 +179,21 @@ For most cPanel accounts, Step 1 + correct `CONTACT_EMAIL`/`MAIL_FROM` is enough
 | What | Where |
 |------|--------|
 | Form page | https://niche-society.com/contact.php |
-| Form action | `contact-handler.php` (same folder as contact.php) |
-| Email to you | `CONTACT_EMAIL` in `config/config.php` (e.g. info@niche-society.com) |
-| Auto-reply to sender | Sent by `contact-handler.php` to the email they entered |
-| Log file | `logs/contact-form-emails.log` (after submit) |
+| Form action | `contact-handler.php` |
+| SMTP config | `config/email.php` (copy from `config/email.php.example`) |
+| Email to you | `CONTACT_EMAIL` in `config/config.php`; same as SMTP account |
+| Auto-reply to sender | Sent by `contact-handler.php` via SMTP to the email they entered |
+| On-page feedback | Success/error message set by `contact-handler.php` (redirect back to contact.php) |
+| Log file | `logs/contact-form-emails.log` |
 
 ---
 
 ## Summary
 
-1. Create **info@niche-society.com** (or your chosen address) in cPanel **Email Accounts**.
-2. Set **CONTACT_EMAIL** and **MAIL_FROM** in `config/config.php` on the server to that address.
-3. Submit a test from https://niche-society.com/contact.php and check:
-   - Your inbox for the message.
-   - Sender inbox for the automatic “Thank you” reply.
-4. If nothing arrives, use **Email Deliverability** and `logs/contact-form-emails.log`; if the host blocks `mail()`, switch to SMTP (we can add that next).
+1. Create **info@niche-society.com** (or your address) in cPanel **Email Accounts** and set a password.
+2. Get **SMTP host, port (465 or 587), username, password** from **Email Accounts** → **Connect Devices** (or Manual Settings).
+3. Copy **config/email.php.example** to **config/email.php** and fill in SMTP settings; set **SMTP_ENABLED** to **true**.
+4. Confirm **CONTACT_EMAIL** / **MAIL_FROM** in **config/config.php** match that address.
+5. Test the form: you should get the message, the sender should get the auto-reply, and **the sender is notified on the page** (success message or error). Check **logs/contact-form-emails.log** if something fails.
 
-After this, the contact form will both send you the message and send the sender an automatic response on your live site.
+After this, email is delivered via SMTP, and the sender is clearly notified on the page and by the automatic reply.

@@ -1,0 +1,22 @@
+<?php
+/**
+ * Email (SMTP) Configuration - EXAMPLE
+ * Copy this file to email.php and fill in your cPanel email details.
+ * Do NOT commit email.php (it contains your password).
+ *
+ * On cPanel: Email → Email Accounts → Create info@yourdomain.com
+ * Then use: Connect Devices / Manual Settings for SMTP host and port.
+ */
+
+// Use SMTP for sending (set to true after you create email.php with real values)
+define('SMTP_ENABLED', false);
+
+// cPanel SMTP - Secure SSL/TLS (Recommended) from Email → Connect Devices
+// For niche-society.com: Outgoing Server = niche-society.com, SMTP Port = 465
+define('SMTP_HOST', 'niche-society.com');
+define('SMTP_PORT', 465);                        // 465 = SSL (recommended), 587 = TLS (use mail.niche-society.com)
+define('SMTP_SECURE', 'ssl');                    // 'ssl' for port 465, 'tls' for port 587
+define('SMTP_USERNAME', 'info@niche-society.com');
+define('SMTP_PASSWORD', 'your-email-password-here');
+define('SMTP_FROM_EMAIL', 'info@niche-society.com');
+define('SMTP_FROM_NAME', 'Niche Society');

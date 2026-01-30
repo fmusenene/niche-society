@@ -1,6 +1,7 @@
 # Config files (use .example files as templates)
 config/config.php
 config/database.php
+config/email.php
 
 # Logs
 logs/*.log

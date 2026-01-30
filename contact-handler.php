@@ -20,6 +20,14 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/functions/helpers.php';
 
+// Load SMTP config if present (for cPanel / reliable email delivery)
+if (file_exists(__DIR__ . '/config/email.php')) {
+    require_once __DIR__ . '/config/email.php';
+}
+if (defined('SMTP_ENABLED') && SMTP_ENABLED && file_exists(__DIR__ . '/functions/mail-smtp.php')) {
+    require_once __DIR__ . '/functions/mail-smtp.php';
+}
+
 // Ensure required tables exist
 try {
     $pdo->exec("CREATE TABLE IF NOT EXISTS contact_forms (
@@ -200,18 +208,23 @@ function sendEmailNotification($data, $lang) {
     </html>
     ";
     
-    $headers = [
-        'MIME-Version: 1.0',
-        'Content-type: text/html; charset=utf-8',
-        'From: Niche Society Website <' . CONTACT_EMAIL . '>',
-        'Reply-To: ' . $data['email'],
-        'X-Mailer: PHP/' . phpversion(),
-        'X-Priority: 1',
-        'Importance: High'
-    ];
-    
-    // Remove error suppression to see actual errors
-    $result = mail($to, $subject, $message, implode("\r\n", $headers));
+    $fromEmail = defined('SMTP_FROM_EMAIL') ? SMTP_FROM_EMAIL : CONTACT_EMAIL;
+    $fromName = defined('SMTP_FROM_NAME') ? SMTP_FROM_NAME : 'Niche Society Website';
+
+    if (defined('SMTP_ENABLED') && SMTP_ENABLED && function_exists('sendMailSMTP')) {
+        $result = sendMailSMTP($to, $subject, $message, $fromEmail, $fromName, $data['email']);
+    } else {
+        $headers = [
+            'MIME-Version: 1.0',
+            'Content-type: text/html; charset=utf-8',
+            'From: ' . $fromName . ' <' . $fromEmail . '>',
+            'Reply-To: ' . $data['email'],
+            'X-Mailer: PHP/' . phpversion(),
+            'X-Priority: 1',
+            'Importance: High'
+        ];
+        $result = mail($to, $subject, $message, implode("\r\n", $headers));
+    }
     
     // Enhanced logging for email sending result
     if (!$result) {
@@ -293,15 +306,21 @@ function sendAutoReply($email, $name, $lang) {
     </html>
     ";
     
-    $headers = [
-        'MIME-Version: 1.0',
-        'Content-type: text/html; charset=utf-8',
-        'From: Niche Society <info@niche-society.com>',
-        'X-Mailer: PHP/' . phpversion()
-    ];
-    
-    $result = @mail($email, $subject, $message, implode("\r\n", $headers));
-    
+    $fromEmail = defined('SMTP_FROM_EMAIL') ? SMTP_FROM_EMAIL : CONTACT_EMAIL;
+    $fromName = defined('SMTP_FROM_NAME') ? SMTP_FROM_NAME : 'Niche Society';
+
+    if (defined('SMTP_ENABLED') && SMTP_ENABLED && function_exists('sendMailSMTP')) {
+        $result = sendMailSMTP($email, $subject, $message, $fromEmail, $fromName, null);
+    } else {
+        $headers = [
+            'MIME-Version: 1.0',
+            'Content-type: text/html; charset=utf-8',
+            'From: ' . $fromName . ' <' . $fromEmail . '>',
+            'X-Mailer: PHP/' . phpversion()
+        ];
+        $result = @mail($email, $subject, $message, implode("\r\n", $headers));
+    }
+
     // Log email sending result
     if (!$result) {
         $error = error_get_last();
@@ -474,10 +493,20 @@ try {
     unset($_SESSION['csrf_token']);
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-    // 10. Set Success Message
-    $_SESSION['contact_success'] = $lang === 'ar' 
-        ? 'شكراً لتواصلك معنا! سنرد عليك في أقرب وقت ممكن.'
-        : 'Thank you for contacting us! We will get back to you as soon as possible.';
+    // 10. Set Success Message (so sender knows status and that auto-reply was sent)
+    if ($emailSent && $autoReplySent) {
+        $_SESSION['contact_success'] = $lang === 'ar'
+            ? 'شكراً لتواصلك معنا! تم استلام رسالتك وإرسال تأكيد إلى بريدك الإلكتروني. تحقق من مجلد الرسائل غير المرغوبة إن لم تجده.'
+            : 'Thank you! We have received your message and sent a confirmation to your email. Check your spam folder if you don\'t see it. We will get back to you as soon as possible.';
+    } elseif ($emailSent) {
+        $_SESSION['contact_success'] = $lang === 'ar'
+            ? 'شكراً! تم استلام رسالتك. لم نتمكن من إرسال بريد التأكيد إلى صندوقك؛ سنرد عليك في أقرب وقت.'
+            : 'Thank you! We have received your message. We couldn\'t send the confirmation email to your inbox; we will still get back to you as soon as possible.';
+    } else {
+        $_SESSION['contact_success'] = $lang === 'ar'
+            ? 'تم حفظ رسالتك. لم نتمكن من إرسال البريد الإلكتروني حالياً؛ سنحاول التواصل معك. يرجى التأكد من إعداد SMTP على الخادم.'
+            : 'Your message was saved. We couldn\'t send the confirmation email right now; we will still try to get back to you. Please ensure SMTP is set up on the server (see docs/CPANEL-CONTACT-FORM-EMAIL-SETUP.md).';
+    }
 
     // Redirect back to contact page
     header('Location: contact.php');
