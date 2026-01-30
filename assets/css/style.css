@@ -3722,6 +3722,43 @@ body.ar-lang .view-all-services-btn:hover svg {
     opacity: 0.9;
 }
 
+/* Blog feed info strip (below hero) */
+.blog-feed-info {
+    background: linear-gradient(135deg, rgba(96, 34, 52, 0.06) 0%, rgba(96, 34, 52, 0.02) 100%);
+    border-top: 1px solid rgba(96, 34, 52, 0.08);
+    border-bottom: 1px solid rgba(96, 34, 52, 0.08);
+    padding: 1rem 0;
+}
+
+.blog-feed-info-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.blog-feed-info-icon {
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(96, 34, 52, 0.12);
+    color: #602234;
+    border-radius: 50%;
+    font-size: 1rem;
+}
+
+.blog-feed-info-text {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: #4a1a29;
+    opacity: 0.92;
+}
+
 /* Contact Page Map Hero */
 .contact-hero-map {
     position: relative;
@@ -7111,6 +7148,17 @@ ul.category-list li a.active .count {
     background: rgba(255, 255, 255, 0.2) !important;
     color: #ffffff !important;
     border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Force white text for "All Articles" and any active category link.
+   Override .section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) a (same specificity, later wins). */
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .sidebar-widget ul.category-list li a.active,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .sidebar-widget .category-list a.active {
+    color: #ffffff !important;
+}
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .sidebar-widget ul.category-list li a.active .count,
+.section:not(.bg-light):not(.bg-cream):not(.bg-burgundy) .sidebar-widget .category-list a.active .count {
+    color: #ffffff !important;
 }
 
 .sidebar-widget .category-list .count,

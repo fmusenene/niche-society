@@ -199,7 +199,8 @@ $pageDescription = htmlspecialchars($post['excerpt']);
                                  alt="<?= htmlspecialchars($post['title']) ?>"
                                  class="img-fluid"
                                  onerror="this.onerror=null; this.src='<?= url('assets/images/niche-society-homepage-1-scaled.jpg') ?>';"
-                                 loading="lazy">
+                                 loading="lazy"
+                                 referrerpolicy="no-referrer">
                         </div>
                         <?php endif; ?>
                         
@@ -404,6 +405,7 @@ $pageDescription = htmlspecialchars($post['excerpt']);
                                             <img src="<?= $recentImageUrl ?>" 
                                                  alt="<?= htmlspecialchars($recent['title']) ?>"
                                                  onerror="this.onerror=null; this.src='<?= url('assets/images/niche-society-homepage-1-scaled.jpg') ?>';"
+                                                 referrerpolicy="no-referrer"
                                                  loading="lazy">
                                         </div>
                                         <div class="recent-post-info">
@@ -477,7 +479,7 @@ $pageDescription = htmlspecialchars($post['excerpt']);
                                     ? $related['featured_image'] 
                                     : url($related['featured_image'] ?? 'assets/images/niche-society-homepage-1-scaled.jpg');
                                 ?>
-                                <img src="<?= $relatedImageUrl ?>" alt="<?= htmlspecialchars($related['title']) ?>">
+                                <img src="<?= $relatedImageUrl ?>" alt="<?= htmlspecialchars($related['title']) ?>" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='<?= url('assets/images/niche-society-homepage-1-scaled.jpg') ?>';">
                             </a>
                         </div>
                         <div class="blog-card-content">

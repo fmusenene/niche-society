@@ -231,130 +231,115 @@ function articleExists($slug, $pdo) {
 }
 
 /**
- * Check if article matches relevant keywords
+ * Download image from news source and save locally so it displays reliably (no hotlink blocking).
+ * Returns relative path e.g. "uploads/news/abc123.jpg" or null on failure.
+ */
+function downloadArticleImage($imageUrl, $slug) {
+    if (!preg_match('/^https?:\/\//i', $imageUrl)) return null;
+    $uploadDir = __DIR__ . '/uploads/news';
+    if (!is_dir($uploadDir)) {
+        if (!@mkdir($uploadDir, 0755, true)) return null;
+    }
+    $ext = 'jpg';
+    if (preg_match('/\.(jpe?g|png|gif|webp)(?:\?|$)/i', $imageUrl, $m)) $ext = strtolower($m[1]);
+    if ($ext === 'jpeg') $ext = 'jpg';
+    $safeSlug = preg_replace('/[^a-z0-9\-]/i', '-', substr($slug, 0, 40));
+    $filename = $safeSlug . '-' . substr(md5($imageUrl), 0, 8) . '.' . $ext;
+    $filepath = $uploadDir . '/' . $filename;
+    $ch = curl_init($imageUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_MAXREDIRS => 3,
+        CURLOPT_TIMEOUT => 15,
+        CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_REFERER => '',
+        CURLOPT_ENCODING => '',
+    ]);
+    $data = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+    curl_close($ch);
+    if ($data === false || $httpCode !== 200 || strlen($data) < 500) return null;
+    if (preg_match('/image\/(jpeg|jpg|png|gif|webp)/i', $contentType, $m)) {
+        $ext = strtolower($m[1]);
+        if ($ext === 'jpeg') $ext = 'jpg';
+        $filename = $safeSlug . '-' . substr(md5($imageUrl), 0, 8) . '.' . $ext;
+        $filepath = $uploadDir . '/' . $filename;
+    }
+    if (@file_put_contents($filepath, $data) === false) return null;
+    return 'uploads/news/' . $filename;
+}
+
+/**
+ * Check if article matches Niche Society profile only:
+ * Luxury estate/property management, event management, protocol/etiquette,
+ * VIP/concierge, high-end hospitality. Middle East focus when combined with these.
  */
 function isArticleRelevant($title, $description, $content) {
-    // Combine all text for searching
     $textToSearch = mb_strtolower($title . ' ' . $description . ' ' . $content, 'UTF-8');
     
-    // EXCLUSION keywords - if these appear, article is NOT relevant
+    // EXCLUSION - not relevant to Niche Society
     $exclusionKeywords = [
         'electric vehicle', 'EV', 'electric car', 'automotive', 'car', 'vehicle',
         'cryptocurrency', 'bitcoin', 'crypto', 'blockchain',
-        'stock market', 'trading', 'investment', 'financial market',
-        'election', 'political', 'politics', 'government',
-        'medical', 'healthcare', 'hospital', 'doctor', 'patient',
-        'sports', 'game', 'match', 'player',
-        'entertainment', 'movie', 'music', 'celebrity',
-        'weather', 'climate', 'temperature',
-        'Canada', 'US', 'USA', 'United States', 'Chinese', 'China', 'EVs', 'EV market'
-        // Note: 'technology', 'tech', 'AI', 'education', 'school', 'university' removed - these topics are allowed
+        'stock market', 'trading', 'investment', 'financial market', 'forex',
+        'election', 'political', 'politics', 'vote', 'campaign',
+        'medical', 'healthcare', 'hospital', 'doctor', 'patient', 'vaccine',
+        'sports', 'game', 'match', 'player', 'football', 'soccer', 'league',
+        'entertainment', 'movie', 'music', 'celebrity', 'film', 'album',
+        'weather', 'climate', 'temperature', 'flood', 'earthquake',
+        'Canada', 'US ', 'USA ', 'United States ', 'Chinese ', 'China ', 'EVs ', 'EV market'
     ];
-    
-    // Check exclusion keywords first
     foreach ($exclusionKeywords as $exclusion) {
         if (mb_strpos($textToSearch, mb_strtolower($exclusion, 'UTF-8')) !== false) {
-            return false; // Article is NOT relevant
+            return false;
         }
     }
     
-    // REQUIRED keywords/phrases - must match specific phrases (more strict)
-    $requiredPhrases = [
-        // Estate & Property Management (must include "management" with property/estate context)
+    // Niche Society profile phrases only - must match at least one
+    $profilePhrases = [
         'estate management', 'property management', 'household management',
-        'property administration', 'real estate management', 'luxury property management',
-        'private property management',
-        
-        // Concierge & Logistics (specific to services)
-        'concierge service', 'VIP concierge', 'luxury concierge',
-        'concierge', 'event logistics', 'operational services',
-        'high-end operational',
-        
-        // Etiquette & Protocol (must be protocol-related)
-        'etiquette', 'protocol', 'official protocol', 'royal protocol',
-        'diplomatic protocol', 'business etiquette', 'formal etiquette',
-        'protocol training', 'etiquette training',
-        
-        // High-end/Luxury Services (in service context)
-        'luxury service', 'high-end service', 'premium service',
-        'exclusive service', 'luxury lifestyle service',
-        
-        // Administrative & Organizational (in service context)
-        'administrative solution', 'organizational solution',
-        'administrative service', 'organizational service',
-        'management solution',
-        
-        // Public Relations (only if related to services)
-        'public relations service', 'corporate relations service',
-        'client relations service',
-        
-        // Related service terms
-        'butler service', 'household staff', 'staff management',
+        'real estate management', 'luxury property', 'private property management',
+        'concierge service', 'VIP concierge', 'luxury concierge', 'concierge',
+        'event management', 'event logistics', 'corporate events', 'royal event',
+        'etiquette', 'protocol', 'royal protocol', 'diplomatic protocol', 'business etiquette',
+        'luxury service', 'high-end service', 'premium service', 'exclusive service',
         'hospitality management', 'guest service', 'white glove service',
-        'personalized service',
-        
-        // Technology in service context
-        'technology', 'tech', 'AI', 'artificial intelligence', 'software',
-        'smart home', 'smart property', 'property technology',
-        'technology service', 'tech solution', 'digital solution',
-        
-        // Education & Training in service context
-        'education', 'training', 'professional training', 'service training',
-        'education service', 'training program', 'professional development',
-        'staff training', 'management training',
-        
-        // Middle East country names (to prioritize Middle East articles)
-        'Saudi Arabia', 'UAE', 'United Arab Emirates', 'Dubai', 'Abu Dhabi',
-        'Qatar', 'Kuwait', 'Bahrain', 'Oman', 'Middle East', 'GCC',
-        'Riyadh', 'Jeddah', 'Doha', 'Muscat', 'Manama'
+        'butler service', 'household staff', 'staff management',
+        'luxury real estate', 'ultra luxury', 'high-net-worth', 'high net worth',
+        'private estate', 'luxury estate', 'residential management',
+        'operational excellence', 'management solution', 'organizational service',
+        'protocol training', 'etiquette training', 'professional training',
+        'smart property', 'property technology', 'luxury hospitality'
     ];
-    
-    // Must match at least ONE required phrase
-    foreach ($requiredPhrases as $phrase) {
-        $phraseLower = mb_strtolower($phrase, 'UTF-8');
-        if (mb_strpos($textToSearch, $phraseLower) !== false) {
-            return true; // Found a relevant phrase
+    foreach ($profilePhrases as $phrase) {
+        if (mb_strpos($textToSearch, mb_strtolower($phrase, 'UTF-8')) !== false) {
+            return true;
         }
     }
     
-    // Additional check: multi-word combinations that indicate relevance
-    $contextMatches = 0;
-    
-    // Check for "luxury" + service-related words
-    if (mb_strpos($textToSearch, 'luxury') !== false) {
-        $luxuryContext = ['property', 'estate', 'home', 'service', 'concierge', 'hospitality'];
-        foreach ($luxuryContext as $context) {
-            if (mb_strpos($textToSearch, $context) !== false) {
-                $contextMatches++;
-                break;
-            }
+    // Middle East + any related term: "Dubai property", "Saudi hospitality", "Jordan real estate"
+    $middleEastTerms = ['saudi', 'uae', 'dubai', 'abu dhabi', 'qatar', 'kuwait', 'bahrain', 'oman', 'jordan', 'amman', 'gcc', 'middle east', 'riyadh', 'jeddah', 'doha', 'muscat', 'manama'];
+    $relatedTerms = ['property', 'estate', 'luxury', 'hospitality', 'concierge', 'management', 'event', 'protocol', 'service', 'real estate', 'business', 'sector', 'market'];
+    foreach ($middleEastTerms as $me) {
+        if (mb_strpos($textToSearch, $me) === false) continue;
+        foreach ($relatedTerms as $term) {
+            if (mb_strpos($textToSearch, $term) !== false) return true;
         }
     }
     
-    // Check for "high-end" + service-related words
-    if (mb_strpos($textToSearch, 'high-end') !== false || mb_strpos($textToSearch, 'high end') !== false) {
-        $highEndContext = ['property', 'estate', 'service', 'operational', 'residential'];
-        foreach ($highEndContext as $context) {
-            if (mb_strpos($textToSearch, $context) !== false) {
-                $contextMatches++;
-                break;
-            }
-        }
+    // Any two of these (broader so more news passes filter)
+    $anyTwo = ['property', 'real estate', 'luxury', 'hospitality', 'management', 'event', 'business', 'estate'];
+    $hits = 0;
+    foreach ($anyTwo as $term) {
+        if (mb_strpos($textToSearch, $term) !== false) $hits++;
+        if ($hits >= 2) return true;
     }
     
-    // Check for "property" + management/service context
-    if (mb_strpos($textToSearch, 'property') !== false) {
-        $propertyContext = ['management', 'administration', 'service', 'luxury', 'private', 'estate'];
-        foreach ($propertyContext as $context) {
-            if (mb_strpos($textToSearch, $context) !== false) {
-                $contextMatches++;
-                break;
-            }
-        }
-    }
-    
-    // Need at least 1 context match AND a relevant phrase, or 2 context matches
-    return $contextMatches >= 2;
+    return false;
 }
 
 /**
@@ -363,9 +348,9 @@ function isArticleRelevant($title, $description, $content) {
 function isMiddleEastArticle($title, $description, $content, $source) {
     $middleEastKeywords = [
         'Saudi Arabia', 'Saudi', 'UAE', 'United Arab Emirates', 'Dubai', 'Abu Dhabi',
-        'Qatar', 'Kuwait', 'Bahrain', 'Oman', 'Middle East', 'GCC',
+        'Qatar', 'Kuwait', 'Bahrain', 'Oman', 'Jordan', 'Amman', 'Middle East', 'GCC',
         'Riyadh', 'Jeddah', 'Doha', 'Muscat', 'Manama',
-        'KSA', 'Emirates', 'Emirati', 'Saudia', 'Qatari', 'Kuwaiti'
+        'KSA', 'Emirates', 'Emirati', 'Saudia', 'Qatari', 'Kuwaiti', 'Jordanian'
     ];
     
     $textToSearch = mb_strtolower($title . ' ' . $description . ' ' . $content . ' ' . $source, 'UTF-8');
@@ -434,90 +419,113 @@ function saveArticle($item, $source, $category, $pdo, $region = 'international')
     $excerptAr = $excerptEn;
     $contentAr = $contentEn;
     
-    // Extract image from RSS feed (multiple methods)
+    // Extract real article image from RSS feed (multiple methods, prefer feed image over default)
     $featuredImage = null;
-    
-    // Method 1: Check media:thumbnail (common in Google News, BBC, etc.)
+    $parsedLink = parse_url($link);
+    $baseUrl = ($parsedLink && isset($parsedLink['scheme']) && isset($parsedLink['host']))
+        ? $parsedLink['scheme'] . '://' . $parsedLink['host'] : '';
+
+    // Method 1: media:thumbnail and media:content (Google News, BBC, Yahoo MRSS)
     $namespaces = $item->getNamespaces(true);
-    if (isset($namespaces['media'])) {
-        $media = $item->children($namespaces['media']);
-        if (isset($media->thumbnail)) {
-            $attrs = $media->thumbnail->attributes();
-            if (isset($attrs['url'])) {
+    $mediaNs = $namespaces['media'] ?? 'http://search.yahoo.com/mrss/';
+    $media = @$item->children($mediaNs);
+    if ($media && isset($media->thumbnail)) {
+        $attrs = $media->thumbnail->attributes();
+        if (isset($attrs['url']) && (string)$attrs['url'] !== '') {
+            $featuredImage = (string)$attrs['url'];
+        }
+    }
+    if (empty($featuredImage) && $media && isset($media->content)) {
+        foreach ($media->content as $content) {
+            $attrs = $content->attributes();
+            $type = isset($attrs['type']) ? (string)$attrs['type'] : '';
+            if (strpos($type, 'image/') === 0 && isset($attrs['url'])) {
                 $featuredImage = (string)$attrs['url'];
-            }
-        }
-        // Check media:content for images
-        if (empty($featuredImage) && isset($media->content)) {
-            foreach ($media->content as $content) {
-                $attrs = $content->attributes();
-                if (isset($attrs['type']) && strpos($attrs['type'], 'image/') === 0 && isset($attrs['url'])) {
-                    $featuredImage = (string)$attrs['url'];
-                    break;
-                }
+                break;
             }
         }
     }
-    
-    // Method 2: Check enclosure (direct image attachment)
+
+    // Method 2: enclosure (RSS 2.0 – single or multiple)
     if (empty($featuredImage) && isset($item->enclosure)) {
-        $enclosure = $item->enclosure;
-        $type = isset($enclosure['type']) ? (string)$enclosure['type'] : '';
-        if (strpos($type, 'image/') === 0) {
-            $featuredImage = (string)$enclosure['url'];
+        $enclosures = is_array($item->enclosure) ? $item->enclosure : [$item->enclosure];
+        foreach ($enclosures as $enc) {
+            $type = isset($enc['type']) ? (string)$enc['type'] : '';
+            if (strpos($type, 'image/') === 0 && isset($enc['url'])) {
+                $featuredImage = (string)$enc['url'];
+                break;
+            }
         }
     }
-    
-    // Method 3: Extract from description/content HTML
+
+    // Method 3: Atom link rel="enclosure"
+    if (empty($featuredImage) && isset($item->link)) {
+        $links = is_array($item->link) ? $item->link : [$item->link];
+        foreach ($links as $l) {
+            $rel = isset($l['rel']) ? (string)$l['rel'] : '';
+            $type = isset($l['type']) ? (string)$l['type'] : '';
+            $href = isset($l['href']) ? (string)$l['href'] : (string)$l;
+            if ((strtolower($rel) === 'enclosure' || strtolower($rel) === '') && strpos($type, 'image/') === 0 && $href !== '') {
+                $featuredImage = $href;
+                break;
+            }
+        }
+    }
+
+    // Method 4: First image in description or content (BBC, Al Jazeera often put img here)
     if (empty($featuredImage)) {
         $htmlContent = $descriptionEn . ' ' . $contentEn;
-        // Try multiple regex patterns for images
-        if (preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $htmlContent, $matches)) {
-            $featuredImage = html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        } elseif (preg_match('/src=["\']([^"\']+\.(?:jpg|jpeg|png|gif|webp)[^"\']*)["\']/i', $htmlContent, $matches)) {
-            $featuredImage = html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        // img src="..."
+        if (preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $htmlContent, $m)) {
+            $featuredImage = html_entity_decode(trim($m[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+        // data-src (lazy-loaded)
+        if (empty($featuredImage) && preg_match('/<img[^>]+data-src=["\']([^"\']+)["\']/i', $htmlContent, $m)) {
+            $featuredImage = html_entity_decode(trim($m[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+        // srcset first URL (e.g. "url 1x, url2 2x")
+        if (empty($featuredImage) && preg_match('/<img[^>]+srcset=["\']([^"\']+)["\']/i', $htmlContent, $m)) {
+            $srcset = preg_split('/\s*,\s*/', trim($m[1]), 2);
+            $first = trim(preg_replace('/\s+\d+x$/', '', $srcset[0]));
+            if ($first !== '') $featuredImage = html_entity_decode($first, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+        // Fallback: any URL ending with image extension
+        if (empty($featuredImage) && preg_match('/src=["\']([^"\']+\.(?:jpg|jpeg|png|gif|webp)(?:\?[^"\']*)?)["\']/i', $htmlContent, $m)) {
+            $featuredImage = html_entity_decode(trim($m[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         }
     }
-    
-    // Method 4: Check for Google News image in link or other sources
-    if (empty($featuredImage) && strpos($link, 'news.google.com') !== false) {
-        // Google News articles sometimes have images embedded differently
-        // Try fetching the actual article page (lightweight check)
-        // For now, we'll skip this to avoid delays
-    }
-    
+
     // Convert relative image URLs to absolute
-    if (!empty($featuredImage) && !preg_match('/^https?:\/\//i', $featuredImage)) {
-        // Try to build absolute URL from article link
-        $parsedLink = parse_url($link);
-        if ($parsedLink && isset($parsedLink['scheme']) && isset($parsedLink['host'])) {
-            $baseUrl = $parsedLink['scheme'] . '://' . $parsedLink['host'];
-            if (strpos($featuredImage, '//') === 0) {
-                // Protocol-relative URL (//example.com/image.jpg)
-                $featuredImage = $parsedLink['scheme'] . ':' . $featuredImage;
-            } elseif (strpos($featuredImage, '/') === 0) {
-                // Absolute path from domain root
-                $featuredImage = $baseUrl . $featuredImage;
-            } else {
-                // Relative path
-                $path = isset($parsedLink['path']) ? dirname($parsedLink['path']) : '';
-                $featuredImage = $baseUrl . rtrim($path, '/') . '/' . ltrim($featuredImage, '/');
-            }
+    if (!empty($featuredImage) && !preg_match('/^https?:\/\//i', $featuredImage) && $baseUrl !== '') {
+        $featuredImage = trim($featuredImage);
+        if (strpos($featuredImage, '//') === 0) {
+            $featuredImage = ($parsedLink['scheme'] ?? 'https') . ':' . $featuredImage;
+        } elseif (strpos($featuredImage, '/') === 0) {
+            $featuredImage = $baseUrl . $featuredImage;
+        } else {
+            $path = isset($parsedLink['path']) ? dirname($parsedLink['path']) : '';
+            $featuredImage = $baseUrl . rtrim(str_replace('\\', '/', $path), '/') . '/' . ltrim($featuredImage, '/');
         }
     }
-    
-    // Clean up image URL (remove query parameters that might cause issues)
-    if (!empty($featuredImage) && preg_match('/^https?:\/\//i', $featuredImage)) {
-        // Keep the image URL as-is if it's absolute
-        // Optionally clean up: $featuredImage = preg_replace('/[?&](w|width|h|height|size)=[^&]*/i', '', $featuredImage);
+
+    // Ensure we have a valid absolute URL; otherwise keep for relative resolution
+    $featuredImage = trim($featuredImage);
+    if ($featuredImage === '' || !preg_match('/^https?:\/\//i', $featuredImage)) {
+        if ($featuredImage !== '' && $baseUrl !== '') {
+            $featuredImage = $baseUrl . (strpos($featuredImage, '/') === 0 ? '' : '/') . ltrim($featuredImage, '/');
+        }
     }
-    
-    // Log if no image found
-    if (empty($featuredImage)) {
+    if ($featuredImage === '' || !preg_match('/^https?:\/\//i', $featuredImage)) {
         logMessage("No image found for article: {$titleEn}", 'WARNING');
-        $featuredImage = 'assets/images/niche-society-homepage-1-scaled.jpg'; // Default image
+        $featuredImage = 'assets/images/niche-society-homepage-1-scaled.jpg';
     } else {
         logMessage("Found image for article: {$titleEn} - {$featuredImage}", 'INFO');
+        // Download image locally so it always displays (avoids hotlink blocking)
+        $localPath = downloadArticleImage($featuredImage, $slug);
+        if ($localPath !== null) {
+            $featuredImage = $localPath;
+            logMessage("Saved article image locally: {$localPath}", 'INFO');
+        }
     }
     
     // Get author ID (use 1 if exists, otherwise NULL)
@@ -624,69 +632,74 @@ logMessage("=== RSS Feed Aggregator Started ===");
 // Alternative reliable sources are used when available
 
 $feeds = [
-    // MIDDLE EAST PRIORITY FEEDS - Using Al Jazeera and alternative sources
-    // Al Jazeera English (Middle East focus) - Reliable RSS feed
+    // MIDDLE EAST PRIORITY – reliable direct RSS (filtered by Niche Society profile)
     [
-        'url' => 'https://www.aljazeera.com/xml/rss/all.xml',
-        'source' => 'Al Jazeera - Middle East',
-        'category' => 'News',
+        'url' => 'https://feeds.bbci.co.uk/news/world/middle_east/rss.xml',
+        'source' => 'BBC News - Middle East',
+        'category' => 'Middle East',
         'region' => 'middle_east',
         'priority' => 1
     ],
-    
-    // Alternative: Use RSS Bridge or RSS aggregator services if Google News blocks
-    // For now, we'll try simplified Google News queries with better error handling
-    
-    // Saudi Arabia - Simplified single keyword searches
+    [
+        'url' => 'https://www.aljazeera.com/xml/rss/all.xml',
+        'source' => 'Al Jazeera - Middle East',
+        'category' => 'Middle East',
+        'region' => 'middle_east',
+        'priority' => 1
+    ],
+    // Google News – topic-specific (Middle East first; may return 400)
     [
         'url' => 'https://news.google.com/rss/search?q=property+management+Saudi+Arabia&hl=en-US&gl=SA&ceid=SA:en',
         'source' => 'Google News - Saudi Arabia',
         'category' => 'Estate Management',
         'region' => 'middle_east',
         'priority' => 1,
-        'skip_on_error' => true // Skip this feed if it returns 400
-    ],
-    [
-        'url' => 'https://news.google.com/rss/search?q=concierge+Saudi+Arabia&hl=en-US&gl=SA&ceid=SA:en',
-        'source' => 'Google News - Saudi Arabia',
-        'category' => 'Logistics',
-        'region' => 'middle_east',
-        'priority' => 1,
         'skip_on_error' => true
     ],
-    
-    // UAE
     [
-        'url' => 'https://news.google.com/rss/search?q=property+Dubai&hl=en-US&gl=AE&ceid=AE:en',
+        'url' => 'https://news.google.com/rss/search?q=luxury+property+Dubai&hl=en-US&gl=AE&ceid=AE:en',
         'source' => 'Google News - UAE',
         'category' => 'Estate Management',
         'region' => 'middle_east',
         'priority' => 1,
         'skip_on_error' => true
     ],
-    
-    // Qatar
     [
-        'url' => 'https://news.google.com/rss/search?q=property+Qatar&hl=en-US&gl=QA&ceid=QA:en',
-        'source' => 'Google News - Qatar',
-        'category' => 'Estate Management',
+        'url' => 'https://news.google.com/rss/search?q=event+management+Dubai&hl=en-US&gl=AE&ceid=AE:en',
+        'source' => 'Google News - Events UAE',
+        'category' => 'Event Management',
         'region' => 'middle_east',
         'priority' => 1,
         'skip_on_error' => true
     ],
-    
-    // INTERNATIONAL FEEDS (Lower Priority)
     [
-        'url' => 'https://news.google.com/rss/search?q=property+management&hl=en-US&gl=US&ceid=US:en',
-        'source' => 'Google News - International',
+        'url' => 'https://news.google.com/rss/search?q=concierge+service+UAE&hl=en-US&gl=AE&ceid=AE:en',
+        'source' => 'Google News - Concierge UAE',
+        'category' => 'Logistics',
+        'region' => 'middle_east',
+        'priority' => 1,
+        'skip_on_error' => true
+    ],
+    [
+        'url' => 'https://news.google.com/rss/search?q=property+hospitality+Jordan&hl=en-US&gl=JO&ceid=JO:en',
+        'source' => 'Google News - Jordan',
+        'category' => 'Middle East',
+        'region' => 'middle_east',
+        'priority' => 1,
+        'skip_on_error' => true
+    ],
+    // INTERNATIONAL (lower priority)
+    [
+        'url' => 'https://news.google.com/rss/search?q=property+management+luxury&hl=en-US&gl=US&ceid=US:en',
+        'source' => 'Google News - Luxury Property',
         'category' => 'Estate Management',
         'region' => 'international',
         'priority' => 2,
         'skip_on_error' => true
     ],
     [
-        'url' => 'https://news.google.com/rss/search?q=concierge&hl=en-US&gl=US&ceid=US:en',
-        'source' => 'Google News - International',
+        'url' => 'https://news.google.com/rss/search?q=concierge+service+VIP&hl=en-US&gl=US&ceid=US:en',
+        'source' => 'Google News - VIP Concierge',
         'category' => 'Logistics',
         'region' => 'international',
         'priority' => 2,
@@ -694,12 +707,12 @@ $feeds = [
     ],
 ];
 
-// Clean up old articles (keep only last 48 hours)
-logMessage("Cleaning up old articles (keeping only articles from last 48 hours)...");
-$deleteStmt = $pdo->prepare("DELETE FROM blog_posts WHERE tags LIKE 'source_url:%' AND created_at < DATE_SUB(NOW(), INTERVAL 48 HOUR)");
+// Clean up old aggregated articles (keep last 7 days so blog has content)
+logMessage("Cleaning up old articles (keeping last 7 days)...");
+$deleteStmt = $pdo->prepare("DELETE FROM blog_posts WHERE tags LIKE 'source_url:%' AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)");
 $deleteStmt->execute();
 $deletedCount = $deleteStmt->rowCount();
-logMessage("Deleted {$deletedCount} old articles (older than 48 hours)");
+logMessage("Deleted {$deletedCount} old articles (older than 7 days)");
 
 // Sort feeds by priority (Middle East first)
 usort($feeds, function($a, $b) {
@@ -746,8 +759,8 @@ logMessage("Middle East articles saved: {$middleEastSaved}");
 logMessage("International articles saved: {$internationalSaved}");
 logMessage("Total new articles saved: {$totalSaved}");
 logMessage("Old articles deleted: {$deletedCount}");
-logMessage("Note: Articles are filtered to only include relevant topics related to administrative/organizational solutions, property management, etiquette/protocol, logistics, and high-end services.");
-logMessage("Note: Middle East articles are prioritized and displayed first. Articles older than 48 hours are automatically deleted.");
+logMessage("Note: Articles are filtered to Niche Society profile only: luxury/property/estate management, event management, protocol/etiquette, concierge/VIP, hospitality.");
+logMessage("Note: Middle East articles are prioritized. Articles older than 7 days are automatically removed.");
 
 // Output summary
 echo PHP_EOL . "=== RSS Feed Aggregator Summary ===" . PHP_EOL;

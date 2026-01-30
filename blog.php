@@ -10,6 +10,20 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/functions/helpers.php';
 
+// Auto-update related news: trigger RSS aggregator if last run was over 1 hour ago.
+// News is refreshed from feeds; articles older than 7 days are removed automatically.
+$rssLastRunFile = __DIR__ . '/logs/rss-last-run.txt';
+$rssRunInterval = 3600; // 1 hour
+if (!is_dir(__DIR__ . '/logs')) {
+    @mkdir(__DIR__ . '/logs', 0755, true);
+}
+if (!file_exists($rssLastRunFile) || (time() - (int)@filemtime($rssLastRunFile) >= $rssRunInterval)) {
+    @file_put_contents($rssLastRunFile, (string)time());
+    $aggregatorUrl = rtrim(SITE_URL, '/') . '/rss-feed-aggregator.php';
+    $ctx = stream_context_create(['http' => ['timeout' => 8]]);
+    @file_get_contents($aggregatorUrl, false, $ctx);
+}
+
 // Handle language switch
 handleLanguageSwitch();
 
@@ -124,6 +138,21 @@ $pageDescription = $lang === 'ar'
             </div>
         </div>
     </section>
+
+    <!-- Feed info strip (what this section is) -->
+    <div class="blog-feed-info" data-aos="fade-up">
+        <div class="container">
+            <div class="blog-feed-info-inner">
+                <span class="blog-feed-info-icon" aria-hidden="true"><i class="bi bi-rss"></i></span>
+                <p class="blog-feed-info-text">
+                    <?= $lang === 'ar' 
+                        ? 'أخبار صناعية ذات صلة من المنطقة والعالم — تُحدَّث تلقائياً (كل ساعة تقريباً عند زيارة الصفحة). تُرشَّح حسب تركيزنا على الإدارة الفاخرة والعقارات والفعاليات والبروتوكول. المقالات الأقدم من 7 أيام تُزال تلقائياً.'
+                        : 'Related industry news from the Middle East and worldwide — updated automatically (about every hour when you visit). Filtered to our focus on luxury management, property, events, and protocol. Articles older than 7 days are removed automatically.'
+                    ?>
+                </p>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <section class="section">
@@ -279,6 +308,7 @@ $pageDescription = $lang === 'ar'
                                              alt="<?= htmlspecialchars($post['title']) ?>"
                                              onerror="this.onerror=null; this.src='<?= $defaultImage ?>';"
                                              loading="lazy"
+                                             referrerpolicy="no-referrer"
                                              style="width: 100%; height: 100%; object-fit: cover;">
                                     </a>
                                     <div class="blog-date-tag">
