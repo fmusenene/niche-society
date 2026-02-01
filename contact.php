@@ -31,9 +31,19 @@ $pageDescription = $lang === 'ar'
     ? 'تواصل معنا للحصول على استشارة مجانية حول خدماتنا في إدارة المنازل والفعاليات' 
     : 'Contact us for a free consultation about our services in household and event management';
 
-// Check for success or error messages from form submission
+// Check for success or error messages from form submission (session first, then GET so it works when session is lost e.g. on cPanel)
 $successMessage = isset($_SESSION['contact_success']) ? $_SESSION['contact_success'] : '';
 $errorMessage = isset($_SESSION['contact_error']) ? $_SESSION['contact_error'] : '';
+if ($successMessage === '' && isset($_GET['contact']) && $_GET['contact'] === 'success') {
+    $successMessage = $lang === 'ar'
+        ? 'شكراً! تم استلام رسالتك. سنتواصل معك في أقرب وقت. إن لم تصلك رسالة تأكيد، تحقق من مجلد الرسائل غير المرغوبة أو راسلنا على info@niche-society.com'
+        : 'Thank you! Your message was received. We will get back to you soon. If you don\'t receive a confirmation email, check your spam folder or email us at info@niche-society.com';
+}
+if ($errorMessage === '' && isset($_GET['contact']) && $_GET['contact'] === 'error') {
+    $errorMessage = $lang === 'ar'
+        ? 'حدث خطأ أو لم يتم إرسال النموذج بشكل صحيح. يرجى المحاولة مرة أخرى أو مراسلتنا على info@niche-society.com'
+        : 'Something went wrong or the form was not submitted correctly. Please try again or email us at info@niche-society.com';
+}
 $formData = isset($_SESSION['form_data']) ? $_SESSION['form_data'] : [];
 unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_data']);
 ?>
@@ -395,6 +405,16 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
             once: true,
             offset: 100
         });
+
+        // Clean ?contact= from URL so refresh doesn't re-show message (message already displayed)
+        (function() {
+            var u = new URL(window.location.href);
+            if (u.searchParams.has('contact')) {
+                u.searchParams.delete('contact');
+                var clean = u.pathname + (u.search || '') + u.hash;
+                if (window.history.replaceState) window.history.replaceState({}, '', clean);
+            }
+        })();
 
         // Form validation and handling
         (function() {

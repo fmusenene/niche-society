@@ -12,13 +12,12 @@ The site uses **SMTP** when you configure it. SMTP is more reliable than PHP `ma
 
 ## If the success or error message doesn’t appear
 
-After submitting the form, the page should redirect back to the contact page and show a green (success) or red (error) message above the form. If you don’t see it:
+After submitting the form, the page redirects to the contact page with **?contact=success** or **?contact=error** in the URL so the message shows **even when the session is lost** (common on cPanel). You should see a green (success) or red (error) message above the form.
 
-1. **Scroll to the form** – The redirect goes to `contact.php#contact-form`. If your browser doesn’t scroll, scroll down to the “Send Us a Message” section; the alert is directly above the form.
-2. **Sessions** – The message is stored in the session. Ensure in cPanel:
-   - **PHP** → **Select PHP Version** (or **MultiPHP INI Editor**): `session.save_path` is writable (often `/tmp` or a path under your home).
-   - You’re using the same domain and **HTTPS** when opening the site (no mixing http/https or www/non-www).
-3. **No output before redirect** – The handler uses output buffering and a single redirect URL so the session and message are preserved. If you edited `contact-handler.php`, don’t add `echo` or spaces before `<?php` in included files.
+1. **Check the URL** – After submit, the address bar should be something like `https://niche-society.com/contact.php?contact=success#contact-form`. If you see `?contact=success` or `?contact=error`, the page will show the message; scroll down to the “Send Us a Message” section if needed.
+2. **Scroll to the form** – The redirect includes `#contact-form` so the browser scrolls to the form. If it doesn’t, scroll down to “Send Us a Message”; the alert is directly above the form.
+3. **If the URL has no ?contact=** – The handler may have crashed before redirecting (e.g. database error). Check **error_log** in cPanel and fix any PHP/database errors. Ensure **config/config.php** and **config/database.php** are correct and the database user can connect.
+4. **Sessions (optional)** – The message is also stored in the session when it works. If you want session-based messages, ensure **session.save_path** is writable and you use the same domain and HTTPS (no mixing http/https or www/non-www).
 
 ---
 
@@ -183,6 +182,15 @@ If something fails, go to Step 7.
 **E. Firewall / host**
 
 - Some hosts block outbound SMTP from shared hosting. If the log always says FAILED and the settings are correct, contact support and ask if they allow SMTP (port 465 or 587) for your account.
+
+---
+
+## If emails still aren’t sent or delivered
+
+1. **Confirm the alert shows** – After submit you should see the success or error message on the contact page (from **?contact=success** or **?contact=error**). If you see the success message, the form and handler ran; if emails still don’t arrive, the problem is SMTP or deliverability.
+2. **Check the log** – In **File Manager** open **public_html/logs/contact-form-emails.log**. After a test submit it will say whether “Admin notification” and “Auto-reply” were **SENT** or **FAILED**. If both FAILED, fix **config/email.php** (host, port 465, ssl, username, password) and run **Email** → **Email Deliverability** for your domain.
+3. **Confirm config/email.php** – File must exist in **public_html/config/**, with **SMTP_ENABLED** true, correct **SMTP_HOST** (e.g. `niche-society.com` or `mail.niche-society.com`), **SMTP_PORT** 465, **SMTP_SECURE** `ssl`, **SMTP_USERNAME** and **SMTP_PASSWORD** matching the cPanel email account. No typos or extra spaces in the password.
+4. **Check inbox and spam** – For **info@niche-society.com** check the inbox and spam folder. For the sender’s auto-reply, ask them to check spam as well.
 
 ---
 
