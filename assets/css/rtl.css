@@ -415,6 +415,14 @@ html[lang="ar"] .faq-question {
     text-align: right;
 }
 
+/* Contact form select - arrow on left in RTL */
+[dir="rtl"] select.form-control,
+html[lang="ar"] select.form-control {
+    background-position: left 1rem center;
+    padding-right: 1rem;
+    padding-left: 3rem;
+}
+
 /* Card Spacing */
 [dir="rtl"] .card-body {
     text-align: right;
