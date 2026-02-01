@@ -337,6 +337,12 @@ html[lang="ar"] .faq-question {
     text-align: right;
 }
 
+/* Contact privacy checkbox - Arabic mobile */
+[dir="rtl"] .form-check-privacy .form-check-label,
+html[lang="ar"] .form-check-privacy .form-check-label {
+    letter-spacing: 0 !important;
+}
+
 /* ========================================
    RTL LAYOUT ADJUSTMENTS
 ======================================== */

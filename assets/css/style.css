@@ -685,6 +685,7 @@ body.top-bar-hidden {
     background-size: cover;
     background-position: center 30%;
     background-repeat: no-repeat;
+    background-attachment: scroll;
     filter: blur(3px);
     -webkit-filter: blur(3px);
     opacity: 1;
@@ -3778,7 +3779,7 @@ body.ar-lang .view-all-services-btn:hover svg {
     min-height: 500px;
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    background-attachment: scroll;
     display: flex;
     align-items: center;
     position: relative;
@@ -7226,6 +7227,25 @@ select[name="service"] option {
     text-decoration: underline;
 }
 
+/* Privacy checkbox - responsive on mobile, especially Arabic */
+.form-check-privacy {
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.form-check-privacy .form-check-label {
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+[dir="rtl"] .form-check-privacy .form-check-label,
+html[lang="ar"] .form-check-privacy .form-check-label {
+    text-align: right;
+}
+
 /* Alerts */
 .alert {
     padding: 1rem 1.5rem;
@@ -7532,6 +7552,21 @@ select[name="service"] option {
         line-height: 1.5;
     }
 
+    .form-check-privacy {
+        gap: 0.5rem;
+    }
+
+    .form-check-privacy .form-check-label {
+        font-size: 0.85rem;
+        line-height: 1.55;
+    }
+
+    [dir="rtl"] .form-check-privacy .form-check-label,
+    html[lang="ar"] .form-check-privacy .form-check-label {
+        font-size: 0.8rem;
+        line-height: 1.6;
+    }
+
     .contact-form-wrapper .alert {
         padding: 0.75rem 1rem;
         font-size: 0.85rem;
@@ -7570,6 +7605,16 @@ select[name="service"] option {
 
     .form-title {
         font-size: 1.2rem;
+    }
+
+    .form-check-privacy .form-check-label {
+        font-size: 0.75rem;
+        line-height: 1.6;
+    }
+
+    [dir="rtl"] .form-check-privacy .form-check-label,
+    html[lang="ar"] .form-check-privacy .form-check-label {
+        font-size: 0.72rem;
     }
 
     .contact-icon {
@@ -11429,7 +11474,7 @@ ul.category-list li a.active .count {
     align-items: center;
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    background-attachment: scroll;
 }
 
 .about-hero-clear {
@@ -11437,7 +11482,7 @@ ul.category-list li a.active .count {
     min-height: 60vh;
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    background-attachment: scroll;
     filter: none !important;
     -webkit-filter: none !important;
     image-rendering: -webkit-optimize-contrast;

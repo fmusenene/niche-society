@@ -314,7 +314,7 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
 
                                 <!-- Privacy Agreement -->
                                 <div class="col-12 mb-4">
-                                    <div class="form-check">
+                                    <div class="form-check form-check-privacy">
                                         <input 
                                             class="form-check-input" 
                                             type="checkbox" 
