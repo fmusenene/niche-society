@@ -9,6 +9,17 @@
  * to ensure ElMessiri is applied to ALL Arabic text without fail.
  */
 
+/* Scrollbar on the right in RTL (html LTR = scrollbar right, body RTL = content RTL) */
+html[dir="rtl"],
+html[lang="ar"] {
+    direction: ltr;
+}
+
+html[dir="rtl"] body,
+html[lang="ar"] body {
+    direction: rtl;
+}
+
 /* ========================================
    UNIVERSAL ARABIC FONT - HIGHEST PRIORITY
    Apply ElMessiri to EVERYTHING in RTL pages

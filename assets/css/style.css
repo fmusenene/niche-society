@@ -652,7 +652,7 @@ body.top-bar-hidden {
     }
 }
 
-/* Hero Section */
+/* Hero Section - no internal scrollbar */
 .hero-premium {
     position: relative;
     min-height: 65vh;
@@ -660,7 +660,8 @@ body.top-bar-hidden {
     display: flex;
     align-items: center;
     overflow-x: hidden;
-    overflow-y: visible;
+    overflow-y: hidden;
+    overflow: hidden;
     background: #602234;
 }
 
@@ -3886,6 +3887,11 @@ body.ar-lang .view-all-services-btn:hover svg {
 /* Contact Page Map Hero */
 .contact-hero-map {
     position: relative;
+    overflow: hidden;
+}
+
+/* Prevent hero from creating its own scrollbar */
+.contact-hero-map .hero-bg-container {
     overflow: hidden;
 }
 
@@ -7244,6 +7250,25 @@ select[name="service"] option {
 [dir="rtl"] .form-check-privacy .form-check-label,
 html[lang="ar"] .form-check-privacy .form-check-label {
     text-align: right;
+}
+
+/* Mobile: stack checkbox above label so it's not "in the words" */
+@media (max-width: 767.98px) {
+    .form-check-privacy {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .form-check-privacy .form-check-input {
+        margin-top: 0;
+        margin-bottom: 0.25rem;
+    }
+
+    .form-check-privacy .form-check-label {
+        width: 100%;
+        display: block;
+    }
 }
 
 /* Alerts */
