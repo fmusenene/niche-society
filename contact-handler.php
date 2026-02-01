@@ -239,7 +239,7 @@ function sendEmailNotification($data, $lang) {
             'X-Priority: 1',
             'Importance: High'
         ];
-        $result = mail($to, $subject, $message, implode("\r\n", $headers));
+        $result = mail($to, $subject, $message, implode("\r\n", $headers), "-f {$fromEmail}");
     }
     
     // Enhanced logging for email sending result
@@ -334,7 +334,7 @@ function sendAutoReply($email, $name, $lang) {
             'From: ' . $fromName . ' <' . $fromEmail . '>',
             'X-Mailer: PHP/' . phpversion()
         ];
-        $result = @mail($email, $subject, $message, implode("\r\n", $headers));
+        $result = @mail($email, $subject, $message, implode("\r\n", $headers), "-f {$fromEmail}");
     }
 
     // Log email sending result
@@ -427,15 +427,15 @@ try {
         $redirectToContact('error');
     }
 
-    // 4. Sanitize Input
-    $data = [
-        'name' => trim(htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8')),
-        'email' => trim(filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL)),
-        'phone' => trim(htmlspecialchars($_POST['phone'] ?? '', ENT_QUOTES, 'UTF-8')),
-        'service' => trim(htmlspecialchars($_POST['service'] ?? '', ENT_QUOTES, 'UTF-8')),
-        'message' => trim(htmlspecialchars($_POST['message'] ?? '', ENT_QUOTES, 'UTF-8')),
-        'privacy' => $_POST['privacy'] ?? ''
-    ];
+// 4. Sanitize Input (store clean raw text, escape later in HTML output)
+$data = [
+    'name' => trim($_POST['name'] ?? ''),
+    'email' => trim(filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL)),
+    'phone' => trim($_POST['phone'] ?? ''),
+    'service' => trim($_POST['service'] ?? ''),
+    'message' => trim($_POST['message'] ?? ''),
+    'privacy' => $_POST['privacy'] ?? ''
+];
 
     // 5. Validate Input
     $errors = validateInput($data);
