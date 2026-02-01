@@ -322,9 +322,19 @@ html[lang="ar"] .navbar-nav .nav-link {
 
 /* Section badges in Arabic */
 [dir="rtl"] .section-badge,
-html[lang="ar"] .section-badge {
+[dir="rtl"] .philosophy-badge,
+[dir="rtl"] .service-badge-header,
+html[lang="ar"] .section-badge,
+html[lang="ar"] .philosophy-badge,
+html[lang="ar"] .service-badge-header {
     letter-spacing: 0 !important;
     text-transform: none !important;
+}
+
+/* Service detail FAQ - RTL text align */
+[dir="rtl"] .faq-question,
+html[lang="ar"] .faq-question {
+    text-align: right;
 }
 
 /* ========================================

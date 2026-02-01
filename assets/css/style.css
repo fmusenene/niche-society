@@ -2257,8 +2257,13 @@ a.btn-primary:hover span * {
         padding: 50px 0;
     }
     
+    .philosophy-section .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
     .philosophy-header {
-        margin-bottom: 60px;
+        margin-bottom: 40px;
     }
     
     .philosophy-main-title {
@@ -2270,20 +2275,20 @@ a.btn-primary:hover span * {
     }
     
     .philosophy-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
     }
     
     .vision-item {
-        grid-row: auto;
+        grid-column: 1 / -1;
     }
     
     .philosophy-card {
-        padding: 40px 35px;
+        padding: 30px 24px;
     }
     
     .card-number {
-        font-size: 60px;
+        font-size: 56px;
         top: 15px;
         right: 15px;
     }
@@ -2294,32 +2299,42 @@ a.btn-primary:hover span * {
     }
     
     .philosophy-card-title {
-        font-size: 28px;
+        font-size: 24px;
     }
     
     .philosophy-text {
-        font-size: 15px;
+        font-size: 14px;
     }
 }
 
 @media (max-width: 767px) {
     .philosophy-section {
-        padding: 40px 0;
+        padding: 36px 0;
+    }
+    
+    .philosophy-section .container {
+        padding-left: 16px;
+        padding-right: 16px;
     }
     
     .philosophy-header {
-        margin-bottom: 40px;
+        margin-bottom: 28px;
     }
     
     .philosophy-badge {
-        padding: 5px 15px;
+        padding: 5px 14px;
         font-size: 10px;
         letter-spacing: 2px;
     }
     
+    [dir="rtl"] .philosophy-badge,
+    html[lang="ar"] .philosophy-badge {
+        letter-spacing: 0;
+    }
+    
     .philosophy-main-title {
-        font-size: 32px;
-        margin-bottom: 12px;
+        font-size: 28px;
+        margin-bottom: 10px;
     }
     
     .philosophy-subtitle {
@@ -2330,24 +2345,32 @@ a.btn-primary:hover span * {
     .philosophy-grid {
         grid-template-columns: 1fr;
         gap: 20px;
+        max-width: 100%;
+    }
+    
+    .vision-item {
+        grid-column: 1;
     }
     
     .philosophy-card {
-        padding: 25px 20px;
+        padding: 24px 18px;
         position: relative;
+        min-height: auto;
+        width: 100%;
     }
     
     .card-number {
-        font-size: 32px !important;
-        top: 8px !important;
-        right: 8px !important;
-        opacity: 0.15 !important;
+        font-size: 36px !important;
+        top: 10px !important;
+        right: 10px !important;
+        opacity: 0.12 !important;
         z-index: 0 !important;
     }
     
-    [dir="rtl"] .card-number {
+    [dir="rtl"] .card-number,
+    html[lang="ar"] .philosophy-section .card-number {
         right: auto !important;
-        left: 8px !important;
+        left: 10px !important;
     }
     
     .philosophy-content {
@@ -2356,92 +2379,31 @@ a.btn-primary:hover span * {
     }
     
     .card-corner {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
     }
     
     .philosophy-card:hover .card-corner {
-        width: 30px;
-        height: 30px;
+        width: 26px;
+        height: 26px;
     }
     
     .philosophy-icon-art svg {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .philosophy-card-title {
-        font-size: 20px !important;
-        margin-bottom: 12px !important;
-        padding-right: 50px !important;
-        position: relative;
-        z-index: 2;
-    }
-    
-    [dir="rtl"] .philosophy-card-title {
-        padding-right: 0 !important;
-        padding-left: 50px !important;
-    }
-    
-    .title-underline {
-        width: 45px;
-        margin-bottom: 15px;
-    }
-    
-    .philosophy-text {
-        font-size: 13px !important;
-        line-height: 1.7 !important;
-        text-align: left;
-        text-align-last: left;
-        word-spacing: normal;
-    }
-    
-    [dir="rtl"] .philosophy-text {
-        text-align: right;
-        text-align-last: right;
-    }
-}
-
-@media (max-width: 480px) {
-    .philosophy-section {
-        padding: 40px 0;
-    }
-    
-    .philosophy-main-title {
-        font-size: 26px;
-    }
-    
-    .philosophy-subtitle {
-        font-size: 13px;
-    }
-    
-    .philosophy-grid {
-        gap: 18px;
-    }
-    
-    .philosophy-card {
-        padding: 22px 18px;
-    }
-    
-    .card-number {
-        font-size: 28px !important;
-        top: 6px !important;
-        right: 6px !important;
-        opacity: 0.12 !important;
-    }
-    
-    [dir="rtl"] .card-number {
-        right: auto !important;
-        left: 6px !important;
+        width: 36px;
+        height: 36px;
     }
     
     .philosophy-card-title {
         font-size: 18px !important;
         margin-bottom: 10px !important;
         padding-right: 45px !important;
+        position: relative;
+        z-index: 2;
+        word-break: keep-all;
     }
     
-    [dir="rtl"] .philosophy-card-title {
+    [dir="rtl"] .philosophy-card-title,
+    html[lang="ar"] .philosophy-card-title {
         padding-right: 0 !important;
         padding-left: 45px !important;
     }
@@ -2452,15 +2414,115 @@ a.btn-primary:hover span * {
     }
     
     .philosophy-text {
-        font-size: 12px !important;
-        line-height: 1.6 !important;
-        text-align: left;
-        text-align-last: left;
+        font-size: 13px !important;
+        line-height: 1.7 !important;
+        -webkit-line-clamp: unset;
+        line-clamp: unset;
+        overflow: visible;
+        display: block;
+        text-align: start;
+        text-align-last: start;
+        word-spacing: normal;
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
     
-    [dir="rtl"] .philosophy-text {
-        text-align: right;
-        text-align-last: right;
+    [dir="rtl"] .philosophy-text,
+    html[lang="ar"] .philosophy-text {
+        text-align: start;
+        text-align-last: start;
+        direction: inherit;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .philosophy-section {
+        padding: 28px 0;
+    }
+    
+    .philosophy-section .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+    
+    .philosophy-header {
+        margin-bottom: 22px;
+    }
+    
+    .philosophy-main-title {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+    
+    .philosophy-subtitle {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+    
+    .philosophy-grid {
+        gap: 16px;
+    }
+    
+    .philosophy-card {
+        padding: 20px 16px;
+    }
+    
+    .card-number {
+        font-size: 30px !important;
+        top: 8px !important;
+        right: 8px !important;
+        opacity: 0.1 !important;
+    }
+    
+    [dir="rtl"] .card-number,
+    html[lang="ar"] .philosophy-section .card-number {
+        right: auto !important;
+        left: 8px !important;
+    }
+    
+    .philosophy-card-title {
+        font-size: 16px !important;
+        margin-bottom: 8px !important;
+        padding-right: 40px !important;
+    }
+    
+    [dir="rtl"] .philosophy-card-title,
+    html[lang="ar"] .philosophy-card-title {
+        padding-right: 0 !important;
+        padding-left: 40px !important;
+    }
+    
+    .title-underline {
+        width: 35px;
+        margin-bottom: 10px;
+    }
+    
+    .philosophy-text {
+        font-size: 12px !important;
+        line-height: 1.65 !important;
+    }
+}
+
+@media (max-width: 399.98px) {
+    .philosophy-section .container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
+    .philosophy-card {
+        padding: 18px 14px;
+    }
+    
+    .philosophy-main-title {
+        font-size: 22px;
+    }
+    
+    .philosophy-card-title {
+        font-size: 15px !important;
+    }
+    
+    .philosophy-text {
+        font-size: 11px !important;
     }
 }
 
@@ -5369,6 +5431,11 @@ img,
     box-shadow: 0 4px 15px rgba(96, 34, 52, 0.25);
 }
 
+[dir="rtl"] .back-button:hover,
+html[lang="ar"] .back-button:hover {
+    transform: translateX(5px);
+}
+
 .back-button i {
     font-size: 1.2rem;
     transition: transform 0.3s ease;
@@ -5491,6 +5558,15 @@ img,
         padding: 1.5rem 0 2rem;
     }
     
+    .service-detail-header .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    
+    .service-detail-nav {
+        margin-bottom: 1.25rem;
+    }
+    
     .back-button {
         padding: 0.6rem 1.2rem;
         font-size: 0.85rem;
@@ -5502,6 +5578,11 @@ img,
         margin-bottom: 1rem;
     }
     
+    [dir="rtl"] .service-badge-header,
+    html[lang="ar"] .service-badge-header {
+        letter-spacing: 0;
+    }
+    
     .service-detail-title {
         font-size: 2rem;
     }
@@ -5509,25 +5590,233 @@ img,
     .service-detail-subtitle {
         font-size: 1.1rem;
         margin-bottom: 1.5rem;
+        padding: 0 8px;
     }
     
     .service-meta-badges {
         flex-direction: row;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-        gap: 0.4rem;
+        gap: 0.5rem;
     }
     
     .meta-badge {
-        font-size: 0.7rem;
-        padding: 0.4rem 0.7rem;
+        font-size: 0.75rem;
+        padding: 0.45rem 0.8rem;
         white-space: nowrap;
         flex: 0 0 auto;
     }
     
     .meta-badge i {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Service Detail - Small Mobile */
+@media (max-width: 575.98px) {
+    .service-detail-header {
+        padding: 1.25rem 0 1.75rem;
+    }
+    
+    .service-detail-header .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+    
+    .service-detail-title {
+        font-size: 1.6rem;
+    }
+    
+    .service-detail-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .service-meta-badges {
+        gap: 0.4rem;
+    }
+    
+    .meta-badge {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.65rem;
+    }
+    
+    /* Service detail page sections (after .service-detail-header) */
+    .service-detail-header ~ .section .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+    
+    .service-stats {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .stat-box {
+        flex: 1 1 100%;
+        padding: 1rem;
+        border: 1px solid rgba(96, 34, 52, 0.1);
+        border-radius: 4px;
+    }
+    
+    .stat-box h3 {
+        font-size: 1.75rem;
+    }
+    
+    .stat-box p {
+        font-size: 0.8rem;
+    }
+    
+    /* Feature cards - single column on service detail */
+    .service-detail-header ~ .section .row .col-md-6.col-lg-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .service-detail-header ~ .section .feature-card {
+        padding: 1.25rem 1rem;
+    }
+    
+    .service-detail-header ~ .section .feature-card h3 {
+        font-size: 1rem;
+    }
+    
+    .service-detail-header ~ .section .feature-card p {
+        font-size: 0.875rem;
+        line-height: 1.6;
+    }
+    
+    .service-detail-header ~ .section .feature-card .feature-icon {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .service-detail-header ~ .section .feature-card .feature-icon-img {
+        width: 48px;
+        height: 48px;
+    }
+    
+    /* Process steps - single column */
+    .service-detail-header ~ .section .row .col-md-6.col-lg-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .service-detail-header ~ .section .process-step {
+        padding: 1.25rem 1rem;
+        text-align: start;
+    }
+    
+    [dir="rtl"] .service-detail-header ~ .section .process-step,
+    html[lang="ar"] .service-detail-header ~ .section .process-step {
+        text-align: start;
+    }
+    
+    .service-detail-header ~ .section .process-step .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .service-detail-header ~ .section .process-step h4 {
+        font-size: 1rem;
+    }
+    
+    .service-detail-header ~ .section .process-step p {
+        font-size: 0.85rem;
+    }
+    
+    /* Benefits - stack image first */
+    .service-detail-header ~ .section .row.align-items-center {
+        flex-direction: column;
+    }
+    
+    .service-detail-header ~ .section .row .col-lg-6.mb-4.mb-lg-0 {
+        order: 0;
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-detail-header ~ .section .row .col-lg-6:not(.mb-4) {
+        order: 1;
+    }
+    
+    .benefit-item {
+        flex-direction: row;
+        gap: 1rem;
+        padding: 0.75rem 0;
+        align-items: flex-start;
+    }
+    
+    .benefit-item i {
+        flex-shrink: 0;
+        font-size: 1.25rem;
+    }
+    
+    .benefit-item h4 {
+        font-size: 1rem;
+    }
+    
+    .benefit-item p {
+        font-size: 0.875rem;
+    }
+    
+    /* FAQ */
+    .faq-question {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        text-align: start;
+    }
+    
+    [dir="rtl"] .faq-question,
+    html[lang="ar"] .faq-question {
+        text-align: start;
+    }
+    
+    /* CTA section */
+    .cta-section .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Service image - prevent overflow */
+    .service-image-wrapper {
+        margin-bottom: 1.5rem;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    
+    .service-detail-img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 399.98px) {
+    .service-detail-header .container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
+    .service-detail-title {
+        font-size: 1.4rem;
+    }
+    
+    .service-detail-subtitle {
+        font-size: 0.95rem;
+    }
+    
+    .meta-badge {
+        font-size: 0.65rem;
+        padding: 0.35rem 0.55rem;
+    }
+    
+    .service-detail-header ~ .section .container {
+        padding-left: 12px;
+        padding-right: 12px;
     }
 }
 
@@ -10192,10 +10481,10 @@ ul.category-list li a.active .count {
         gap: 30px;
     }
     
-    /* Philosophy Grid - 3 columns on tablet, 1 column on mobile */
+    /* Philosophy Grid - 2 columns on tablet (vision spans full), 1 on smaller */
     .philosophy-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
     
     /* Why Choose Grid */
@@ -10318,6 +10607,16 @@ ul.category-list li a.active .count {
     .page-hero {
         height: 50vh;
         min-height: 300px;
+    }
+    
+    /* Philosophy - single column on mobile */
+    .philosophy-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px;
+    }
+    
+    .vision-item {
+        grid-column: 1 !important;
     }
     
     /* Stats Section - Keep 4 columns on mobile */
