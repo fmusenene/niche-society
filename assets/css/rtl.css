@@ -566,9 +566,47 @@ html[lang="ar"] .section-badge {
         padding: 15px !important;
     }
     
-    /* Footer */
-    [dir="rtl"] .footer-corporate .row > [class*="col-"] {
-        text-align: right !important;
+    /* Footer - center on mobile like English (single column layout) */
+    [dir="rtl"] .footer-corporate .row > [class*="col-"],
+    html[lang="ar"] .footer-corporate .row > [class*="col-"] {
+        text-align: center !important;
+    }
+    [dir="rtl"] .footer-corporate .footer-description,
+    [dir="rtl"] .footer-corporate .footer-heading,
+    [dir="rtl"] .footer-corporate .footer-links-list,
+    [dir="rtl"] .footer-corporate .footer-contact-list,
+    [dir="rtl"] .footer-corporate .footer-contact-item,
+    [dir="rtl"] .footer-corporate .footer-social-links,
+    html[lang="ar"] .footer-corporate .footer-description,
+    html[lang="ar"] .footer-corporate .footer-heading,
+    html[lang="ar"] .footer-corporate .footer-links-list,
+    html[lang="ar"] .footer-corporate .footer-contact-list,
+    html[lang="ar"] .footer-corporate .footer-contact-item,
+    html[lang="ar"] .footer-corporate .footer-social-links {
+        text-align: center !important;
+    }
+    [dir="rtl"] .footer-corporate .footer-contact-item,
+    html[lang="ar"] .footer-corporate .footer-contact-item {
+        justify-content: center !important;
+    }
+    [dir="rtl"] .footer-corporate .footer-links-list,
+    html[lang="ar"] .footer-corporate .footer-links-list {
+        display: block !important;
+        text-align: center !important;
+    }
+    [dir="rtl"] .footer-corporate .footer-links-list li,
+    html[lang="ar"] .footer-corporate .footer-links-list li {
+        text-align: center !important;
+    }
+    [dir="rtl"] .footer-corporate .footer-bottom,
+    [dir="rtl"] .footer-corporate .footer-copyright,
+    [dir="rtl"] .footer-corporate .footer-legal-links,
+    [dir="rtl"] .footer-corporate .footer-iso-badge,
+    html[lang="ar"] .footer-corporate .footer-bottom,
+    html[lang="ar"] .footer-corporate .footer-copyright,
+    html[lang="ar"] .footer-corporate .footer-legal-links,
+    html[lang="ar"] .footer-corporate .footer-iso-badge {
+        text-align: center !important;
     }
     
     /* Buttons */
