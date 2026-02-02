@@ -193,7 +193,38 @@ $password = 'root'; // MAMP default
 - Option B: Use PHPMailer library
 - Option C: Use email service API (SendGrid, Mailgun)
 
-### Issue 5: Rate limiting not working
+### Issue 5: Blog changes not showing on live server
+
+**Possible causes and fixes:**
+
+1. **Latest code not deployed**
+   - Pushing to GitHub does **not** update the live server. You must deploy (pull on server, or upload files via FTP/cPanel).
+   - **Verify:** On the live blog page, right‑click → **View Page Source**. Search for `blog 9-per-page`. If you see that comment, the latest blog code is live; if not, deploy the updated `blog.php` (and related files).
+
+2. **Live server still has old files**
+   - **cPanel / Git:** Use “Git Version Control” → Clone or Pull to update the site folder.
+   - **FTP:** Re-upload at least: `blog.php`, `blog-post.php`, `rss-feed-aggregator.php`, and any CSS/JS you changed.
+
+3. **Caching**
+   - Clear server cache (LiteSpeed, OPcache, etc.) if your host has it.
+   - Clear CDN cache if you use one.
+   - Hard refresh the blog in the browser: **Ctrl+F5** (or Cmd+Shift+R on Mac).
+
+4. **Only 5 articles showing even after deploy**
+   - The live **database** may have only 5 published posts. The 9-per-page limit only shows up to 9; it can’t show more than exist.
+   - **Fix:** Run the RSS aggregator on the live server so it fetches and saves new articles:
+     - **Option A:** Set a cron job on the server:  
+       `0 * * * * php /path/to/niche-society/rss-feed-aggregator.php`
+     - **Option B:** Visit the live blog; if the last aggregator run was more than 1 hour ago, it will trigger. Then wait a few minutes and refresh.
+     - **Option C:** Open in browser (once):  
+       `https://your-live-domain.com/rss-feed-aggregator.php`  
+       (Then set up cron so you don’t depend on manual visits.)
+
+5. **RSS aggregator fails on live (e.g. PHP 8 TypeError)**
+   - Ensure the **fixed** `rss-feed-aggregator.php` is deployed (the version that uses `file_get_contents` + `simplexml_load_string` instead of passing a context to `simplexml_load_file`).
+   - Check the server PHP version and any error logs after running the aggregator.
+
+### Issue 6: Rate limiting not working
 **Cause**: rate_limit_log table missing or IP not tracked  
 **Fix**: Run database schema.sql to create tables
 ```bash

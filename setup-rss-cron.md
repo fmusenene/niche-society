@@ -2,6 +2,8 @@
 
 This guide explains how to set up automatic RSS feed aggregation for the Niche Society blog.
 
+**Live server (cPanel):** For **running the aggregator manually** and **setting it to run every 1 hour** on your live server, see the step-by-step guide: **[docs/RSS-AGGREGATOR-LIVE-SERVER.md](docs/RSS-AGGREGATOR-LIVE-SERVER.md)**.
+
 ## Overview
 
 The RSS Feed Aggregator (`rss-feed-aggregator.php`) automatically fetches articles from various news sources and publishes them to your blog. It:

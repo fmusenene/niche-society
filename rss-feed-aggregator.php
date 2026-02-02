@@ -214,13 +214,92 @@ function generateSlug($title) {
 }
 
 /**
- * Translate text using Google Translate API (optional) or keep as-is
- * For now, we'll keep content as-is and let users know translation is needed
+ * Translate text using an external API (optional).
+ *
+ * IMPORTANT:
+ * - To enable real translation, define TRANSLATE_API_KEY in config/config.php
+ *   (e.g. Google Cloud Translation API key).
+ * - If no key is defined or the API call fails, this safely falls back to the original text.
+ *
+ * NOTE:
+ * - This runs on the server when aggregating articles, so translated Arabic text is stored
+ *   once in the database (no per-request API calls on page load).
  */
 function translateContent($text, $targetLang) {
-    // For now, return the text as-is
-    // In production, you could integrate Google Translate API or similar
-    return $text;
+    $text = trim((string)$text);
+    $targetLang = trim((string)$targetLang);
+
+    // Nothing to translate
+    if ($text === '' || $targetLang === '') {
+        return $text;
+    }
+
+    // No API key configured → keep original text
+    if (!defined('TRANSLATE_API_KEY') || !TRANSLATE_API_KEY) {
+        return $text;
+    }
+
+    // Avoid very short strings where translation is not critical (e.g. 1–2 letters)
+    if (mb_strlen($text, 'UTF-8') < 3) {
+        return $text;
+    }
+
+    try {
+        $apiKey = TRANSLATE_API_KEY;
+
+        // Google Cloud Translation API v2 endpoint (example)
+        $endpoint = 'https://translation.googleapis.com/language/translate/v2';
+
+        $payload = http_build_query([
+            'q'      => $text,
+            'target' => $targetLang,
+            'format' => 'text',
+            // 'source' => 'en', // optional; API can auto-detect
+            'key'    => $apiKey,
+        ], '', '&', PHP_QUERY_RFC3986);
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $endpoint,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => $payload,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT        => 20,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_HTTPHEADER     => [
+                'Content-Type: application/x-www-form-urlencoded; charset=utf-8',
+            ],
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+
+        if ($response === false || $httpCode !== 200) {
+            logMessage("Translation API error ({$httpCode}): {$curlError} – falling back to original text", 'ERROR');
+            return $text;
+        }
+
+        $data = json_decode($response, true);
+        if (!isset($data['data']['translations'][0]['translatedText'])) {
+            logMessage("Translation API response missing translatedText – falling back to original text", 'ERROR');
+            return $text;
+        }
+
+        $translated = trim((string)$data['data']['translations'][0]['translatedText']);
+        if ($translated === '') {
+            return $text;
+        }
+
+        return $translated;
+    } catch (Exception $e) {
+        // On any failure, do NOT break aggregation; just log and return original
+        logMessage("Translation exception: " . $e->getMessage(), 'ERROR');
+        return $text;
+    }
 }
 
 /**
@@ -416,10 +495,10 @@ function saveArticle($item, $source, $category, $pdo, $region = 'international')
         $excerptEn = generateExcerpt($descriptionEn, 200);
     }
     
-    // For Arabic, we'll use the same content for now (can be translated later)
-    $titleAr = $titleEn; // Will be translated manually or via API
-    $excerptAr = $excerptEn;
-    $contentAr = $contentEn;
+    // Arabic versions: translate once at aggregation time (if TRANSLATE_API_KEY is configured)
+    $titleAr   = translateContent($titleEn, 'ar');
+    $excerptAr = translateContent($excerptEn, 'ar');
+    $contentAr = translateContent($contentEn, 'ar');
     
     // Extract real article image from RSS feed (multiple methods, prefer feed image over default)
     $featuredImage = null;
