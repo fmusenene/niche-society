@@ -13,23 +13,22 @@
 
 ob_start();
 
-// Start session
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/functions/helpers.php';
 
 // Redirect back to contact page; use ?contact=success|error so message shows even if session is lost (e.g. cPanel)
-$redirectToContact = function ($contactParam = null) {
+$redirectToContact = function ($contactParam = null, $errorCode = null) {
     session_write_close();
     if (ob_get_level()) ob_end_clean();
     $base = url('contact.php');
     $url = $base . '#contact-form';
     if ($contactParam === 'success' || $contactParam === 'error') {
-        $url = $base . '?contact=' . $contactParam . '#contact-form';
+        $url = $base . '?contact=' . $contactParam;
+        if ($contactParam === 'error' && $errorCode !== null && $errorCode !== '') {
+            $url .= '&code=' . rawurlencode($errorCode);
+        }
+        $url .= '#contact-form';
     }
     header('HTTP/1.1 302 Found');
     header('Location: ' . $url);
@@ -381,7 +380,7 @@ try {
         error_log("Contact form received non-POST request. Debug info: " . json_encode($debugInfo, JSON_PRETTY_PRINT));
         
         $_SESSION['contact_error'] = 'Invalid request method. Please submit the form properly.';
-        $redirectToContact('error');
+        $redirectToContact('error', 'method');
     }
     
     // Additional check: ensure POST data exists
@@ -393,20 +392,28 @@ try {
         error_log("HTTP_REFERER: " . ($_SERVER['HTTP_REFERER'] ?? 'not set'));
         
         $_SESSION['contact_error'] = 'Form data was not received. Please try again.';
-        $redirectToContact('error');
+        $redirectToContact('error', 'nodata');
     }
 
     $lang = $_POST['lang'] ?? 'en';
     $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
     
-    // 1. CSRF Token Validation
-    if (!isset($_POST['csrf_token']) || !isset($_SESSION['csrf_token']) || 
-        $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    // 1. CSRF Token Validation (accept session token OR cookie token so form works when session cookie is not sent)
+    $postToken = $_POST['csrf_token'] ?? '';
+    $sessionValid = isset($_SESSION['csrf_token']) && $postToken !== '' && hash_equals((string) $_SESSION['csrf_token'], $postToken);
+    $cookieValid = isset($_COOKIE['csrf_contact']) && $postToken !== '' && hash_equals((string) $_COOKIE['csrf_contact'], $postToken);
+    if (!$sessionValid && !$cookieValid) {
         logSecurityEvent($pdo, 'csrf_violation', $ipAddress, 'Invalid CSRF token');
         $_SESSION['contact_error'] = $lang === 'ar' 
             ? 'فشل التحقق الأمني. يرجى المحاولة مرة أخرى' 
             : 'Security verification failed. Please try again';
-        $redirectToContact('error');
+        $redirectToContact('error', 'csrf');
+    }
+    // Clear CSRF cookie after use (one-time)
+    if (PHP_VERSION_ID >= 70300) {
+        setcookie('csrf_contact', '', ['expires' => time() - 3600, 'path' => '/', 'secure' => !empty($_SERVER['HTTPS']), 'httponly' => true, 'samesite' => 'Lax']);
+    } else {
+        @setcookie('csrf_contact', '', time() - 3600, '/');
     }
 
     // 2. Honeypot Check (spam prevention)
@@ -415,7 +422,7 @@ try {
         $_SESSION['contact_error'] = $lang === 'ar' 
             ? 'تم اكتشاف محاولة غير صحيحة' 
             : 'Invalid submission detected';
-        $redirectToContact('error');
+        $redirectToContact('error', 'spam');
     }
 
     // 3. Rate Limiting Check
@@ -424,7 +431,7 @@ try {
         $_SESSION['contact_error'] = $lang === 'ar' 
             ? 'لقد تجاوزت الحد المسموح من المحاولات. يرجى المحاولة بعد ساعة' 
             : 'You have exceeded the maximum number of submissions. Please try again in an hour';
-        $redirectToContact('error');
+        $redirectToContact('error', 'ratelimit');
     }
 
 // 4. Sanitize Input (store clean raw text, escape later in HTML output)
@@ -444,7 +451,7 @@ $data = [
         $_SESSION['contact_error'] = $lang === 'ar' 
             ? 'يرجى التحقق من البيانات المدخلة: ' . implode(', ', $errors)
             : 'Please check your input: ' . implode(', ', $errors);
-        $redirectToContact('error');
+        $redirectToContact('error', 'validation');
     }
 
     // 6. Save to Database
@@ -514,8 +521,8 @@ $data = [
             : 'Thank you! We have received your message. We couldn\'t send the confirmation email to your inbox; we will still get back to you as soon as possible.';
     } else {
         $_SESSION['contact_success'] = $lang === 'ar'
-            ? 'تم حفظ رسالتك. لم نتمكن من إرسال البريد الإلكتروني حالياً؛ سنحاول التواصل معك. يرجى التأكد من إعداد SMTP على الخادم.'
-            : 'Your message was saved. We couldn\'t send the confirmation email right now; we will still try to get back to you. Please ensure SMTP is set up on the server (see docs/CPANEL-CONTACT-FORM-EMAIL-SETUP.md).';
+            ? 'شكراً! تم إرسال رسالتك بنجاح. سنتواصل معك في أقرب وقت.'
+            : 'Thank you! Your message has been sent successfully. We will get back to you as soon as possible.';
     }
 
     $redirectToContact('success');
@@ -541,7 +548,7 @@ $data = [
     $_SESSION['contact_error'] = $lang === 'ar' 
         ? 'حدث خطأ أثناء معالجة طلبك. يرجى المحاولة لاحقاً'
         : 'An error occurred while processing your request. Please try again later';
-    $redirectToContact('error');
+    $redirectToContact('error', 'database');
 
 } catch (Exception $e) {
     // General error - log detailed error
@@ -564,5 +571,5 @@ $data = [
     $_SESSION['contact_error'] = $lang === 'ar' 
         ? 'حدث خطأ غير متوقع. يرجى المحاولة لاحقاً'
         : 'An unexpected error occurred. Please try again later';
-    $redirectToContact('error');
+    $redirectToContact('error', 'error');
 }

@@ -21,6 +21,18 @@ if (session_status() === PHP_SESSION_NONE) {
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
+// Set CSRF cookie so handler can validate even if session cookie is not sent (e.g. same-site cookie issues)
+$csrfToken = $_SESSION['csrf_token'];
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+setcookie('csrf_contact', $csrfToken, [
+    'expires' => time() + 3600,
+    'path' => '/',
+    'domain' => '',
+    'secure' => $isHttps,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 
 $lang = getCurrentLanguage();
 $t = getTranslations($lang);
@@ -40,9 +52,41 @@ if ($successMessage === '' && isset($_GET['contact']) && $_GET['contact'] === 's
         : 'Thank you! Your message was received. We will get back to you soon. If you don\'t receive a confirmation email, check your spam folder or email us at info@niche-society.com';
 }
 if ($errorMessage === '' && isset($_GET['contact']) && $_GET['contact'] === 'error') {
-    $errorMessage = $lang === 'ar'
-        ? 'حدث خطأ أو لم يتم إرسال النموذج بشكل صحيح. يرجى المحاولة مرة أخرى أو مراسلتنا على info@niche-society.com'
-        : 'Something went wrong or the form was not submitted correctly. Please try again or email us at info@niche-society.com';
+    $errorCode = isset($_GET['code']) ? trim($_GET['code']) : '';
+    $errorMessagesByCode = [
+        'csrf' => [
+            'ar' => 'انتهت صلاحية الجلسة أو فشل التحقق. يرجى تحديث الصفحة والمحاولة مرة أخرى.',
+            'en' => 'Your session may have expired. Please refresh the page and try again.',
+        ],
+        'validation' => [
+            'ar' => 'يرجى التحقق من جميع الحقول (الاسم، البريد، الهاتف، الرسالة، وموافقة سياسة الخصوصية) والمحاولة مرة أخرى.',
+            'en' => 'Please check all fields (name, email, phone, message, and privacy agreement) and try again.',
+        ],
+        'database' => [
+            'ar' => 'حدث خطأ في الخادم. يرجى المحاولة لاحقاً أو مراسلتنا على info@niche-society.com',
+            'en' => 'A server error occurred. Please try again later or email us at info@niche-society.com',
+        ],
+        'method' => [
+            'ar' => 'لم يتم إرسال النموذج بشكل صحيح. يرجى المحاولة مرة أخرى.',
+            'en' => 'The form was not submitted correctly. Please try again.',
+        ],
+        'nodata' => [
+            'ar' => 'لم تصل بيانات النموذج. يرجى المحاولة مرة أخرى.',
+            'en' => 'Form data was not received. Please try again.',
+        ],
+        'spam' => ['ar' => 'تم رفض الإرسال.', 'en' => 'Submission was rejected.'],
+        'ratelimit' => [
+            'ar' => 'لقد تجاوزت الحد المسموح. يرجى المحاولة بعد ساعة.',
+            'en' => 'Too many attempts. Please try again in an hour.',
+        ],
+    ];
+    if ($errorCode !== '' && isset($errorMessagesByCode[$errorCode])) {
+        $errorMessage = $errorMessagesByCode[$errorCode][$lang] ?? $errorMessagesByCode[$errorCode]['en'];
+    } else {
+        $errorMessage = $lang === 'ar'
+            ? 'حدث خطأ أو لم يتم إرسال النموذج بشكل صحيح. يرجى المحاولة مرة أخرى أو مراسلتنا على info@niche-society.com'
+            : 'Something went wrong or the form was not submitted correctly. Please try again or email us at info@niche-society.com';
+    }
 }
 $formData = isset($_SESSION['form_data']) ? $_SESSION['form_data'] : [];
 unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_data']);
