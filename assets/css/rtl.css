@@ -348,10 +348,16 @@ html[lang="ar"] .faq-question {
     text-align: right;
 }
 
-/* Contact privacy checkbox - Arabic mobile */
+/* Contact privacy checkbox - Arabic: letter-spacing and clear gap from text */
 [dir="rtl"] .form-check-privacy .form-check-label,
 html[lang="ar"] .form-check-privacy .form-check-label {
     letter-spacing: 0 !important;
+    margin-inline-start: 1rem; /* extra space between checkbox and first word */
+}
+
+[dir="rtl"] .form-check-privacy,
+html[lang="ar"] .form-check-privacy {
+    gap: 1.75rem; /* clear space between checkbox and label for visibility */
 }
 
 /* ========================================

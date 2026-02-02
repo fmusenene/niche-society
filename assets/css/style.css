@@ -7252,22 +7252,23 @@ html[lang="ar"] .form-check-privacy .form-check-label {
     text-align: right;
 }
 
-/* Mobile: stack checkbox above label so it's not "in the words" */
+/* Mobile: keep checkbox on same line as label text (inline, not stacked) */
 @media (max-width: 767.98px) {
     .form-check-privacy {
-        flex-direction: column;
+        flex-direction: row;
         align-items: flex-start;
         gap: 0.5rem;
+        flex-wrap: wrap;
     }
 
     .form-check-privacy .form-check-input {
-        margin-top: 0;
-        margin-bottom: 0.25rem;
+        margin-top: 0.2rem;
+        flex-shrink: 0;
     }
 
     .form-check-privacy .form-check-label {
-        width: 100%;
-        display: block;
+        flex: 1;
+        min-width: 0;
     }
 }
 
