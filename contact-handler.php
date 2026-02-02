@@ -513,8 +513,8 @@ $data = [
     // 10. Set Success Message (so sender knows status and that auto-reply was sent)
     if ($emailSent && $autoReplySent) {
         $_SESSION['contact_success'] = $lang === 'ar'
-            ? 'شكراً لتواصلك معنا! تم استلام رسالتك وإرسال تأكيد إلى بريدك الإلكتروني. تحقق من مجلد الرسائل غير المرغوبة إن لم تجده.'
-            : 'Thank you! We have received your message and sent a confirmation to your email. Check your spam folder if you don\'t see it. We will get back to you as soon as possible.';
+            ? 'شكراً لتواصلك معنا. تم استلام رسالتك وسنتواصل معك في أقرب وقت.'
+            : 'Thank you for your message. We have received it and will get back to you as soon as possible.';
     } elseif ($emailSent) {
         $_SESSION['contact_success'] = $lang === 'ar'
             ? 'شكراً! تم استلام رسالتك. لم نتمكن من إرسال بريد التأكيد إلى صندوقك؛ سنرد عليك في أقرب وقت.'
