@@ -11,7 +11,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/functions/helpers.php';
 
 // Auto-update related news: trigger RSS aggregator if last run was over 1 hour ago.
-// News is refreshed from feeds; articles older than 7 days are removed automatically.
+// For reliable hourly updates regardless of visits, set a cron: 0 * * * * php /path/to/rss-feed-aggregator.php
 $rssLastRunFile = __DIR__ . '/logs/rss-last-run.txt';
 $rssRunInterval = 3600; // 1 hour
 if (!is_dir(__DIR__ . '/logs')) {
@@ -31,8 +31,11 @@ $lang = getCurrentLanguage();
 $t = getTranslations($lang);
 $dir = getTextDirection($lang);
 
+// Articles per page (main grid and sidebar recent list)
+$blogPostsPerPage = 9;
+
 // Pagination settings
-$postsPerPage = 9;
+$postsPerPage = $blogPostsPerPage;
 $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($currentPage - 1) * $postsPerPage;
 
@@ -99,6 +102,9 @@ $pageDescription = $lang === 'ar'
 <html lang="<?= $lang ?>" dir="<?= $dir ?>">
 <head>
     <?= getMetaTags($pageTitle, $pageDescription, getCurrentUrl()) ?>
+    <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
+    <link rel="shortcut icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
+    <link rel="apple-touch-icon" href="<?= url('assets/images/favicon.png') ?>">
     <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
     <?php if ($lang === 'ar'): ?>
     <link rel="stylesheet" href="<?= url('assets/css/rtl.css') ?>">
@@ -203,7 +209,7 @@ $pageDescription = $lang === 'ar'
                             FROM blog_posts 
                             WHERE status = 'published' AND published_at <= NOW()
                             ORDER BY published_at DESC 
-                            LIMIT 5
+                            LIMIT " . (int) $blogPostsPerPage . "
                         ");
                         $recentStmt->execute();
                         $recentPosts = $recentStmt->fetchAll(PDO::FETCH_ASSOC);

@@ -69,17 +69,19 @@ function fetchRSSFeed($url) {
         ]
     ]);
     
-    // Try simplexml_load_file() first (simpler approach as suggested)
-    $feed = @simplexml_load_file($url, 'SimpleXMLElement', LIBXML_NOCDATA, $context);
-    
-    if ($feed !== false) {
-        $itemCount = isset($feed->channel->item) ? count($feed->channel->item) : 0;
-        logMessage("Successfully fetched RSS feed using simplexml_load_file(): {$url} ({$itemCount} items)");
-        libxml_clear_errors();
-        return $feed;
+    // Fetch with context (User-Agent etc.), then parse — simplexml_load_file() does not accept context in PHP 8+
+    $xml = @file_get_contents($url, false, $context);
+    if ($xml !== false && $xml !== '') {
+        $feed = @simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
+        if ($feed !== false) {
+            $itemCount = isset($feed->channel->item) ? count($feed->channel->item) : 0;
+            logMessage("Successfully fetched RSS feed: {$url} ({$itemCount} items)");
+            libxml_clear_errors();
+            return $feed;
+        }
     }
     
-    // If simplexml_load_file() fails, fall back to cURL (for feeds requiring custom headers)
+    // If that fails, fall back to cURL (for feeds requiring custom headers)
     libxml_clear_errors();
     logMessage("simplexml_load_file() failed, trying cURL method for: {$url}");
     
@@ -707,12 +709,13 @@ $feeds = [
     ],
 ];
 
-// Clean up old aggregated articles (keep last 7 days so blog has content)
-logMessage("Cleaning up old articles (keeping last 7 days)...");
-$deleteStmt = $pdo->prepare("DELETE FROM blog_posts WHERE tags LIKE 'source_url:%' AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)");
-$deleteStmt->execute();
+// Clean up old aggregated articles (keep last 14 days so blog has more content)
+$retentionDays = 14;
+logMessage("Cleaning up old articles (keeping last {$retentionDays} days)...");
+$deleteStmt = $pdo->prepare("DELETE FROM blog_posts WHERE tags LIKE 'source_url:%' AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY)");
+$deleteStmt->execute([$retentionDays]);
 $deletedCount = $deleteStmt->rowCount();
-logMessage("Deleted {$deletedCount} old articles (older than 7 days)");
+logMessage("Deleted {$deletedCount} old articles (older than {$retentionDays} days)");
 
 // Sort feeds by priority (Middle East first)
 usort($feeds, function($a, $b) {
@@ -727,10 +730,14 @@ $feedsProcessed = 0;
 $middleEastSaved = 0;
 $internationalSaved = 0;
 
+// Per-feed limit: max new articles to process per feed each run (more = more blog news; filtered by relevance)
+$limitMiddleEast = 25;
+$limitInternational = 15;
+
 foreach ($feeds as $feedConfig) {
     try {
         $region = $feedConfig['region'] ?? 'international';
-        $limit = ($region === 'middle_east') ? 10 : 5; // Get more from Middle East
+        $limit = ($region === 'middle_east') ? $limitMiddleEast : $limitInternational;
         $skipOnError = $feedConfig['skip_on_error'] ?? false;
         
         $saved = processFeed($feedConfig['url'], $feedConfig['source'], $feedConfig['category'], $pdo, $limit, $region, $skipOnError);
@@ -760,7 +767,7 @@ logMessage("International articles saved: {$internationalSaved}");
 logMessage("Total new articles saved: {$totalSaved}");
 logMessage("Old articles deleted: {$deletedCount}");
 logMessage("Note: Articles are filtered to Niche Society profile only: luxury/property/estate management, event management, protocol/etiquette, concierge/VIP, hospitality.");
-logMessage("Note: Middle East articles are prioritized. Articles older than 7 days are automatically removed.");
+logMessage("Note: Middle East articles are prioritized. Aggregated articles older than {$retentionDays} days are automatically removed.");
 
 // Output summary
 echo PHP_EOL . "=== RSS Feed Aggregator Summary ===" . PHP_EOL;

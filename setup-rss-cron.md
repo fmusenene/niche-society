@@ -38,18 +38,20 @@ C:\xampp\php\php.exe rss-feed-aggregator.php
 exit
 ```
 
-### Step 2: Schedule the Task
+### Step 2: Schedule the Task (every hour)
 
 1. Open **Task Scheduler** (search "Task Scheduler" in Windows)
 2. Click **Create Basic Task** on the right
 3. Name: "Niche Society RSS Aggregator"
-4. Description: "Automatically fetch and publish blog articles from RSS feeds"
-5. Trigger: **Daily** 
-6. Time: Choose a time (e.g., every hour, or 6:00 AM and 6:00 PM for twice daily)
-   - For hourly: Create multiple triggers or use Task Scheduler's "Repeat task" option
+4. Description: "Fetch blog news from RSS feeds every hour"
+5. Trigger: **Daily**
+6. Start: today, **Repeat task every: 1 hour**, for a duration of **Indefinitely**
 7. Action: **Start a program**
-8. Program/script: `C:\xampp\htdocs\niche-society-main\run-rss-aggregator.bat`
-9. Click **Finish**
+8. Program/script: `C:\xampp\htdocs\niche-society\run-rss-aggregator.bat`
+9. Start in (optional): `C:\xampp\htdocs\niche-society`
+10. Click **Finish**
+
+To set "Repeat task every 1 hour": after choosing Daily and time, check **Open the Properties dialog when I click Finish**, then in the task Properties → Triggers tab → Edit the Daily trigger → check **Repeat task every: 1 hour** and set **for a duration of: Indefinitely**.
 
 ### Step 3: Verify
 

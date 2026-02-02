@@ -128,15 +128,15 @@ if ($isContentShort && $sourceUrl) {
     }
 }
 
-// Get related posts (same category, excluding current post)
+// Get related posts (prefer same category, then recent; 9 articles, refreshed hourly via RSS)
 $relatedStmt = $pdo->prepare("
     SELECT slug, {$titleCol} as title, {$excerptCol} as excerpt, featured_image, published_at
     FROM blog_posts 
-    WHERE category = ? AND slug != ? AND status = 'published'
-    ORDER BY published_at DESC
-    LIMIT 3
+    WHERE status = 'published' AND published_at <= NOW() AND slug != ?
+    ORDER BY (category = ?) DESC, published_at DESC
+    LIMIT 9
 ");
-$relatedStmt->execute([$post['category'] ?? '', $slug]);
+$relatedStmt->execute([$slug, $post['category'] ?? '']);
 $relatedPosts = $relatedStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Fix image URL
@@ -151,6 +151,9 @@ $pageDescription = htmlspecialchars($post['excerpt']);
 <html lang="<?= $lang ?>" dir="<?= $dir ?>">
 <head>
     <?= getMetaTags($pageTitle, $pageDescription, getCurrentUrl()) ?>
+    <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
+    <link rel="shortcut icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
+    <link rel="apple-touch-icon" href="<?= url('assets/images/favicon.png') ?>">
     <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
     <?php if ($lang === 'ar'): ?>
     <link rel="stylesheet" href="<?= url('assets/css/rtl.css') ?>">
@@ -388,7 +391,7 @@ $pageDescription = htmlspecialchars($post['excerpt']);
                                 FROM blog_posts 
                                 WHERE status = 'published' AND published_at <= NOW() AND slug != ?
                                 ORDER BY published_at DESC 
-                                LIMIT 5
+                                LIMIT 9
                             ");
                             $recentStmt->execute([$slug]);
                             $recentPosts = $recentStmt->fetchAll(PDO::FETCH_ASSOC);

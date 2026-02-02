@@ -24,6 +24,9 @@ $pageDescription = $lang === 'ar'
 <html lang="<?= $lang ?>" dir="<?= $dir ?>">
 <head>
     <?= getMetaTags($pageTitle, $pageDescription, getCurrentUrl()) ?>
+    <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
+    <link rel="shortcut icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
+    <link rel="apple-touch-icon" href="<?= url('assets/images/favicon.png') ?>">
     <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
     <?php if ($lang === 'ar'): ?>
     <link rel="stylesheet" href="<?= url('assets/css/rtl.css') ?>">
