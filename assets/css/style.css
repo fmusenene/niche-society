@@ -7929,6 +7929,8 @@ ul.category-list li a.active .count {
     margin-bottom: 1rem;
     font-size: 0.85rem;
     color: #999;
+    white-space: nowrap;
+    flex-wrap: nowrap;
 }
 
 .blog-card-meta span {
@@ -7942,12 +7944,19 @@ ul.category-list li a.active .count {
     font-weight: 600;
     margin-bottom: 1rem;
     line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .blog-card-title a {
+    display: block;
     color: #602234;
     text-decoration: none;
     transition: color 0.3s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .blog-card-title a:hover {
@@ -8045,9 +8054,13 @@ ul.category-list li a.active .count {
 }
 
 .blog-card-horizontal .blog-card-title a {
+    display: block;
     color: #602234;
     text-decoration: none;
     transition: color 0.3s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .blog-card-horizontal .blog-card-title a:hover {
@@ -8470,7 +8483,9 @@ ul.category-list li a.active .count {
         font-size: 1.2rem;
     }
 
-    .blog-card-meta {
+    /* On mobile, only stack meta for horizontal cards.
+       Vertical cards keep author/category on a single line. */
+    .blog-card-horizontal .blog-card-meta {
         flex-direction: column;
         gap: 0.5rem;
     }
@@ -8486,19 +8501,63 @@ ul.category-list li a.active .count {
 }
 
 /* ============================================
-   BLOG GRID LAYOUT (3 COLUMNS)
+   BLOG GRID LAYOUT (3 PER ROW — RESPONSIVE, FILLS PAGE)
    ============================================ */
+/* Minimal space below articles — no empty gap; page ends at content or Newsletter */
+.blog-main-section {
+    padding-bottom: 1rem !important;
+}
+
+.blog-main-section .blog-posts-grid {
+    margin-bottom: 1rem;
+}
+
+.blog-pagination-nav {
+    margin-top: 1rem !important;
+    margin-bottom: 0 !important;
+}
+
 .blog-posts-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    margin-bottom: 3rem;
+    gap: 1.75rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 100%;
 }
 
 @media (max-width: 1199px) {
     .blog-posts-grid {
         gap: 1.5rem;
     }
+}
+
+@media (max-width: 991px) {
+    .blog-posts-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .blog-posts-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+}
+
+/* Columns only as tall as their content — no empty space below pagination */
+.blog-layout-row {
+    align-items: flex-start;
+}
+
+/* Newsletter signup form (blog + anywhere) */
+.newsletter-signup-form .form-control {
+    min-width: 0;
+    max-width: 100%;
+}
+.newsletter-signup-form .form-control::placeholder {
+    color: #6c757d;
 }
 
 .blog-card-vertical {
@@ -8510,6 +8569,7 @@ ul.category-list li a.active .count {
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: 0;
 }
 
 .blog-card-vertical:hover {
@@ -8570,12 +8630,19 @@ ul.category-list li a.active .count {
     font-weight: 700; /* Bolder as shown in design */
     line-height: 1.4;
     color: #000; /* Dark text as in design */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .blog-card-title a {
+    display: block;
     color: #000; /* Dark text as shown in design */
     text-decoration: none;
     transition: color 0.3s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .blog-card-title a:hover {
@@ -8590,6 +8657,8 @@ ul.category-list li a.active .count {
     margin-bottom: 1rem;
     font-size: 0.9rem;
     color: #333; /* Darker text for better readability */
+    white-space: nowrap;
+    flex-wrap: nowrap;
 }
 
 .blog-card-meta .author {
@@ -8604,6 +8673,7 @@ ul.category-list li a.active .count {
 .blog-card-meta .category {
     color: #333; /* Dark text as shown in design */
     font-weight: 400;
+    white-space: nowrap;
 }
 
 .blog-card-excerpt {
@@ -8647,20 +8717,6 @@ ul.category-list li a.active .count {
 
 [dir="rtl"] .blog-read-more-link:hover i {
     transform: translateX(-5px);
-}
-
-@media (max-width: 991px) {
-    .blog-posts-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-}
-
-@media (max-width: 767px) {
-    .blog-posts-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
 }
 
 /* ============================================

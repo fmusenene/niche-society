@@ -31,8 +31,24 @@ $lang = getCurrentLanguage();
 $t = getTranslations($lang);
 $dir = getTextDirection($lang);
 
-// Articles per page (main grid and sidebar recent list)
-$blogPostsPerPage = 9;
+// Newsletter form CSRF token (so handler can validate)
+if (!isset($_SESSION['csrf_newsletter'])) {
+    $_SESSION['csrf_newsletter'] = bin2hex(random_bytes(32));
+}
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+setcookie('csrf_newsletter', $_SESSION['csrf_newsletter'], [
+    'expires' => time() + 3600,
+    'path' => '/',
+    'secure' => $isHttps,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
+// Articles per page (main grid) — 3 per row × 8 rows = 24 to fill the page with news
+$blogPostsPerPage = 24;
+// Sidebar "Recent Posts" — fixed at 16 so the sidebar isn't too long
+$sidebarRecentPostsLimit = 16;
 
 // Pagination settings
 $postsPerPage = $blogPostsPerPage;
@@ -80,9 +96,7 @@ $postsStmt = $pdo->prepare("
            featured_image, category, published_at, views as views_count, tags
     FROM blog_posts 
     WHERE {$whereSQL}
-    ORDER BY 
-        CASE WHEN tags LIKE '%region:middle_east%' THEN 0 ELSE 1 END,
-        published_at DESC
+    ORDER BY published_at DESC
     LIMIT {$postsPerPage} OFFSET {$offset}
 ");
 $postsStmt->execute($params);
@@ -101,6 +115,7 @@ $pageDescription = $lang === 'ar'
 <!DOCTYPE html>
 <html lang="<?= $lang ?>" dir="<?= $dir ?>">
 <head>
+    <!-- blog 12-per-page (deploy marker: if you see this in View Source, latest code is live) -->
     <?= getMetaTags($pageTitle, $pageDescription, getCurrentUrl()) ?>
     <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
     <link rel="shortcut icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
@@ -163,9 +178,9 @@ $pageDescription = $lang === 'ar'
     <!-- Main Content -->
     <section class="section">
         <div class="container">
-            <div class="row">
-                <!-- Sidebar -->
-                <div class="col-lg-3 mb-5 mb-lg-0" data-aos="fade-right">
+            <div class="row blog-layout-row">
+                <!-- Sidebar: stretches to match grid height -->
+                <div class="col-lg-3 mb-5 mb-lg-0 blog-sidebar-col" data-aos="fade-right">
                     <!-- Categories -->
                     <div class="sidebar-widget">
                         <h3 class="widget-title"><?= $lang === 'ar' ? 'التصنيفات' : 'Categories' ?></h3>
@@ -209,7 +224,7 @@ $pageDescription = $lang === 'ar'
                             FROM blog_posts 
                             WHERE status = 'published' AND published_at <= NOW()
                             ORDER BY published_at DESC 
-                            LIMIT " . (int) $blogPostsPerPage . "
+                            LIMIT " . (int) $sidebarRecentPostsLimit . "
                         ");
                         $recentStmt->execute();
                         $recentPosts = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -348,7 +363,7 @@ $pageDescription = $lang === 'ar'
 
                     <!-- Pagination -->
                     <?php if ($totalPages > 1): ?>
-                    <nav aria-label="Page navigation" class="mt-5">
+                    <nav aria-label="Page navigation" class="blog-pagination-nav">
                         <ul class="pagination justify-content-center">
                             <!-- Previous -->
                             <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
@@ -399,24 +414,56 @@ $pageDescription = $lang === 'ar'
         </div>
     </section>
 
-    <!-- Newsletter CTA -->
-    <section class="section bg-cream">
+    <!-- Newsletter signup (functional: saves to newsletter_subscribers) -->
+    <section class="section bg-cream" id="newsletter-section">
         <div class="container">
+            <?php
+            $newsletterMsg = isset($_GET['newsletter']) ? $_GET['newsletter'] : '';
+            $newsletterCode = isset($_GET['code']) ? $_GET['code'] : '';
+            if ($newsletterMsg === 'success'): ?>
+                <div class="alert alert-success text-center" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <?= $lang === 'ar' ? 'شكراً! تم تسجيل بريدك بنجاح. سنرسل لك آخر الأخبار والمقالات.' : 'Thank you! You’re subscribed. We’ll send you the latest news and articles.' ?>
+                </div>
+            <?php elseif ($newsletterMsg === 'already'): ?>
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <?= $lang === 'ar' ? 'هذا البريد مسجّل مسبقاً في قائمتنا.' : 'This email is already on our list.' ?>
+                </div>
+            <?php elseif ($newsletterMsg === 'error'): ?>
+                <div class="alert alert-danger text-center" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <?php
+                    if ($newsletterCode === 'invalid_email') {
+                        echo $lang === 'ar' ? 'يرجى إدخال بريد إلكتروني صحيح.' : 'Please enter a valid email address.';
+                    } elseif ($newsletterCode === 'csrf') {
+                        echo $lang === 'ar' ? 'انتهت صلاحية الجلسة. يرجى تحديث الصفحة والمحاولة مرة أخرى.' : 'Session expired. Please refresh and try again.';
+                    } else {
+                        echo $lang === 'ar' ? 'حدث خطأ. يرجى المحاولة لاحقاً.' : 'Something went wrong. Please try again later.';
+                    }
+                    ?>
+                </div>
+            <?php endif; ?>
             <div class="row align-items-center">
-                <div class="col-lg-8 mb-4 mb-lg-0 text-center text-lg-start" data-aos="fade-right">
+                <div class="col-lg-7 mb-4 mb-lg-0 text-center text-lg-start" data-aos="fade-right">
                     <h2><?= $lang === 'ar' ? 'اشترك في النشرة الإخبارية' : 'Subscribe to Our Newsletter' ?></h2>
-                    <p class="lead-text">
+                    <p class="lead-text mb-0">
                         <?= $lang === 'ar'
                             ? 'احصل على آخر الأخبار والمقالات مباشرة إلى بريدك الإلكتروني'
                             : 'Get the latest news and articles directly to your inbox'
                         ?>
                     </p>
                 </div>
-                <div class="col-lg-4 text-center text-lg-end" data-aos="fade-left">
-                    <a href="<?= url('contact.php') ?>" class="btn btn-primary btn-lg">
-                        <?= $lang === 'ar' ? 'اشترك الآن' : 'Subscribe Now' ?>
-                        <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?>"></i>
-                    </a>
+                <div class="col-lg-5" data-aos="fade-left">
+                    <form method="post" action="<?= url('newsletter-subscribe.php') ?>" class="newsletter-signup-form d-flex flex-column flex-sm-row gap-2 align-items-stretch align-items-sm-center">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_newsletter']) ?>">
+                        <input type="hidden" name="source" value="blog">
+                        <input type="email" name="email" class="form-control" placeholder="<?= $lang === 'ar' ? 'بريدك الإلكتروني' : 'Your email address' ?>" required aria-label="Email">
+                        <button type="submit" class="btn btn-primary btn-lg flex-shrink-0">
+                            <?= $lang === 'ar' ? 'اشترك' : 'Subscribe' ?>
+                            <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?> ms-1"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

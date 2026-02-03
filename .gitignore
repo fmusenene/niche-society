@@ -2,6 +2,7 @@
 config/config.php
 config/database.php
 config/email.php
+config/mailchimp.php
 
 # Logs
 logs/*.log
