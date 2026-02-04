@@ -59,6 +59,9 @@ define('SITE_DESCRIPTION_EN', 'Niche Society - Exceptional Management Solutions'
 define('SITE_KEYWORDS_AR', 'إدارة، تنظيم، خدمات فاخرة، نيش سوسايتي');
 define('SITE_KEYWORDS_EN', 'management, organization, luxury services, niche society');
 
+// Google Translate API (for blog Arabic translations – get key from Google Cloud Console)
+define('TRANSLATE_API_KEY', ''); // e.g. AIza... Leave empty if not using; then run backfill-blog-arabic.php?run=1
+
 // Google Analytics (optional)
 define('GA_TRACKING_ID', ''); // Add your GA tracking ID
 

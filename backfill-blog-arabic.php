@@ -1,24 +1,33 @@
 <?php
 /**
- * One-time script to translate existing RSS blog articles into Arabic.
+ * One-time script to translate ALL published blog articles into Arabic.
  *
- * - Uses the same TRANSLATE_API_KEY-based translation logic as rss-feed-aggregator.php
- * - Updates title_ar, excerpt_ar, content_ar for aggregated posts (tags LIKE 'source_url:%')
- * - Safe to run multiple times; it skips rows that already have different Arabic text
+ * - Uses TRANSLATE_API_KEY in config/config.php (Google Cloud Translate API)
+ * - Updates title_ar, excerpt_ar, content_ar for every published post that needs it
+ * - Safe to run multiple times; skips rows that already have proper Arabic
  *
  * HOW TO RUN (browser):
- *   1) Make sure TRANSLATE_API_KEY is defined in config/config.php
+ *   1) In config/config.php set: define('TRANSLATE_API_KEY', 'your-google-api-key');
  *   2) Visit: https://yourdomain.com/backfill-blog-arabic.php?run=1
  *
  * HOW TO RUN (CLI):
  *   php backfill-blog-arabic.php
  *
- * IMPORTANT:
- * - After running successfully once, you can delete this file from the server.
+ * After running, switch the site to Arabic to see titles/excerpts/content in Arabic.
  */
 
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/database.php';
+
+// Require API key so we don't overwrite with English
+if (!defined('TRANSLATE_API_KEY') || trim((string)TRANSLATE_API_KEY) === '' || trim((string)TRANSLATE_API_KEY) === 'YOUR_GOOGLE_TRANSLATE_API_KEY_HERE') {
+    if (php_sapi_name() === 'cli') {
+        echo "ERROR: Set TRANSLATE_API_KEY in config/config.php first, then run this script again.\n";
+    } else {
+        echo "<p><strong>ERROR:</strong> Set TRANSLATE_API_KEY in config/config.php first, then run this script again.</p>";
+    }
+    exit(1);
+}
 
 // Simple gate: require CLI or ?run=1
 if (php_sapi_name() !== 'cli') {
@@ -109,12 +118,11 @@ global $pdo;
 
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Select aggregated posts (from RSS) that still have English-only Arabic fields
+// Select ALL published posts that need Arabic (not only RSS; include every post)
 $sql = "
     SELECT id, title_en, excerpt_en, content_en, title_ar, excerpt_ar, content_ar
     FROM blog_posts
-    WHERE tags LIKE 'source_url:%'
-      AND status = 'published'
+    WHERE status = 'published'
 ";
 
 $stmt = $pdo->prepare($sql);
@@ -147,6 +155,11 @@ foreach ($rows as $row) {
     $newTitleAr   = $needsTitle   ? backfillTranslateContent($titleEn, 'ar')   : $titleAr;
     $newExcerptAr = $needsExcerpt ? backfillTranslateContent($excerptEn, 'ar') : $excerptAr;
     $newContentAr = $needsContent ? backfillTranslateContent($contentEn, 'ar') : $contentAr;
+
+    // Don't overwrite with English if API failed (returned original text)
+    if ($needsTitle   && trim($newTitleAr) === trim($titleEn)) $newTitleAr   = $titleAr;
+    if ($needsExcerpt && trim($newExcerptAr) === trim($excerptEn)) $newExcerptAr = $excerptAr;
+    if ($needsContent && trim($newContentAr) === trim($contentEn)) $newContentAr = $contentAr;
 
     $updateStmt = $pdo->prepare("
         UPDATE blog_posts

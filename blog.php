@@ -87,14 +87,13 @@ $countStmt->execute($params);
 $totalPosts = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
 $totalPages = ceil($totalPosts / $postsPerPage);
 
-// Get posts
+// Get posts (when Arabic, also fetch _en so we can use as fallback if _ar is empty)
 $titleCol = $lang === 'ar' ? 'title_ar' : 'title_en';
 $excerptCol = $lang === 'ar' ? 'excerpt_ar' : 'excerpt_en';
-
 $postsStmt = $pdo->prepare("
-    SELECT id, slug, {$titleCol} as title, {$excerptCol} as excerpt, 
-           featured_image, category, published_at, views as views_count, tags
-    FROM blog_posts 
+    SELECT id, slug, {$titleCol} as title, {$excerptCol} as excerpt,
+           title_en, excerpt_en, featured_image, category, published_at, views as views_count, tags
+    FROM blog_posts
     WHERE {$whereSQL}
     ORDER BY published_at DESC
     LIMIT {$postsPerPage} OFFSET {$offset}
@@ -236,7 +235,7 @@ $pageDescription = $lang === 'ar'
                                     <?= htmlspecialchars($recent['title']) ?>
                                 </a>
                                 <span class="post-date">
-                                    <?= date('M d, Y', strtotime($recent['published_at'])) ?>
+                                    <?= $lang === 'ar' ? formatDate($recent['published_at']) : date('M d, Y', strtotime($recent['published_at'])) ?>
                                 </span>
                             </li>
                             <?php endforeach; ?>
@@ -313,14 +312,23 @@ $pageDescription = $lang === 'ar'
                                 }
                             }
                             
-                            // Format date for tag (e.g., "DECEMBER 12")
-                            $dateTag = strtoupper(date('F d', strtotime($post['published_at'])));
-                            
-                            // Get author name from tags if available, otherwise use default
+                            // Date and author in current language
+                            $dateTag = formatBlogDateTag($post['published_at'], $lang);
                             $authorName = 'Niche Society';
                             if (!empty($post['tags']) && preg_match('/author:([^\s]+)/', $post['tags'], $matches)) {
                                 $authorName = $matches[1];
                             }
+                            $authorName = translateAuthorForDisplay($authorName, $lang);
+                            // When Arabic, use title/excerpt; if empty or same as English, show English as fallback
+                            $displayTitle = $post['title'];
+                            $displayExcerpt = $post['excerpt'];
+                            if ($lang === 'ar' && (trim($displayTitle) === '' || trim($displayTitle) === trim($post['title_en'] ?? ''))) {
+                                $displayTitle = $post['title_en'] ?? $displayTitle;
+                            }
+                            if ($lang === 'ar' && (trim($displayExcerpt) === '' || trim($displayExcerpt) === trim($post['excerpt_en'] ?? ''))) {
+                                $displayExcerpt = $post['excerpt_en'] ?? $displayExcerpt;
+                            }
+                            $displayCategory = translateCategoryForDisplay($post['category'] ?? '', $lang);
                         ?>
                         <article class="blog-card-vertical" data-aos="fade-up">
                                 <div class="blog-card-image-wrapper">
@@ -333,24 +341,24 @@ $pageDescription = $lang === 'ar'
                                              style="width: 100%; height: 100%; object-fit: cover;">
                                     </a>
                                     <div class="blog-date-tag">
-                                        <?= $dateTag ?>
+                                        <?= htmlspecialchars($dateTag) ?>
                                     </div>
                                 </div>
                                 <div class="blog-card-content">
                                     <h3 class="blog-card-title">
                                         <a href="<?= $articleUrl ?>">
-                                            <?= htmlspecialchars($post['title']) ?>
+                                            <?= htmlspecialchars($displayTitle) ?>
                                         </a>
                                     </h3>
                                     <div class="blog-card-meta">
                                         <span class="author"><?= htmlspecialchars($authorName) ?></span>
-                                        <?php if ($post['category']): ?>
+                                        <?php if ($displayCategory !== ''): ?>
                                         <span class="separator">/</span>
-                                        <span class="category"><?= htmlspecialchars($post['category']) ?></span>
+                                        <span class="category"><?= htmlspecialchars($displayCategory) ?></span>
                                         <?php endif; ?>
                                     </div>
                                     <p class="blog-card-excerpt">
-                                        <?= htmlspecialchars($post['excerpt']) ?>
+                                        <?= htmlspecialchars($displayExcerpt) ?>
                                     </p>
                                     <a href="<?= $articleUrl ?>" class="blog-read-more-link">
                                         <?= $lang === 'ar' ? 'اقرأ المزيد' : 'Read More' ?>

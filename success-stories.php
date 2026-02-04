@@ -111,12 +111,41 @@ $pageDescription = $lang === 'ar'
         </div>
     </section>
 
+    <!-- Share Your Story bar (visible immediately below hero) -->
+    <section class="success-stories-share-bar">
+        <div class="container">
+            <div class="share-bar-inner">
+                <span class="share-bar-text">
+                    <i class="bi bi-chat-quote-fill"></i>
+                    <?= $lang === 'ar' ? 'لديك قصة نجاح؟ شاركها معنا' : 'Have a success story? Share it with us' ?>
+                </span>
+                <a href="<?= url('success-story-submit.php') ?>" class="btn btn-primary share-bar-btn">
+                    <?= $lang === 'ar' ? 'شارك الآن' : 'Share now' ?>
+                    <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?>"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Main Content -->
     <section class="section">
         <div class="container">
             <div class="row">
                 <!-- Sidebar -->
                 <div class="col-lg-3 mb-5 mb-lg-0" data-aos="fade-right">
+                    <!-- Share Your Story (top of sidebar for visibility) -->
+                    <div class="sidebar-widget sidebar-share-story">
+                        <div class="share-story-card">
+                            <i class="bi bi-pencil-square share-story-icon"></i>
+                            <h3 class="share-story-title"><?= $lang === 'ar' ? 'شارك قصتك' : 'Share Your Story' ?></h3>
+                            <p class="share-story-desc"><?= $lang === 'ar' ? 'ساعد الآخرين بقراءة تجربتك مع خدماتنا.' : 'Help others by sharing your experience with our services.' ?></p>
+                            <a href="<?= url('success-story-submit.php') ?>" class="btn btn-primary w-100">
+                                <i class="bi bi-plus-lg"></i>
+                                <?= $lang === 'ar' ? 'أضف قصتك' : 'Add your story' ?>
+                            </a>
+                        </div>
+                    </div>
+
                     <!-- Service Filter -->
                     <div class="sidebar-widget">
                         <h3 class="widget-title"><?= $lang === 'ar' ? 'الخدمات' : 'Services' ?></h3>
@@ -329,28 +358,24 @@ $pageDescription = $lang === 'ar'
         </div>
     </section>
 
-    <!-- CTA Section -->
+    <?php if (isset($_GET['submitted']) && $_GET['submitted'] === '1'): ?>
     <section class="section bg-cream">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8 mb-4 mb-lg-0 text-center text-lg-start" data-aos="fade-right">
-                    <h2><?= $lang === 'ar' ? 'شاركنا قصتك' : 'Share Your Story' ?></h2>
-                    <p class="lead-text">
-                        <?= $lang === 'ar'
-                            ? 'هل لديك قصة نجاح تود مشاركتها؟ تواصل معنا'
-                            : 'Do you have a success story to share? Contact us'
-                        ?>
-                    </p>
-                </div>
-                <div class="col-lg-4 text-center text-lg-end" data-aos="fade-left">
-                    <a href="<?= url('contact.php') ?>" class="btn btn-primary btn-lg">
-                        <?= $lang === 'ar' ? 'تواصل معنا' : 'Contact Us' ?>
-                        <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?>"></i>
-                    </a>
-                </div>
+            <div class="alert alert-success text-center">
+                <?= $lang === 'ar'
+                    ? 'شكراً! تم استلام قصتك ونشرها على الموقع.'
+                    : 'Thank you! Your story has been received and published on the site.'
+                ?>
             </div>
         </div>
     </section>
+    <?php endif; ?>
+
+    <!-- Floating Share Your Story button (visible on scroll) -->
+    <a href="<?= url('success-story-submit.php') ?>" class="success-stories-fab" id="successStoriesFab" aria-label="<?= $lang === 'ar' ? 'شارك قصتك' : 'Share your story' ?>">
+        <i class="bi bi-pencil-square"></i>
+        <span class="success-stories-fab-label"><?= $lang === 'ar' ? 'شارك قصتك' : 'Share your story' ?></span>
+    </a>
 
     <?php include __DIR__ . '/includes/footer.php'; ?>
 
@@ -362,6 +387,18 @@ $pageDescription = $lang === 'ar'
             once: true,
             offset: 100
         });
+        // Show floating Share Your Story button after user scrolls past hero
+        (function () {
+            var fab = document.getElementById('successStoriesFab');
+            if (!fab) return;
+            var threshold = 400;
+            function updateFab() {
+                if (window.pageYOffset > threshold) fab.classList.add('visible');
+                else fab.classList.remove('visible');
+            }
+            window.addEventListener('scroll', function () { requestAnimationFrame(updateFab); }, { passive: true });
+            updateFab();
+        })();
     </script>
     <script src="<?= url('assets/js/main.js') ?>"></script>
 </body>

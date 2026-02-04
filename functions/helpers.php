@@ -261,6 +261,63 @@ function formatDate($date, $format = 'Y-m-d') {
 }
 
 /**
+ * Format blog card date tag (e.g. "DECEMBER 17" or "١٧ ديسمبر") for current language
+ */
+function formatBlogDateTag($dateString, $lang = null) {
+    $lang = $lang ?? getCurrentLang();
+    $timestamp = strtotime($dateString);
+    if ($lang === 'ar') {
+        $months_ar = [
+            1 => 'يناير', 2 => 'فبراير', 3 => 'مارس', 4 => 'أبريل',
+            5 => 'مايو', 6 => 'يونيو', 7 => 'يوليو', 8 => 'أغسطس',
+            9 => 'سبتمبر', 10 => 'أكتوبر', 11 => 'نوفمبر', 12 => 'ديسمبر'
+        ];
+        $day = (int) date('j', $timestamp);
+        $month = $months_ar[(int) date('n', $timestamp)];
+        return $day . ' ' . $month;
+    }
+    return strtoupper(date('F j', $timestamp));
+}
+
+/**
+ * Return category label in Arabic when lang is ar (known categories only)
+ */
+function translateCategoryForDisplay($category, $lang = null) {
+    if (($lang ?? getCurrentLang()) !== 'ar' || trim((string)$category) === '') {
+        return $category;
+    }
+    $map = [
+        'Estate Management' => 'إدارة العقارات',
+        'Niche Society' => 'نيش سوسيتي',
+        'Middle East' => 'الشرق الأوسط',
+        'Protocol and Etiquette' => 'البروتوكول والآداب',
+        'Household Management' => 'إدارة المنزل',
+        'Event Management' => 'إدارة الفعاليات',
+        'Property Management' => 'إدارة العقارات',
+        'Luxury' => 'الفاخرة',
+        'Concierge' => 'الكونسيرج',
+    ];
+    $out = [];
+    foreach (array_map('trim', explode('/', (string)$category)) as $part) {
+        $out[] = $map[$part] ?? $part;
+    }
+    return implode(' / ', $out);
+}
+
+/**
+ * Return author name in Arabic when lang is ar (e.g. Niche Society -> نيش سوسيتي)
+ */
+function translateAuthorForDisplay($authorName, $lang = null) {
+    if (($lang ?? getCurrentLang()) !== 'ar') {
+        return $authorName;
+    }
+    if (stripos((string)$authorName, 'Niche Society') !== false) {
+        return 'نيش سوسيتي';
+    }
+    return $authorName;
+}
+
+/**
  * Send email
  */
 function sendEmail($to, $subject, $message, $from = CONTACT_EMAIL) {
