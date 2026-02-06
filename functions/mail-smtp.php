@@ -141,12 +141,16 @@ function sendMailSMTP($to, $subject, $bodyHtml, $fromEmail, $fromName, $replyTo 
         return false;
     }
 
+    $messageId = '<' . bin2hex(random_bytes(16)) . '@' . (defined('SMTP_HOST') ? SMTP_HOST : 'localhost') . '>';
     $headers = [
-        'MIME-Version: 1.0',
-        'Content-Type: text/html; charset=utf-8',
+        'Date: ' . date('r'),
+        'To: ' . $to,
         'From: ' . ($fromName ? "\"{$fromName}\" <{$fromEmail}>" : $fromEmail),
         'Reply-To: ' . $replyTo,
         'Subject: ' . $subject,
+        'Message-ID: ' . $messageId,
+        'MIME-Version: 1.0',
+        'Content-Type: text/html; charset=utf-8',
         'X-Mailer: PHP/' . phpversion(),
     ];
     $data = implode("\r\n", $headers) . "\r\n\r\n" . $bodyHtml . "\r\n.";
