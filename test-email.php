@@ -1,112 +1,75 @@
 <?php
 /**
- * Email Diagnostic Test Script
- * Tests if emails can be sent to info@niche-society.com
+ * Email Delivery Test Script
+ * Upload to production, run once via browser, then DELETE this file.
+ * URL: https://niche-society.com/test-email.php?key=niche2026test
  */
 
+$key = $_GET['key'] ?? '';
+if ($key !== 'niche2026test') {
+    http_response_code(403);
+    die('Access denied. Use ?key=niche2026test');
+}
+
 require_once __DIR__ . '/config/config.php';
+require_once __DIR__ . '/config/database.php';
 
-// Test email configuration
-echo "<h2>Email Configuration Test</h2>";
-echo "<pre>";
+if (file_exists(__DIR__ . '/config/email.php')) {
+    require_once __DIR__ . '/config/email.php';
+}
+if (defined('SMTP_ENABLED') && SMTP_ENABLED && file_exists(__DIR__ . '/functions/mail-smtp.php')) {
+    require_once __DIR__ . '/functions/mail-smtp.php';
+}
 
+header('Content-Type: text/plain; charset=utf-8');
+
+echo "=== Niche Society Email Test ===\n";
+echo "Time: " . date('Y-m-d H:i:s') . "\n";
+echo "PHP: " . phpversion() . "\n\n";
+
+echo "--- Configuration ---\n";
+echo "SMTP_ENABLED: " . (defined('SMTP_ENABLED') && SMTP_ENABLED ? 'YES' : 'NO') . "\n";
+echo "SMTP_HOST: " . (defined('SMTP_HOST') ? SMTP_HOST : 'NOT SET') . "\n";
+echo "SMTP_PORT: " . (defined('SMTP_PORT') ? SMTP_PORT : 'NOT SET') . "\n";
+echo "SMTP_USERNAME: " . (defined('SMTP_USERNAME') ? SMTP_USERNAME : 'NOT SET') . "\n";
+echo "SMTP_PASSWORD: " . (defined('SMTP_PASSWORD') ? str_repeat('*', strlen(SMTP_PASSWORD)) : 'NOT SET') . "\n";
 echo "CONTACT_EMAIL: " . CONTACT_EMAIL . "\n";
-echo "SMTP_ENABLED: " . (SMTP_ENABLED ? 'Yes' : 'No') . "\n";
+echo "CONTACT_EMAIL_CC: " . (defined('CONTACT_EMAIL_CC') ? CONTACT_EMAIL_CC : 'NOT SET') . "\n";
+echo "sendMailSMTP exists: " . (function_exists('sendMailSMTP') ? 'YES' : 'NO') . "\n\n";
 
-if (SMTP_ENABLED) {
-    echo "SMTP_HOST: " . SMTP_HOST . "\n";
-    echo "SMTP_PORT: " . SMTP_PORT . "\n";
-    echo "SMTP_USERNAME: " . (SMTP_USERNAME ? 'Set' : 'Not Set') . "\n";
+if (!function_exists('sendMailSMTP')) {
+    die("ERROR: sendMailSMTP function not loaded. Check config/email.php and functions/mail-smtp.php");
+}
+
+$fromEmail = defined('SMTP_FROM_EMAIL') ? SMTP_FROM_EMAIL : CONTACT_EMAIL;
+$fromName = defined('SMTP_FROM_NAME') ? SMTP_FROM_NAME : 'Niche Society';
+$subject = 'Test Email - ' . date('H:i:s');
+$body = '<html><body><h2>Email Delivery Test</h2><p>Sent at ' . date('Y-m-d H:i:s') . '</p><p>If you see this, delivery is working.</p></body></html>';
+
+// Test 1: Primary (info@)
+echo "--- Test 1: Send to " . CONTACT_EMAIL . " ---\n";
+$r1 = sendMailSMTP(CONTACT_EMAIL, $subject . ' [Primary]', $body, $fromEmail, $fromName, null);
+echo "Result: " . ($r1 ? 'SUCCESS' : 'FAILED') . "\n\n";
+
+// Test 2: Backup (Khadeeja@)
+$cc = defined('CONTACT_EMAIL_CC') ? CONTACT_EMAIL_CC : '';
+if ($cc) {
+    echo "--- Test 2: Send to $cc ---\n";
+    $r2 = sendMailSMTP($cc, $subject . ' [Backup]', $body, $fromEmail, $fromName, null);
+    echo "Result: " . ($r2 ? 'SUCCESS' : 'FAILED') . "\n\n";
 } else {
-    echo "\n⚠️  SMTP is disabled. Using PHP mail() function.\n";
-    echo "Note: PHP mail() may not work on localhost/XAMPP without mail server configuration.\n";
+    $r2 = false;
+    echo "--- Test 2: SKIPPED (no CONTACT_EMAIL_CC) ---\n\n";
 }
 
-echo "\n=== Testing Email Sending ===\n";
+// Test 3: External (Gmail)
+$ext = 'fmusenene@gmail.com';
+echo "--- Test 3: Send to $ext ---\n";
+$r3 = sendMailSMTP($ext, $subject . ' [External]', $body, $fromEmail, $fromName, null);
+echo "Result: " . ($r3 ? 'SUCCESS' : 'FAILED') . "\n\n";
 
-// Test 1: Send test email to info@niche-society.com
-$to = CONTACT_EMAIL;
-$subject = "Test Email from Niche Society Website";
-$message = "
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .header { background: #602234; color: white; padding: 20px; }
-        .content { padding: 20px; }
-    </style>
-</head>
-<body>
-    <div class='header'>
-        <h2>Test Email</h2>
-    </div>
-    <div class='content'>
-        <p>This is a test email to verify that emails are being sent correctly to <strong>info@niche-society.com</strong>.</p>
-        <p>Time: " . date('Y-m-d H:i:s') . "</p>
-        <p>If you receive this email, the email system is working correctly.</p>
-    </div>
-</body>
-</html>
-";
-
-$headers = [
-    'MIME-Version: 1.0',
-    'Content-type: text/html; charset=utf-8',
-    'From: Niche Society Website <' . CONTACT_EMAIL . '>',
-    'Reply-To: ' . CONTACT_EMAIL,
-    'X-Mailer: PHP/' . phpversion()
-];
-
-echo "Sending test email to: $to\n";
-echo "Subject: $subject\n";
-echo "From: " . CONTACT_EMAIL . "\n";
-
-// Remove error suppression to see actual errors
-$result = mail($to, $subject, $message, implode("\r\n", $headers));
-
-if ($result) {
-    echo "\n✅ Email sent successfully!\n";
-    echo "Check the inbox (and spam folder) for: $to\n";
-} else {
-    $error = error_get_last();
-    echo "\n❌ Email failed to send!\n";
-    echo "Error: " . ($error ? $error['message'] : 'Unknown error') . "\n";
-    echo "\nPossible issues:\n";
-    echo "1. Mail server not configured on this server\n";
-    echo "2. PHP mail() function disabled\n";
-    echo "3. Firewall blocking outbound email\n";
-    echo "4. SMTP configuration needed\n";
-}
-
-echo "\n=== Email Function Check ===\n";
-if (function_exists('mail')) {
-    echo "✅ PHP mail() function is available\n";
-} else {
-    echo "❌ PHP mail() function is NOT available\n";
-}
-
-echo "\n=== PHP Configuration ===\n";
-echo "sendmail_path: " . ini_get('sendmail_path') . "\n";
-echo "SMTP: " . ini_get('SMTP') . "\n";
-echo "smtp_port: " . ini_get('smtp_port') . "\n";
-
-echo "\n=== Recommendations ===\n";
-if (!SMTP_ENABLED) {
-    echo "1. Enable SMTP in config/config.php\n";
-    echo "2. Configure SMTP settings (host, port, username, password)\n";
-    echo "3. Use a service like SendGrid, Mailgun, or your hosting provider's SMTP\n";
-}
-echo "4. Check spam/junk folder for test emails\n";
-echo "5. Verify email address exists and can receive emails\n";
-echo "6. Check server mail logs for delivery issues\n";
-
-echo "</pre>";
-
-// Create logs directory if it doesn't exist
-if (!file_exists(__DIR__ . '/logs')) {
-    @mkdir(__DIR__ . '/logs', 0755, true);
-    echo "<p>Created logs directory for email debugging.</p>";
-}
-
-echo "<p><strong>Note:</strong> Check the <code>logs/</code> directory for detailed email logs.</p>";
-?>
+echo "=== SUMMARY ===\n";
+echo CONTACT_EMAIL . ": " . ($r1 ? 'SENT' : 'FAILED') . "\n";
+echo ($cc ?: 'N/A') . ": " . ($r2 ? 'SENT' : 'FAILED') . "\n";
+echo "$ext: " . ($r3 ? 'SENT' : 'FAILED') . "\n\n";
+echo "Check all inboxes now. DELETE this file after testing!\n";

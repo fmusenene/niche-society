@@ -226,6 +226,7 @@ function sendEmailNotification($data, $lang) {
     $fromEmail = defined('SMTP_FROM_EMAIL') ? SMTP_FROM_EMAIL : CONTACT_EMAIL;
     $fromName = defined('SMTP_FROM_NAME') ? SMTP_FROM_NAME : 'Niche Society Website';
 
+    // Send to primary contact
     if (defined('SMTP_ENABLED') && SMTP_ENABLED && function_exists('sendMailSMTP')) {
         $result = sendMailSMTP($to, $subject, $message, $fromEmail, $fromName, $data['email']);
     } else {
@@ -240,7 +241,17 @@ function sendEmailNotification($data, $lang) {
         ];
         $result = mail($to, $subject, $message, implode("\r\n", $headers), "-f {$fromEmail}");
     }
-    
+
+    // Send to backup contact (ensures delivery even if primary is same as sender)
+    if (defined('CONTACT_EMAIL_CC') && CONTACT_EMAIL_CC !== '' && CONTACT_EMAIL_CC !== $to) {
+        $ccTo = CONTACT_EMAIL_CC;
+        if (defined('SMTP_ENABLED') && SMTP_ENABLED && function_exists('sendMailSMTP')) {
+            sendMailSMTP($ccTo, $subject, $message, $fromEmail, $fromName, $data['email']);
+        } else {
+            @mail($ccTo, $subject, $message, implode("\r\n", $headers), "-f {$fromEmail}");
+        }
+    }
+
     // Enhanced logging for email sending result
     if (!$result) {
         $error = error_get_last();
@@ -252,7 +263,7 @@ function sendEmailNotification($data, $lang) {
         $errorMessage .= "Note: On localhost/XAMPP, PHP mail() requires SMTP configuration.\n";
         $errorMessage .= "For production, ensure your server has a mail server configured.\n";
         error_log($errorMessage);
-        
+
         // Also log to a file for easier debugging
         $logFile = __DIR__ . '/logs/email-errors.log';
         if (!file_exists(__DIR__ . '/logs')) {
@@ -261,10 +272,13 @@ function sendEmailNotification($data, $lang) {
         @file_put_contents($logFile, date('Y-m-d H:i:s') . " - " . $errorMessage . "\n", FILE_APPEND);
     } else {
         $successMessage = "Email notification sent successfully to: $to\n";
+        if (defined('CONTACT_EMAIL_CC') && CONTACT_EMAIL_CC !== '') {
+            $successMessage .= "CC sent to: " . CONTACT_EMAIL_CC . "\n";
+        }
         $successMessage .= "Subject: $subject\n";
         $successMessage .= "Time: " . date('Y-m-d H:i:s') . "\n";
         error_log($successMessage);
-        
+
         // Log success to file
         $logFile = __DIR__ . '/logs/email-success.log';
         if (!file_exists(__DIR__ . '/logs')) {
@@ -272,7 +286,7 @@ function sendEmailNotification($data, $lang) {
         }
         @file_put_contents($logFile, date('Y-m-d H:i:s') . " - " . $successMessage . "\n", FILE_APPEND);
     }
-    
+
     return $result;
 }
 
