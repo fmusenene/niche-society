@@ -1,0 +1,589 @@
+<?php
+/**
+ * Contact Form Handler - Niche Society
+ * 
+ * Processes contact form submissions with:
+ * - CSRF protection
+ * - Input validation and sanitization
+ * - Rate limiting
+ * - Spam prevention
+ * - Email notifications
+ * - Database storage
+ */
+
+ob_start();
+
+require_once __DIR__ . '/config/config.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/functions/helpers.php';
+
+// Redirect back to contact page; use ?contact=success|error so message shows even if session is lost (e.g. cPanel)
+$redirectToContact = function ($contactParam = null, $errorCode = null) {
+    session_write_close();
+    if (ob_get_level()) ob_end_clean();
+    $base = url('contact.php');
+    $url = $base . '#contact-form';
+    if ($contactParam === 'success' || $contactParam === 'error') {
+        $url = $base . '?contact=' . $contactParam;
+        if ($contactParam === 'error' && $errorCode !== null && $errorCode !== '') {
+            $url .= '&code=' . rawurlencode($errorCode);
+        }
+        $url .= '#contact-form';
+    }
+    header('HTTP/1.1 302 Found');
+    header('Location: ' . $url);
+    exit;
+};
+
+// Load SMTP config if present (for cPanel / reliable email delivery)
+if (file_exists(__DIR__ . '/config/email.php')) {
+    require_once __DIR__ . '/config/email.php';
+}
+if (defined('SMTP_ENABLED') && SMTP_ENABLED && file_exists(__DIR__ . '/functions/mail-smtp.php')) {
+    require_once __DIR__ . '/functions/mail-smtp.php';
+}
+
+// Ensure required tables exist
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS contact_forms (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        email VARCHAR(100) NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        service_interest VARCHAR(100),
+        message TEXT NOT NULL,
+        ip_address VARCHAR(45),
+        user_agent VARCHAR(255),
+        status ENUM('new', 'read', 'replied', 'closed') DEFAULT 'new',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_status (status),
+        INDEX idx_email (email),
+        INDEX idx_created_at (created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    
+    $pdo->exec("CREATE TABLE IF NOT EXISTS security_logs (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        event_type VARCHAR(50) NOT NULL,
+        ip_address VARCHAR(45),
+        user_agent VARCHAR(255),
+        details TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_event_type (event_type),
+        INDEX idx_ip_address (ip_address),
+        INDEX idx_created_at (created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+} catch (PDOException $e) {
+    error_log("Table creation error (non-fatal): " . $e->getMessage());
+}
+
+// Set JSON header for AJAX responses - REMOVED because we're using redirects, not JSON
+// header('Content-Type: application/json');
+
+/**
+ * Send JSON response and exit
+ */
+function sendResponse($success, $message, $redirect = null) {
+    $response = [
+        'success' => $success,
+        'message' => $message
+    ];
+    if ($redirect) {
+        $response['redirect'] = $redirect;
+    }
+    echo json_encode($response);
+    exit;
+}
+
+/**
+ * Validate and sanitize input
+ */
+function validateInput($data) {
+    $errors = [];
+    
+    // Name validation
+    if (empty($data['name']) || strlen(trim($data['name'])) < 2) {
+        $errors[] = 'Name must be at least 2 characters long';
+    }
+    
+    // Email validation
+    if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Please provide a valid email address';
+    }
+    
+    // Phone validation
+    if (empty($data['phone']) || !preg_match('/^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/', $data['phone'])) {
+        $errors[] = 'Please provide a valid phone number';
+    }
+    
+    // Message validation
+    if (empty($data['message']) || strlen(trim($data['message'])) < 10) {
+        $errors[] = 'Message must be at least 10 characters long';
+    }
+    
+    // Privacy agreement
+    if (!isset($data['privacy']) || $data['privacy'] !== 'on') {
+        $errors[] = 'You must agree to the privacy policy';
+    }
+    
+    return $errors;
+}
+
+/**
+ * Check rate limiting
+ */
+function checkRateLimit($pdo, $ipAddress) {
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) as count 
+        FROM contact_forms 
+        WHERE ip_address = ? 
+        AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+    ");
+    $stmt->execute([$ipAddress]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    return $result['count'] < 3; // Max 3 submissions per hour
+}
+
+/**
+ * Log security event
+ */
+function logSecurityEvent($pdo, $eventType, $ipAddress, $details) {
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO security_logs (event_type, ip_address, user_agent, details, created_at)
+            VALUES (?, ?, ?, ?, NOW())
+        ");
+        $stmt->execute([
+            $eventType,
+            $ipAddress,
+            $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown',
+            $details
+        ]);
+    } catch (Exception $e) {
+        // Silent fail for logging
+        error_log("Security log failed: " . $e->getMessage());
+    }
+}
+
+/**
+ * Send email notification
+ */
+function sendEmailNotification($data, $lang) {
+    $to = CONTACT_EMAIL; // info@niche-society.com
+    $subject = $lang === 'ar' 
+        ? 'رسالة جديدة من موقع نيش سوسيتي' 
+        : 'New Contact Form Submission - Niche Society';
+    
+    $message = "
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #602234; color: white; padding: 20px; text-align: center; }
+            .content { background: #f9f9f9; padding: 20px; }
+            .field { margin-bottom: 15px; }
+            .field-label { font-weight: bold; color: #602234; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h2>" . ($lang === 'ar' ? 'رسالة جديدة' : 'New Contact Message') . "</h2>
+            </div>
+            <div class='content'>
+                <div class='field'>
+                    <span class='field-label'>" . ($lang === 'ar' ? 'الاسم:' : 'Name:') . "</span>
+                    " . htmlspecialchars($data['name']) . "
+                </div>
+                <div class='field'>
+                    <span class='field-label'>" . ($lang === 'ar' ? 'البريد الإلكتروني:' : 'Email:') . "</span>
+                    " . htmlspecialchars($data['email']) . "
+                </div>
+                <div class='field'>
+                    <span class='field-label'>" . ($lang === 'ar' ? 'الهاتف:' : 'Phone:') . "</span>
+                    " . htmlspecialchars($data['phone']) . "
+                </div>
+                <div class='field'>
+                    <span class='field-label'>" . ($lang === 'ar' ? 'الخدمة المهتم بها:' : 'Service of Interest:') . "</span>
+                    " . htmlspecialchars($data['service'] ?? 'Not specified') . "
+                </div>
+                <div class='field'>
+                    <span class='field-label'>" . ($lang === 'ar' ? 'الرسالة:' : 'Message:') . "</span>
+                    <p>" . nl2br(htmlspecialchars($data['message'])) . "</p>
+                </div>
+            </div>
+            <div class='footer'>
+                <p>" . ($lang === 'ar' ? 'تم الإرسال من موقع نيش سوسيتي' : 'Sent from Niche Society website') . "</p>
+                <p>" . date('Y-m-d H:i:s') . "</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    ";
+    
+    $fromEmail = defined('SMTP_FROM_EMAIL') ? SMTP_FROM_EMAIL : CONTACT_EMAIL;
+    $fromName = defined('SMTP_FROM_NAME') ? SMTP_FROM_NAME : 'Niche Society Website';
+
+    // Send to primary contact
+    if (defined('SMTP_ENABLED') && SMTP_ENABLED && function_exists('sendMailSMTP')) {
+        $result = sendMailSMTP($to, $subject, $message, $fromEmail, $fromName, $data['email']);
+    } else {
+        $headers = [
+            'MIME-Version: 1.0',
+            'Content-type: text/html; charset=utf-8',
+            'From: ' . $fromName . ' <' . $fromEmail . '>',
+            'Reply-To: ' . $data['email'],
+            'X-Mailer: PHP/' . phpversion(),
+            'X-Priority: 1',
+            'Importance: High'
+        ];
+        $result = mail($to, $subject, $message, implode("\r\n", $headers), "-f {$fromEmail}");
+    }
+
+    // Send to backup contact (ensures delivery even if primary is same as sender)
+    if (defined('CONTACT_EMAIL_CC') && CONTACT_EMAIL_CC !== '' && CONTACT_EMAIL_CC !== $to) {
+        $ccTo = CONTACT_EMAIL_CC;
+        if (defined('SMTP_ENABLED') && SMTP_ENABLED && function_exists('sendMailSMTP')) {
+            sendMailSMTP($ccTo, $subject, $message, $fromEmail, $fromName, $data['email']);
+        } else {
+            @mail($ccTo, $subject, $message, implode("\r\n", $headers), "-f {$fromEmail}");
+        }
+    }
+
+    // Enhanced logging for email sending result
+    if (!$result) {
+        $error = error_get_last();
+        $errorMessage = "Email notification FAILED to send to: $to\n";
+        $errorMessage .= "Subject: $subject\n";
+        $errorMessage .= "From: " . CONTACT_EMAIL . "\n";
+        $errorMessage .= "Error details: " . ($error ? $error['message'] : 'Unknown error') . "\n";
+        $errorMessage .= "PHP mail() function returned: " . ($result ? 'true' : 'false') . "\n";
+        $errorMessage .= "Note: On localhost/XAMPP, PHP mail() requires SMTP configuration.\n";
+        $errorMessage .= "For production, ensure your server has a mail server configured.\n";
+        error_log($errorMessage);
+
+        // Also log to a file for easier debugging
+        $logFile = __DIR__ . '/logs/email-errors.log';
+        if (!file_exists(__DIR__ . '/logs')) {
+            @mkdir(__DIR__ . '/logs', 0755, true);
+        }
+        @file_put_contents($logFile, date('Y-m-d H:i:s') . " - " . $errorMessage . "\n", FILE_APPEND);
+    } else {
+        $successMessage = "Email notification sent successfully to: $to\n";
+        if (defined('CONTACT_EMAIL_CC') && CONTACT_EMAIL_CC !== '') {
+            $successMessage .= "CC sent to: " . CONTACT_EMAIL_CC . "\n";
+        }
+        $successMessage .= "Subject: $subject\n";
+        $successMessage .= "Time: " . date('Y-m-d H:i:s') . "\n";
+        error_log($successMessage);
+
+        // Log success to file
+        $logFile = __DIR__ . '/logs/email-success.log';
+        if (!file_exists(__DIR__ . '/logs')) {
+            @mkdir(__DIR__ . '/logs', 0755, true);
+        }
+        @file_put_contents($logFile, date('Y-m-d H:i:s') . " - " . $successMessage . "\n", FILE_APPEND);
+    }
+
+    return $result;
+}
+
+/**
+ * Send auto-reply to customer
+ */
+function sendAutoReply($email, $name, $lang) {
+    $subject = $lang === 'ar' 
+        ? 'شكراً لتواصلك معنا - نيش سوسيتي' 
+        : 'Thank You for Contacting Us - Niche Society';
+    
+    $message = "
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #602234; color: white; padding: 30px; text-align: center; }
+            .content { padding: 30px; background: white; }
+            .footer { text-align: center; padding: 20px; background: #FFF7E7; }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h1>Niche Society</h1>
+            </div>
+            <div class='content'>
+                " . ($lang === 'ar' 
+                    ? "<p>عزيزي/عزيزتي <strong>" . htmlspecialchars($name) . "</strong>،</p>
+                       <p>شكراً لتواصلك معنا. لقد استلمنا رسالتك وسيقوم فريقنا بالرد عليك في أقرب وقت ممكن.</p>
+                       <p>نحن نقدر اهتمامك بخدماتنا ونتطلع إلى خدمتك.</p>
+                       <p>مع أطيب التحيات،<br>فريق نيش سوسيتي</p>"
+                    : "<p>Dear <strong>" . htmlspecialchars($name) . "</strong>,</p>
+                       <p>Thank you for contacting us. We have received your message and our team will respond to you as soon as possible.</p>
+                       <p>We appreciate your interest in our services and look forward to serving you.</p>
+                       <p>Best regards,<br>Niche Society Team</p>"
+                ) . "
+            </div>
+            <div class='footer'>
+                <p><strong>" . ($lang === 'ar' ? 'نيش سوسيتي' : 'Niche Society') . "</strong></p>
+                <p>info@niche-society.com | +966 532 447 976</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    ";
+    
+    $fromEmail = defined('SMTP_FROM_EMAIL') ? SMTP_FROM_EMAIL : CONTACT_EMAIL;
+    $fromName = defined('SMTP_FROM_NAME') ? SMTP_FROM_NAME : 'Niche Society';
+
+    if (defined('SMTP_ENABLED') && SMTP_ENABLED && function_exists('sendMailSMTP')) {
+        $result = sendMailSMTP($email, $subject, $message, $fromEmail, $fromName, null);
+    } else {
+        $headers = [
+            'MIME-Version: 1.0',
+            'Content-type: text/html; charset=utf-8',
+            'From: ' . $fromName . ' <' . $fromEmail . '>',
+            'X-Mailer: PHP/' . phpversion()
+        ];
+        $result = @mail($email, $subject, $message, implode("\r\n", $headers), "-f {$fromEmail}");
+    }
+
+    // Log email sending result
+    if (!$result) {
+        $error = error_get_last();
+        error_log("Auto-reply email failed to send to: $email");
+        error_log("Error details: " . ($error ? $error['message'] : 'Unknown error'));
+        error_log("Note: On localhost/XAMPP, PHP mail() requires SMTP configuration. Emails will work on production server.");
+    } else {
+        error_log("Auto-reply email sent successfully to: $email");
+    }
+    
+    return $result;
+}
+
+// ============================================
+// MAIN PROCESSING LOGIC
+// ============================================
+
+try {
+    // Check if request is POST - improved check with multiple fallbacks
+    // Some servers/proxies/CDNs might modify REQUEST_METHOD, so we check POST data first
+    $requestMethod = $_SERVER['REQUEST_METHOD'] ?? '';
+    $hasPostData = !empty($_POST);
+    
+    // Primary check: If we have POST data, treat it as a POST request
+    // This handles cases where proxies/CDNs might change REQUEST_METHOD
+    if (!$hasPostData && strtoupper($requestMethod) !== 'POST') {
+        // Log detailed debugging information
+        $debugInfo = [
+            'REQUEST_METHOD' => $requestMethod,
+            'REQUEST_URI' => $_SERVER['REQUEST_URI'] ?? 'unknown',
+            'HTTP_X_REQUESTED_WITH' => $_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'not set',
+            'HTTP_X_HTTP_METHOD_OVERRIDE' => $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] ?? 'not set',
+            'POST_data_exists' => $hasPostData,
+            'POST_keys' => array_keys($_POST ?? []),
+            'SERVER_NAME' => $_SERVER['SERVER_NAME'] ?? 'unknown',
+            'HTTP_HOST' => $_SERVER['HTTP_HOST'] ?? 'unknown',
+            'CONTENT_TYPE' => $_SERVER['CONTENT_TYPE'] ?? 'not set',
+            'CONTENT_LENGTH' => $_SERVER['CONTENT_LENGTH'] ?? 'not set',
+            'HTTP_REFERER' => $_SERVER['HTTP_REFERER'] ?? 'not set'
+        ];
+        
+        error_log("Contact form received non-POST request. Debug info: " . json_encode($debugInfo, JSON_PRETTY_PRINT));
+        
+        $_SESSION['contact_error'] = 'Invalid request method. Please submit the form properly.';
+        $redirectToContact('error', 'method');
+    }
+    
+    // Additional check: ensure POST data exists
+    if (!$hasPostData) {
+        error_log("Contact form received POST request but POST data is empty");
+        error_log("REQUEST_METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'not set'));
+        error_log("Content-Type: " . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
+        error_log("Content-Length: " . ($_SERVER['CONTENT_LENGTH'] ?? 'not set'));
+        error_log("HTTP_REFERER: " . ($_SERVER['HTTP_REFERER'] ?? 'not set'));
+        
+        $_SESSION['contact_error'] = 'Form data was not received. Please try again.';
+        $redirectToContact('error', 'nodata');
+    }
+
+    $lang = $_POST['lang'] ?? 'en';
+    $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    
+    // 1. CSRF Token Validation (accept session token OR cookie token so form works when session cookie is not sent)
+    $postToken = $_POST['csrf_token'] ?? '';
+    $sessionValid = isset($_SESSION['csrf_token']) && $postToken !== '' && hash_equals((string) $_SESSION['csrf_token'], $postToken);
+    $cookieValid = isset($_COOKIE['csrf_contact']) && $postToken !== '' && hash_equals((string) $_COOKIE['csrf_contact'], $postToken);
+    if (!$sessionValid && !$cookieValid) {
+        logSecurityEvent($pdo, 'csrf_violation', $ipAddress, 'Invalid CSRF token');
+        $_SESSION['contact_error'] = $lang === 'ar' 
+            ? 'فشل التحقق الأمني. يرجى المحاولة مرة أخرى' 
+            : 'Security verification failed. Please try again';
+        $redirectToContact('error', 'csrf');
+    }
+    // Clear CSRF cookie after use (one-time)
+    if (PHP_VERSION_ID >= 70300) {
+        setcookie('csrf_contact', '', ['expires' => time() - 3600, 'path' => '/', 'secure' => !empty($_SERVER['HTTPS']), 'httponly' => true, 'samesite' => 'Lax']);
+    } else {
+        @setcookie('csrf_contact', '', time() - 3600, '/');
+    }
+
+    // 2. Honeypot Check (spam prevention)
+    if (!empty($_POST['website'])) {
+        logSecurityEvent($pdo, 'spam_detected', $ipAddress, 'Honeypot triggered');
+        $_SESSION['contact_error'] = $lang === 'ar' 
+            ? 'تم اكتشاف محاولة غير صحيحة' 
+            : 'Invalid submission detected';
+        $redirectToContact('error', 'spam');
+    }
+
+    // 3. Rate Limiting Check
+    if (!checkRateLimit($pdo, $ipAddress)) {
+        logSecurityEvent($pdo, 'rate_limit_exceeded', $ipAddress, 'Too many submissions');
+        $_SESSION['contact_error'] = $lang === 'ar' 
+            ? 'لقد تجاوزت الحد المسموح من المحاولات. يرجى المحاولة بعد ساعة' 
+            : 'You have exceeded the maximum number of submissions. Please try again in an hour';
+        $redirectToContact('error', 'ratelimit');
+    }
+
+// 4. Sanitize Input (store clean raw text, escape later in HTML output)
+$data = [
+    'name' => trim($_POST['name'] ?? ''),
+    'email' => trim(filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL)),
+    'phone' => trim($_POST['phone'] ?? ''),
+    'service' => trim($_POST['service'] ?? ''),
+    'message' => trim($_POST['message'] ?? ''),
+    'privacy' => $_POST['privacy'] ?? ''
+];
+
+    // 5. Validate Input
+    $errors = validateInput($data);
+    if (!empty($errors)) {
+        logSecurityEvent($pdo, 'validation_failed', $ipAddress, implode(', ', $errors));
+        $_SESSION['contact_error'] = $lang === 'ar' 
+            ? 'يرجى التحقق من البيانات المدخلة: ' . implode(', ', $errors)
+            : 'Please check your input: ' . implode(', ', $errors);
+        $redirectToContact('error', 'validation');
+    }
+
+    // 6. Save to Database
+    $stmt = $pdo->prepare("
+        INSERT INTO contact_forms 
+        (name, email, phone, service_interest, message, ip_address, user_agent, status, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'new', NOW())
+    ");
+    
+    $success = $stmt->execute([
+        $data['name'],
+        $data['email'],
+        $data['phone'],
+        $data['service'],
+        $data['message'],
+        $ipAddress,
+        $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'
+    ]);
+
+    if (!$success) {
+        throw new Exception('Database insertion failed');
+    }
+
+    // 7. Send Email Notifications
+    $emailSent = sendEmailNotification($data, $lang);
+    $autoReplySent = sendAutoReply($data['email'], $data['name'], $lang);
+    
+    // Enhanced logging for email sending results
+    $emailLog = "=== Contact Form Email Status ===\n";
+    $emailLog .= "Time: " . date('Y-m-d H:i:s') . "\n";
+    $emailLog .= "Admin notification to " . CONTACT_EMAIL . ": " . ($emailSent ? 'SENT' : 'FAILED') . "\n";
+    $emailLog .= "Auto-reply to " . $data['email'] . ": " . ($autoReplySent ? 'SENT' : 'FAILED') . "\n";
+    
+    if (!$emailSent || !$autoReplySent) {
+        $emailLog .= "WARNING: Some emails failed to send!\n";
+        if (!$emailSent) {
+            $emailLog .= "CRITICAL: Admin notification email failed. Check email server configuration.\n";
+        }
+        $emailLog .= "Note: On localhost/XAMPP, PHP mail() requires SMTP configuration.\n";
+        $emailLog .= "For production, ensure your server has a mail server configured.\n";
+    }
+    
+    error_log($emailLog);
+    
+    // Also save to log file for easier debugging
+    $logFile = __DIR__ . '/logs/contact-form-emails.log';
+    if (!file_exists(__DIR__ . '/logs')) {
+        @mkdir(__DIR__ . '/logs', 0755, true);
+    }
+    @file_put_contents($logFile, $emailLog . "\n", FILE_APPEND);
+
+    // 8. Log Success
+    logSecurityEvent($pdo, 'contact_form_success', $ipAddress, 'Form submitted successfully');
+
+    // 9. Clear CSRF token and generate new one
+    unset($_SESSION['csrf_token']);
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+    // 10. Set Success Message (so sender knows status and that auto-reply was sent)
+    if ($emailSent && $autoReplySent) {
+        $_SESSION['contact_success'] = $lang === 'ar'
+            ? 'شكراً! تم إرسال رسالتك بنجاح. سنتواصل معك في أقرب وقت.'
+            : 'Thank you! Your message has been sent successfully. We will get back to you as soon as possible.';
+    } elseif ($emailSent) {
+        $_SESSION['contact_success'] = $lang === 'ar'
+            ? 'شكراً! تم استلام رسالتك. لم نتمكن من إرسال بريد التأكيد إلى صندوقك؛ سنرد عليك في أقرب وقت.'
+            : 'Thank you! We have received your message. We couldn\'t send the confirmation email to your inbox; we will still get back to you as soon as possible.';
+    } else {
+        $_SESSION['contact_success'] = $lang === 'ar'
+            ? 'شكراً! تم إرسال رسالتك بنجاح. سنتواصل معك في أقرب وقت.'
+            : 'Thank you! Your message has been sent successfully. We will get back to you as soon as possible.';
+    }
+
+    $redirectToContact('success');
+
+} catch (PDOException $e) {
+    // Database error - log detailed error
+    $errorDetails = "Contact form database error: " . $e->getMessage();
+    $errorDetails .= "\nSQL State: " . $e->getCode();
+    $errorDetails .= "\nFile: " . $e->getFile() . " Line: " . $e->getLine();
+    error_log($errorDetails);
+    
+    // Preserve form data in session for user convenience
+    if (isset($_POST)) {
+        $_SESSION['form_data'] = [
+            'name' => $_POST['name'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'phone' => $_POST['phone'] ?? '',
+            'service' => $_POST['service'] ?? '',
+            'message' => $_POST['message'] ?? ''
+        ];
+    }
+    
+    $_SESSION['contact_error'] = $lang === 'ar' 
+        ? 'حدث خطأ أثناء معالجة طلبك. يرجى المحاولة لاحقاً'
+        : 'An error occurred while processing your request. Please try again later';
+    $redirectToContact('error', 'database');
+
+} catch (Exception $e) {
+    // General error - log detailed error
+    $errorDetails = "Contact form error: " . $e->getMessage();
+    $errorDetails .= "\nFile: " . $e->getFile() . " Line: " . $e->getLine();
+    $errorDetails .= "\nTrace: " . $e->getTraceAsString();
+    error_log($errorDetails);
+    
+    // Preserve form data in session for user convenience
+    if (isset($_POST)) {
+        $_SESSION['form_data'] = [
+            'name' => $_POST['name'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'phone' => $_POST['phone'] ?? '',
+            'service' => $_POST['service'] ?? '',
+            'message' => $_POST['message'] ?? ''
+        ];
+    }
+    
+    $_SESSION['contact_error'] = $lang === 'ar' 
+        ? 'حدث خطأ غير متوقع. يرجى المحاولة لاحقاً'
+        : 'An unexpected error occurred. Please try again later';
+    $redirectToContact('error', 'error');
+}

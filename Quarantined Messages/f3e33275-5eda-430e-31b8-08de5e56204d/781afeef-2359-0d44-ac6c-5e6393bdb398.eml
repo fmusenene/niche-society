@@ -1,0 +1,870 @@
+Received: from DB3PR0302MB9258.eurprd03.prod.outlook.com
+ (2603:10a6:10:431::14) by DU0PR03MB8597.eurprd03.prod.outlook.com with HTTPS;
+ Wed, 28 Jan 2026 10:15:17 +0000
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=Cm8xF0yLoPYPdr9zuMEDzMhQ+4UWrr66RpRGvqS/Tfq3ejeBeoph6ZmD5JdKWCsU09+3FR9qWeTuJKqUjjspirsJ4PnrxNJYy24mMXqwo1TyOo2dFph3FJCYLJgUpXgiitEc1dVWGc4aTGlGzI1APb+L2fQ19aaGoCIozbGQNlOUPKuXNesXdl6EOSE7DQn/sF8387ZnkHdUZ1C+4+lMrN+xgSZphGq4oMmWjH6yA8vf+/tztM5IGN1Z1zyFO0pJpl8PtuqS+9zTdt2UVp+2a8EMiZ/2txuZnh5LNmX1+IuGf3XNLARCJtsQzXVz16nKP/VutJTic5fzia77yRvyew==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O4XILjH8PEzEUYZTyTky+0yQm7qSjAoC1BlimCpRbeM=;
+ b=JWOPOwjk2GAsO3x8+qpyj/Uvqr/u6ali/MeSHnOHyZzZzmZnnaG6GZ7wtOzp4XkBOYVpwVDyL6c/U+uwQJSDHmbDD665BM0goPlZ/JHmNj9eBDiO1etYXP8AF4zeN+ktwDOEGNXw3vHjOUGFFqFMcEoiB6GYPmv3qacGBkM3Kv0X4W5zj9r/q0rWYVHGnYnWLu7S/zCS7MB672a40ZLbxUpTfTVUD7662+FXS1h2BLnjy2GxUgITeGtOezwstPFX55Uv7bFV4hz2BjjamdWi6MkvtQszTiwnlyi09qp2CexqCgOB+BzRXtCQ/kJsdXZXJ2KGwFnOlgAWd0ddW0BxiA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 2a01:111:f403:c206::4) smtp.rcpttodomain=spectromfirst.com
+ smtp.mailfrom=dregochganol.co.uk; dmarc=bestguesspass action=none
+ header.from=dregochganol.co.uk; dkim=pass (signature was verified)
+ header.d=dregochganol.onmicrosoft.com; arc=pass (0 oda=0 ltdi=1)
+Received: from DB8P191CA0006.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:130::16)
+ by DB3PR0302MB9258.eurprd03.prod.outlook.com (2603:10a6:10:431::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.16; Wed, 28 Jan
+ 2026 10:15:14 +0000
+Received: from DB1PEPF000509F7.eurprd02.prod.outlook.com
+ (2603:10a6:10:130:cafe::ae) by DB8P191CA0006.outlook.office365.com
+ (2603:10a6:10:130::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9542.16 via Frontend Transport; Wed,
+ 28 Jan 2026 10:15:13 +0000
+Authentication-Results: spf=pass (sender IP is 2a01:111:f403:c206::4)
+ smtp.mailfrom=dregochganol.co.uk; dkim=pass (signature was verified)
+ header.d=dregochganol.onmicrosoft.com;dmarc=bestguesspass action=none
+ header.from=dregochganol.co.uk;compauth=pass reason=109
+Received-SPF: Pass (protection.outlook.com: domain of dregochganol.co.uk
+ designates 2a01:111:f403:c206::4 as permitted sender)
+ receiver=protection.outlook.com; client-ip=2a01:111:f403:c206::4;
+ helo=CWXP265CU010.outbound.protection.outlook.com; pr=C
+Received: from CWXP265CU010.outbound.protection.outlook.com
+ (2a01:111:f403:c206::4) by DB1PEPF000509F7.mail.protection.outlook.com
+ (2603:10a6:18:3::699) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.3 via Frontend Transport; Wed,
+ 28 Jan 2026 10:15:13 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jIXDF/Es2w6Dw0T49abIk5KsrkIFFPDAQSvELmM3FLegDGxWgt3ixhXLc8bFkPz1MW5RmDzPjdZG6DrOZJcJbl1R3usza+VpzC0gb101o5jg6ocfq/958/lrLkmrz5e13YTkkORad7gTXgKVooxByJ8NUrbPaEjZ32C5qO1bgeR9TXvDHudL7vZQnh4XqSUkh9M7Et3KLdvjrapbvJWCP6mbouVS7jvFgPIPOzVFFbALzYdllNEQWrDVZzF8m+PObzdjDILGItGSAgQVOMDQBphyDpv3MQOuECL/OQau6IW9ehLd8FgvShUyHijyjKUG4Ev9TX2wqjgnBmAns1ehNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O4XILjH8PEzEUYZTyTky+0yQm7qSjAoC1BlimCpRbeM=;
+ b=SABZ4icRbqsYppjADrgnyQvC1A+juu/3jKcDeaAGeOUyyLnw3fR2OLn1GvMOZfaPw+V6wA5nze5QGHNSy/wJWFtWRshDudLK3spqAnbqegtfJJWCeyDtMugZK4O6m5oKh7VlfZVQksILXT+GjTmrUyuwjqwtoxPP8nRdOCLE47F4rC5gwuEgfbbuskep91f9huEId0PddVZQ11ULS42q5RxR8N4IYUdbwxWSzcBq3Q0HfIfXFx2pel7He0iFr0o3lZqTDZylZ+E7byV+HThnJvD+r4PJ6t/iQ0BiirzPUuAkHOgXdpDioHjmx7509Gl4yy2R05tM1NfCapgUxq08jg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 148.163.101.172) smtp.rcpttodomain=spectromfirst.com
+ smtp.mailfrom=dregochganol.co.uk; dmarc=none action=none
+ header.from=dregochganol.co.uk; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dregochganol.onmicrosoft.com; s=selector2-dregochganol-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O4XILjH8PEzEUYZTyTky+0yQm7qSjAoC1BlimCpRbeM=;
+ b=oNn9bbqJVWGhyaYIHXTZ8DNPjn1915jUMeLv00soH++A8y3HfRQd3+HUqgAZr5OlY7jV+F1G6TQCx2UJdY/5glzr9sXoPCkxuRz6DP77L/KiP2FpqKznXpDLiHpWVQmOqiTvPD+SUZ+5slENDosFrsvMkKcBtId3yXiwnrK9C6s=
+Received: from CWLP265CA0399.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1d6::21)
+ by LOBP123MB8652.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:47f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.7; Wed, 28 Jan
+ 2026 10:15:12 +0000
+Received: from CW2PEPF000056C0.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:400:1d6:cafe::b1) by CWLP265CA0399.outlook.office365.com
+ (2603:10a6:400:1d6::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.8 via Frontend Transport; Wed,
+ 28 Jan 2026 10:15:03 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 148.163.101.172)
+ smtp.mailfrom=dregochganol.co.uk; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=dregochganol.co.uk;
+Received-SPF: Fail (protection.outlook.com: domain of dregochganol.co.uk does
+ not designate 148.163.101.172 as permitted sender)
+ receiver=protection.outlook.com; client-ip=148.163.101.172; helo=[127.0.0.1];
+Received: from [127.0.0.1] (148.163.101.172) by
+ CW2PEPF000056C0.mail.protection.outlook.com (10.167.240.23) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9564.3
+ via Frontend Transport; Wed, 28 Jan 2026 10:15:11 +0000
+Content-Type: text/html; charset=utf-8
+From: Dk_542_Deu_NA3-eDoc&Auth-activity_type%3Dinternal%26batch_name%3D55204_GCC_22Feb%26master_ref_id%3DNDIzMTg4Mg%3D%3D%26ag%3Dmailer_552_22Feb25_9800107584_febnotify&activity_name=award_C3X__2202250917_09_2025-02-22&emid=R29uQ3ZRMm9rQWttWUt6Q0FLSGhx@dregochganol.co.uk
+To: <a.fanous@spectromfirst.com>
+Subject: f882d1e28e6b91a6aa221d6de0f3a7f7c510d44b, 1/28/2026 REF.
+ ID:8842759803
+Message-ID: <76b99e2a-a8d2-2b23-3784-62c0a9b9a2b4@dregochganol.co.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 28 Jan 2026 10:15:10 +0000
+Return-Path: Dk_542_Deu_NA3-eDoc&Auth-activity_type%3Dinternal%26batch_name%3D55204_GCC_22Feb%26master_ref_id%3DNDIzMTg4Mg%3D%3D%26ag%3Dmailer_552_22Feb25_9800107584_febnotify&activity_name=award_C3X__2202250917_09_2025-02-22&emid=R29uQ3ZRMm9rQWttWUt6Q0FLSGhx@dregochganol.co.uk
+X-EOPAttributedMessage: 1
+X-MS-TrafficTypeDiagnostic: CW2PEPF000056C0:EE_|LOBP123MB8652:EE_|DB1PEPF000509F7:EE_|DB3PR0302MB9258:EE_|DU0PR03MB8597:EE_
+X-MS-Office365-Filtering-Correlation-Id: f3e33275-5eda-430e-31b8-08de5e56204d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|34070700014|36860700013|61400799027|376014|38142699006|82310400026|8096899003|36200700002|54012099003|7053199007|18132099003|95630200002;
+X-Microsoft-Antispam-Message-Info-Original: =?utf-8?B?NDk4RmUzbTZ2QXZjMitMVVFSbjZXVU1KZ0JkRkFzQUEyaVVBeElKVlJGeGIy?=
+ =?utf-8?B?YzlvV0JyMWg1RDV4SG51MFMrV3hIUW5kemxsbytWUGRvZDFNck1JRjdpL0Ri?=
+ =?utf-8?B?UDQ4b1hnb3RlelhEWmlhWmxKQ0NrNXNJdHlEREU5TU1kOGJDWnQ0ZnNUZSs1?=
+ =?utf-8?B?d24vK09DeWg1VnZ4QWQ5elZ2RXBtOGREMUNtY1Z0dUFWNGV5c3duUEI1dGg1?=
+ =?utf-8?B?dkp1N3NvaDNqc0U2UGY4WWRGL0swUlN2OEpFaCs2cDlHWkhkbkVhSmF4eFR4?=
+ =?utf-8?B?VzVPNml4Yjdyang0ZXNIMGxqQUc0ZzhDejRDcFdOVXhzMTRuNWNMRUxydDRO?=
+ =?utf-8?B?SmJ0T1ZjWHBMamtPN1lzSXJyY0p2Y3BsUkdUcEM4MldManJoL1NTSFdyemxw?=
+ =?utf-8?B?U1grZGNtVTdTYVVzcUE3OXplUVFCRkduY0wvU3NSRTdYd3ZoUWhzam5zS3pD?=
+ =?utf-8?B?Qi9MMlg4V1pyMHhja3FqVzBodksvWVNDMGZpRVZzK3lQZ2R2aFozUlVNQldr?=
+ =?utf-8?B?cjh5SkhreGJKMDlpT00ydmxNZ0ZiQWk0VklzdzhpUHlmSmtHaDEzbXdBNTdr?=
+ =?utf-8?B?VitZWDA5Qk9KOWd5TWFFWkFCMlhzUFk4WlQxNDF2cWttZjhuZGx5aWtmR2xo?=
+ =?utf-8?B?anp4SjZDaTMrS3ZTRTMwZWlwejIrNjI5NDI2dVdOR3pPblhsUVhReCtNSHVy?=
+ =?utf-8?B?K0Y1MERqRGZEaFpEYWhvYnRJaFdWUTBXYlRYeWo2MitjeGYyVUhWSWxIc1k3?=
+ =?utf-8?B?cjl0Nm5tUEhsUUtRTzB5eDI4TWZLckxKOG1YSCtVMnpiS2VwaC9lSHdEanFU?=
+ =?utf-8?B?cmNTN3pzQkk4YzlaVlNWcnJxK2FRTGpPNnNUdVl5ZEZrS3hUeTRYeTBWYTIr?=
+ =?utf-8?B?SjdRbk9ScXlEenJpdmIwQTBvSTFURmhYdmR3YmRQL0IySytUMEVUVTU2RFQr?=
+ =?utf-8?B?MVN3Vk1YcktvV2UxTzllZnBKK3dvTlBsZXFBNE9lTVBCM2NMUGt5clFMZ0N5?=
+ =?utf-8?B?SkVMcVg4SGZEYi9FMTRsOUVKb2R3UmlOZzVmaFZkYzh5b3NDeFpuTFFsSGxF?=
+ =?utf-8?B?QmdERWRBSnpGbXRWRHpOZnRkSUtPVDN1L0VIbTVyY1cwRmJKWnRxbEF0cUtF?=
+ =?utf-8?B?cTFGblNFcXp5TDBnQ1RNUjc4V3gwWnJ4UkpHZmhPRkljaUN5WHBSbDN4bDU0?=
+ =?utf-8?B?cUIxMjdyTjhpelcxRkF6Q1E0bGNjMk50OUt4alVNZWN1SDU5RlNZYk83MUxz?=
+ =?utf-8?B?SjJMb3JKL3BUNVlxZDdpV21VWStGeTNXWi9icmE4UjE0eFd6eGgrZm5kb0s3?=
+ =?utf-8?B?R1VxclRWY0NhbDZZSDJBYU9WNWZTSnFUMVAzUS9ubGVETWhlNVZFSjNYRGRN?=
+ =?utf-8?B?TU9zZ1BQWThYbjM4cXdENFF2ZHdYVnpqNTRBS1h5TTY4U3NRcEl4ZWRFMnlj?=
+ =?utf-8?B?cy8rZU5TUkFhZjRSSVVweDF3KzJZZDg3b2doVUkyTjFaM0xHalFQcFo3ZEkr?=
+ =?utf-8?B?RGVKOFVPZGRKaXB4T01DTDF6SitxajROSzhkaEpOSEtWYllOTSt0cGFKUUJp?=
+ =?utf-8?B?d0pOTmZBajVFamwycTlhRVk4ZzVEWC85aS9XWFA5NWlFM00rY2czZjl3QkJW?=
+ =?utf-8?B?NWowZWpvZDNCaThRd2syL3c0NlROMXNLcXBUV21iTDUvM1RxK1hWVENBY2kw?=
+ =?utf-8?B?MG9ySHErb1YvaHVsaGRZRjNYNUlQdjk2NEJjWHVvdXBZSmhnbjZIajZ0UlBY?=
+ =?utf-8?B?WkNNRkppbVpRTUVaUzMyeDRROU5Sa0xsaEVKbld0RDJqeWpRSG9oZjliWE5D?=
+ =?utf-8?B?NXlkTHR4SEVnN2JnTTJ4WGQ4MjVNdXBRYmNCRExIK1ZqTEVydUxWaU9ET2Rh?=
+ =?utf-8?B?ZVNMV2QxZFhSS1NhSzEyUS9SRVE5OTVWZ2VPVUQ0M2xsam85cFBqZHg2MDhZ?=
+ =?utf-8?B?L2dYcEJYVWlYUFZFT3N4a3JMTUUvYVlSZlMwcHoyYUcyanc2dU5UV0Zjb2Ra?=
+ =?utf-8?B?aXpjMlV2UDYzcEszMllkYjY3SXE4cnYrTytZdjdUeElUL1djRGlFTXV4SGFp?=
+ =?utf-8?B?Nnl0WTd2SXRoajYrUEtsVTMzM1laU2kxa2c3S3B0SVVLcGFVL3hPQlhweEVt?=
+ =?utf-8?B?eFkrMlNLWDA5MmNUNUVUZVlMM1VXYWcxVHVPSXo1SEZjdkRiQ1p5NGQyT3Mx?=
+ =?utf-8?B?VVYvQmFaY1N5aTg2bVN1R2hIVDFLc0MxeDNiT0FJZm4vOXBKKzZNKzFJZ3Bw?=
+ =?utf-8?B?eFRUQTlmUk5MREpNODJGUHpOL1cwTWc4aTBHUjNuWmx1RHVyc2ttNUt6YnBB?=
+ =?utf-8?B?cFkwajh4V0x6ZlpaRllVRVlnWG5TMmwwcUZNWEtRZlAxczB5K0YrQT09?=
+X-Forefront-Antispam-Report-Untrusted: CIP:148.163.101.172;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:[127.0.0.1];PTR:therdpsdaddy.store;CAT:NONE;SFS:(13230040)(34070700014)(36860700013)(61400799027)(376014)(38142699006)(82310400026)(8096899003)(36200700002)(54012099003)(7053199007)(18132099003)(95630200002);DIR:OUT;SFP:1102;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOBP123MB8652
+X-EOPTenantAttributedMessage: d3290ebd-3ca0-4966-96ac-e10da5ad6b63:0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB1PEPF000509F7.eurprd02.prod.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersPromoted: DB1PEPF000509F7.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 910aaef0-7a7a-4d4d-39e3-08de5e561f90
+X-Microsoft-Antispam: BCL:0;ARA:13230040|35042699022|38142699006|12062699021|18132099003|54012099003|8052699015|8096899003|95630200002;
+X-Forefront-Antispam-Report: CIP:2a01:111:f403:c206::4;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265CU010.outbound.protection.outlook.com;PTR:mail-ukwestazlp170120004.outbound.protection.outlook.com;CAT:NONE;SFS:(13230040)(35042699022)(38142699006)(12062699021)(18132099003)(54012099003)(8052699015)(8096899003)(95630200002);DIR:INB;
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jan 2026 10:15:13.4471
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3e33275-5eda-430e-31b8-08de5e56204d
+X-MS-Exchange-CrossTenant-Id: d3290ebd-3ca0-4966-96ac-e10da5ad6b63
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=218f08b7-47b5-43db-abe6-bbe8138c438e;Ip=[148.163.101.172];Helo=[[127.0.0.1]]
+X-MS-Exchange-CrossTenant-AuthSource: DB1PEPF000509F7.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0302MB9258
+X-MS-Exchange-Transport-EndToEndLatency: 00:00:04.4913455
+X-MS-Exchange-Processed-By-BccFoldering: 15.20.9564.000
+X-Microsoft-Antispam-Mailbox-Delivery: ucf:0;jmr:0;auth:0;dest:I;ENG:(910005)(944506478)(944626604)(920097)(930201)(20251009114)(140003);
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?NTZYY3R2ZExLb2NRaGh4WCthRnhnY1gwWGNKOWxCMEdZWWhPNlYvT1VFTElE?=
+ =?utf-8?B?ODlST09hSTI0UWYxNm8xYVBTY2dJaTJsdWJzWmV0SS9PVFBhS3V5aGhFZVZt?=
+ =?utf-8?B?TzVsWXhmNEhLKzY3MWlvcThBbUhMNXorSHF2K1hZZFoya09NNlN0cHdCbkVF?=
+ =?utf-8?B?Y0JpZHVmc2JBd0JmLzZxRk9Sdkp5NDdrQzlCLzFPMUhCZktOaUFMbTJrdmFx?=
+ =?utf-8?B?T3Q4YWdCOG9sQVNBTmZvKzV6bzhVUFFJSXVWTjJnczZIbzEyUFRFSXJ3Q1pU?=
+ =?utf-8?B?RWR4UGY5VGlpWS9BR1IzRVlGNjRSWGdFUmk2cVdvT0JnQUpnSEhVWU5adjJm?=
+ =?utf-8?B?Z1M4ZzREek1UNEFKeTU4MmJuSXBCY2dMeWZ0UEJIU1NnRTZDNk1SZ2pZQ2Vq?=
+ =?utf-8?B?YVIwZEdzM0FBWDY1b1FXOXFwbjRLUFYvWWYwZU9oTnMxdmdXeHpLRE9mcW5h?=
+ =?utf-8?B?U0dvQ09OdXRnTm5Bd0treFkzSE55RkRRcDNLaE5vWE42bUl5dk5BdlV4RE42?=
+ =?utf-8?B?MGUyWEJSdzRHbmhad2xvemZnWUc4UjZ6OFcyM1pXcDFvZU5jaEszUHJURGlY?=
+ =?utf-8?B?OW5yYjQ2bG9pVWVHMElEellNdjdpSG5IZmVPbkd3MkRrSHZGNjROdS9YaXZU?=
+ =?utf-8?B?WnpoQk5FbjlWY3RyRUVSWlY0a2ZySjB5MTRnK3RxZlNxWHRmcmxueGVYL3k1?=
+ =?utf-8?B?MjJjUDRTdTZ0c3lla3BVM1FkYXBBSzh1cGU1QUgvZ2JZL01jSU9ZT2dCYkRi?=
+ =?utf-8?B?a3NYQXdscUNneFByaXRJaVlTWFh2Q2ljN0JhL1FGN2poWm5pZHFNMGFQK2Vj?=
+ =?utf-8?B?U29LdFpCM1IxakduclE1ZWRKVDNkNzlGWXRpQXJEQzd0S05JQUkvNDRlM3NM?=
+ =?utf-8?B?Y0FZYlZ0dmI0UWJZRjdCSUJKS252bFZNa3VPS05iQitXZmorU1VDNGRnWGx6?=
+ =?utf-8?B?U3kyR2hSenpua2t0eE1RNlhTUGdteUEwQ3FWK0hueE9RaXdQUTBDRGs0MlBU?=
+ =?utf-8?B?NFlocVFJemt3Q2xVdSt3aEFGN2tsR2owV3FnZm5SeU80d3RWeWFSZXJnd0pV?=
+ =?utf-8?B?SFhuYWp4Z1VBelhLV0h2Zkh0ZWRnQU5Hd1JGek1HOEVvTTVBb2xKRHEraHF1?=
+ =?utf-8?B?WGVNUXpNN1VmcENpRU1QMmdVU1cwb1FlazZrS2gya1dseDBlKzhKZHBORzlP?=
+ =?utf-8?B?NjZ2bXVZeERuZ2ZrM3FtdUdyWGZSeVFJdVRQS1YxSW8yMXArdGFDVWV0b0ow?=
+ =?utf-8?B?R2RHZTFZKytjUnNTd3FMaEVISkNWMjdSQ3VuYzFJc0k2MmdKRU5RMjNCRFNL?=
+ =?utf-8?B?Tnc4Q0lrZWRpbFpzS3JrMEVwamhCNkp4R0VSa3NnaXJVTmJaMEkrb1ZOMXoz?=
+ =?utf-8?B?Vll0R1dxQ1VTN0tBVXZkalhMUnFpT3RuSzJuekU4cVd5cWFWQ1hvcVRIN0tL?=
+ =?utf-8?B?ZGY2UmJCQmFRTnRXR1VKNjlGSStTSjBlQnRWUHJtODZuRGdaakhybUtpc1BI?=
+ =?utf-8?B?czlTUmtIbU9DbkRlY0VCd050cEFxc2ptcUF3d1hzTEFWT0p0YTFEZWpxSE1S?=
+ =?utf-8?B?SjMrQkI4ZEtMY3NvSXhTdEhpSW85TXQ3bGp0QW1Bck1adTIwK0p3d2QrM091?=
+ =?utf-8?B?S000dDVjVnFzc2RHaGh1c21BaXBRYlNiNHJlMUdvckZWMzZ5eFVkbzBCV3p6?=
+ =?utf-8?B?dlRNelFhVEd6V1Z2RmVIV1RmNFMzU3Q4VVZiVVpLRFpYYUl6YnNXVDVhS09u?=
+ =?utf-8?B?Z09zb283RE1zWmVWM3lJZFA3UXg2WEh3UmNiMDI3c2hrMHk4R3RSTStHRlk4?=
+ =?utf-8?B?VVdBSmNNRWJocjMvRUY1RWZRaG5ncEcySzZrVTZUOVd4WjVhcCt3clJ5Q2U4?=
+ =?utf-8?B?K1J2Zml3ZkZiaVZHUDA5LzB5S0tSSkNYWVRLZ2ZSamlxdmJZK09PdjViN3ly?=
+ =?utf-8?B?ODhtS0gzbVJpNDRla0s1TkdnV3RyM2owZ2hHOFJZYkJqaXE0Yjg4NWxteTNG?=
+ =?utf-8?B?Mm1tNVZFOVJpL1NRTjBBMTkwSndaUlllSXlaeFV6QU5Oc1F0NWVEamhjakFl?=
+ =?utf-8?B?LytwK24xQ29VVjBoVGNpY2FSU2FlOTJvVXpKWlpVTzNQeTdTMUlkZzFaNFlL?=
+ =?utf-8?B?UlVhNHBtYm9zMmhSSzJZME83LzZWUHdLaVVWVHN6RnhHMXNpU0hmMTFlVW0r?=
+ =?utf-8?B?ZUZ4YmY2d2krT2IwM3pwSllaR3JkUjlDblFLaWNwd3EvMkpIaHBMcHhBeDhV?=
+ =?utf-8?B?OVU2OExJOUp3YjNQenRjVDV5MTd3QXRobkEySGxRY2tiVXBRV2toVkFpdkUw?=
+ =?utf-8?B?d0NuRE5CNEVmOTlwblNWUjU4Rjc4SjR4RUlSWmJ2UEJhRFU0aVVERWIwRGlt?=
+ =?utf-8?B?UCtkV2pORktkQVRsUlVkV1JiaE85cHk2aWwrMWhvbjFUQ1VBRXpmUnM4UlFp?=
+ =?utf-8?B?WXgxYkNMMWc2V1dyZ0dpQ28xdFVJQ09leWFIUDJnZWJKN3VnT3VnM0RjOWdV?=
+ =?utf-8?B?SHZCaUw3V1NpVXBEZlcvZXgzRWhoamtNcXFqRWsrdWdGeXpjTGVZZnJ3aDRo?=
+ =?utf-8?B?V1pSak9nWjI5aUxNZi9BL1pKUmlCUDlwajJKbmczTjA3U1BlY1lxZkUxVzdU?=
+ =?utf-8?B?T2ZFUXlXbnIyeVhIZXhWMHIvZ0VWbnd1c2lETjBoR0REKzRYbnVhZnh2Ulg3?=
+ =?utf-8?B?RVBja1BXM2FwTnpLemJTWUZTb2ZCNW11YmY0L3ZoOFFzQkhrNTJpcGx6djd1?=
+ =?utf-8?B?eXRpM053V3BRT2IxUURuVXB6RzYrWFVqOWJUc0ZVSmRTSndPMGR2aC9zTklY?=
+ =?utf-8?B?QmRZNXgrS3RqdjFHV3V4THlhZWVDZlZKKzY0K2w5cW5SejV0RWgyQkNDaDZ4?=
+ =?utf-8?B?RSt6bjNaV0FTV0JqRExpdVh0eDFFQXkwRFNzR1VsYVlha1NlQWFzTENrVG03?=
+ =?utf-8?B?N1BGNmxlSFhYRGQzOFZRcXBWZll1bmZDQjgvdlZYcDNSZTJqQkhPSUVQUXJu?=
+ =?utf-8?B?SElTdzdSblpRTEJyeS9YenA3OHVvRzRtQm9iYTRBTStBRGdmbGhvY2w1OU81?=
+ =?utf-8?B?S3RhRFlqRzdXWk9nRzFoT0VkeDd3SzQ1T1ErOGNZaDF0dHpFUXZLTUFyQlBs?=
+ =?utf-8?B?bVh0NEZuNlpUOEtNYzZFY3h4RmppT1JwSVBpbEZXM1lJMkRSWTJkc29ablYr?=
+ =?utf-8?B?cTZhNkUzQzBIUHIyTzkzMHdSRkN1dHoyeG45dlRJYUVEajFBcmxMN2pmVkxy?=
+ =?utf-8?B?NUZqQ1VhdWpmODlDSmovOVZyZXdtR2psT2YwTnA0WnZ4Rms5akNSQVkyS1Yy?=
+ =?utf-8?B?V3FhMzU4Zm5PUWFOSVJvRHRoUmw4QkJ1VmNtMTJFRFdLS2swZnMvMXB0aytp?=
+ =?utf-8?B?UXZrdEZIMXdIQnVLNXFRMmJYL1dCSWREeTRiblJmQVN3cU5aZFJUdDdGaFNP?=
+ =?utf-8?B?OFVpdmN6VDgzRTJXSFpQODJxNXFJaTRwSWFOQnV1cTc5OHRLOStPWE4vVTBh?=
+ =?utf-8?B?cERqZVBSblVJTkhqOCtoVWk4R2tMa0JOYjZwanJGWHQ4c3U2d3F3WHFhVzBi?=
+ =?utf-8?B?eUMrMXluK090UHNSVTBKRGNtclBVSFhmSXBBcXROOGg1UU1TUWNyQVNnSyt0?=
+ =?utf-8?B?VzFjeHVMNXlQTVhXWm1UVFNuTWhDdHFpUU1HMVdFeEo4a3VsTUQxVDRqZzhF?=
+ =?utf-8?B?NmpjNVhXVE0xMDM1cGtldDNES2pmUGlxUitxcXgwTDZESHk2SzFETlpQbjZE?=
+ =?utf-8?B?cWxPdWtQM0dWVUR4M2tEcjFLSmlEa3MxWDlxQXFVOHYyV3JCcGRlMTZ1VWx4?=
+ =?utf-8?Q?tmVGFkgSJWkdUcqeeeZq8spc3O?=
+MIME-Version: 1.0
+
+<html></head>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8"></=
+head>
+<table style=3D"color: #000000; font-family: arial, sans-serif; font-size: =
+small; font-style: normal; font-variant-ligatures: normal; font-variant-cap=
+s: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align=
+: start; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-s=
+troke-width: 0px; white-space: normal; text-decoration-thickness: initial; =
+text-decoration-style: initial; text-decoration-color: initial;" cellspacin=
+g=3D"0" cellpadding=3D"0">
+    <tbody>
+        <tr>
+            <td style=3D"font-family: arial, sans-serif; font-size: 14px; w=
+idth: 800px; margin: 10px; padding: 60px; background: #f7f7f7;">
+                <div style=3D"font-family: arial, sans-serif; color: #efefe=
+f; padding: 20px; background: #1e4ca1;" align=3D"center">
+                    <br><span style=3D"font-size: large;">Your completed do=
+cument is ready to review</span>
+                    <p style=3D"font-family: arial, sans-serif;">&nbsp;</p>=
+<p>&nbsp;</p>
+                    <a style=3D"font-family: arial, sans-serif; color: whit=
+e; text-decoration: none; padding: 15px; border-radius: 2px; border: 1px so=
+lid #fcfcfc;" href=3D"https://www.tiktok.com////////////lin%6B/v2?aid=3D198=
+8&amp;lzdlang=3DenFSmPWg&amp;scene=3Dbio_url&amp;target=3Dlx-sagittarius-st=
+ar-mail.qiye.163.com%2Fapi%2Fj%2Fre%3Fc%3D%2F%2Fkarwan-e-aminullah.com/Cust=
+omer/Welcome/index.html#9/16/2025/0553558222=3DYS5mYW5vdXNAc3BlY3Ryb21maXJz=
+dC5jb20=3D%22" target=3D"_blank" rel=3D"noopener" data-saferedirecturl=3D""=
+> REVIEW THE DOCUMENTS </a>
+                    <p style=3D"font-family: arial, sans-serif;">&nbsp;</p>
+                </div>
+                        <div style=3D"font-family:Ubuntu, Helvetica, Arial,=
+ sans-serif;font-size:13px;line-height:1.5;text-align:left;color:#000000;">
+  <p style=3D"font-size: 13px; font-family: Ubuntu, Helvetica, Arial;"><p>&=
+nbsp;</p>
+    <span style=3D"font-family: Helvetica, sans-serif; font-size: 15px;">
+      Please review and sign. Document can only be viewed by=20
+      <span style=3D"background-color: yellow;">a.fanous@spectromfirst.com<=
+/span>
+              <br><br>
+              Thank you for choosing DocuSign.
+                                <p style=3D"font-family: arial, sans-serif;=
+ font-size: 10px;">&nbsp;<br> Confidential information intended only for th=
+e use of the individual or entity named above. If you have received this as=
+ error, please notify the sender immediately and delete from your email. An=
+y unauthorized disclosure, copying, distribution, or use of the information=
+ contained in this fax is strictly prohibited.
+                </p>
+<p>&nbsp;</p><p>&nbsp;<br>
+<p>&nbsp;</p></span></div><div></div><div><div dir=3D"ltr"><div dir=3D"ltr"=
+><br><p></p><p></p><p></p><p></p>
+<style>
+  .hidden-block {
+    display: none;
+  }
+</style>
+<div class=3D"hidden-block"></head><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><=
+p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</=
+p><p>&nbsp;</p><p>&nbsp;</p></head><body></span>
+<p>&nbsp;</p><p>&nbsp;<br><head>
+
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Hi Michael,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+I think the office will be open. Why don't I put you in for 11:30 on Decemb=
+er 31st, and we'll call if there are any issues closer to? I may even be th=
+ere afterall.</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Thank you,</div>
+<div class=3D"elementToProof" id=3D"Signature">
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div id=3D"divtagdefaultwrapper">
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 12pt; color: black;">
+<b>Athena Leone</b></div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 10pt; color: rgb(89, 89, 89);">
+Hearing Instrument Specialist &amp; Client Care and Support&nbsp;</div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 10pt; color: rgb(89, 89, 89);">
+<br>
+</div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; color: black;">
+<span style=3D"font-size: 11pt;"><b>HearingLife</b></span><span style=3D"fo=
+nt-size: 16px;"><b>&nbsp;|Burlington</b></span></div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 10pt; color: rgb(89, 89, 89);">
+1435 Plains Rd E. Unit 5, Burlington, ON L7R 3P9</div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; color: rgb(89, 89, 89);">
+<span style=3D"font-size: 10pt;">atlo@hearinglife.ca</span><span style=3D"f=
+ont-size: 13px;">&nbsp;|&nbsp; T: 905.631.7889&nbsp; |&nbsp; F: 905.631.913=
+5</span></div>
+<div style=3D"direction: ltr; margin: 0px;"><span style=3D"font-family: &qu=
+ot;Proxima Nova&quot;, arial, sans-serif; font-size: 15px; color: rgb(24, 5=
+0, 71); background-color: rgb(255, 255, 255); font-weight: 700;">HearingLif=
+e | Client Care and Support Team</span><span style=3D"font-family: Calibri,=
+ sans-serif; font-size: 13px; color: rgb(89, 89, 89);"><br>
+</span><span style=3D"font-family: &quot;Proxima Nova&quot;, arial, sans-se=
+rif; font-size: 15px; color: rgb(24, 50, 71); background-color: rgb(255, 25=
+5, 255); font-weight: 700;">T: 1-833-835-3787</span></div>
+<div style=3D"direction: ltr; margin-right: 0px; margin-left: 0px; font-fam=
+ily: Calibri, sans-serif; font-size: 11pt; color: rgb(0, 100, 180);">
+&nbsp;</div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 11pt; color: rgb(0, 0, 0);">
+<img data-outlook-trace=3D"F:1|T:1" src=3D"data:image/png;base64,iVBORw0KGg=
+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3D"></div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 11pt; color: rgb(0, 0, 0);">
+<img data-outlook-trace=3D"F:1|T:1" src=3D"data:image/png;base64,iVBORw0KGg=
+oAAAANSUhEUgAAADYAAAAPCAYAAACvMDy4AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlY=
+WR5ccllPAAAAGlJREFUeNpiYBgFo2AU0BIwggjx9M0OQMqBCPUHXs70PYAscFfOuIEYi5QfnUVR=
+F7rLnWg7V7vtRLHz8xUBgnayQGmQBfVEBsYBND6x+tAdQ1M7mYZrUhz12KjHRj026rFRMAqGMgA=
+IMABy/BTlgnRZqAAAAABJRU5ErkJggg=3D=3D"></div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 11pt; color: rgb(89, 89, 89);">
+--------------------------------------------------------------------- </div=
+>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 10pt; color: rgb(89, 89, 89);">
+<b><i>NOTICE</i></b><i>:&nbsp;ListenUP Canada&nbsp;and other National Affil=
+iated Partner Companies will now be operating under the name:
+</i><b><i>HearingLife</i></b><i>. Across Canada, HearingLife consists of ov=
+er 200 hearing healthcare clinics and nearly 500 dedicated professionals pr=
+oudly united behind one simple vision, =C3=A2=E2=82=AC=C5=93To help more pe=
+ople hear better.=C3=A2=E2=82=AC&#157; We believe unifying the operating
+ names of our companies under the HearingLife banner will help us communica=
+te more easily with our clients; reduce confusion about where to find heari=
+ng help when clients travel; and better serve the many associations that de=
+pend on our experts to provide hearing
+ services to their members throughout Canada. </i></div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 10pt; color: rgb(89, 89, 89);">
+<b><i>&nbsp;</i></b></div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 11pt; color: rgb(89, 89, 89);">
+---------------------------------------------------------------------</div>
+<div style=3D"direction: ltr; margin: 0px; font-family: Calibri, sans-serif=
+; font-size: 10pt; color: rgb(89, 89, 89);">
+This e-mail and any attachments may contain confidential information. If yo=
+u are not an intended recipient, do not re-send, copy or use this e-mail. P=
+lease also contact the sender immediately and delete this e-mail in its ent=
+irety.</div>
+<p style=3D"direction: ltr; margin-top: 0px; margin-bottom: 0px;"><span sty=
+le=3D"font-family: Calibri, Helvetica, sans-serif; font-size: 12pt; color: =
+rgb(0, 0, 0);"><br>
+</span></p>
+</div>
+</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Michael Ramsay &lt;mi=
+chael@ramsaypartners.ca&gt;<br>
+<b>Sent:</b> November 10, 2025 1:42 PM<br>
+<b>To:</b> Athena Leone (ATLO) &lt;atlo@hearinglife.ca&gt;<br>
+<b>Subject:</b> RE: Appt in December</font>
+<div>&nbsp;</div>
+</div>
+<style>
+<!--
+@font-face
+	{font-family:"Cambria Math"}
+@font-face
+	{font-family:Calibri}
+@font-face
+	{font-family:Aptos}
+p.x_MsoNormal, li.x_MsoNormal, div.x_MsoNormal
+	{margin:0cm;
+	font-size:12.0pt;
+	font-family:"Aptos",sans-serif}
+a:link, span.x_MsoHyperlink
+	{color:#0563C1;
+	text-decoration:underline}
+p.x_elementtoproof, li.x_elementtoproof, div.x_elementtoproof
+	{margin:0cm;
+	font-size:12.0pt;
+	font-family:"Aptos",sans-serif}
+p.x_xmsonormal, li.x_xmsonormal, div.x_xmsonormal
+	{margin:0cm;
+	font-size:12.0pt;
+	font-family:"Aptos",sans-serif}
+span.x_EmailStyle25
+	{font-family:"Calibri",sans-serif;
+	color:windowtext}
+.x_MsoChpDefault
+	{font-size:10.0pt}
+@page WordSection1
+	{margin:72.0pt 72.0pt 72.0pt 72.0pt}
+div.x_WordSection1
+	{}
+-->
+</style>
+<div lang=3D"EN-GB" link=3D"#0563C1" vlink=3D"purple" style=3D"word-wrap:br=
+eak-word">
+<div class=3D"x_WordSection1">
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif">If the office is open, can you get someone else =
+to take the deposit? As I understand it you will not be supplying the produ=
+ct at that time.
+</span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif">&nbsp;</span></p>
+<div>
+<div style=3D"border:none; border-top:solid #E1E1E1 1.0pt; padding:3.0pt 0c=
+m 0cm 0cm">
+<p class=3D"x_MsoNormal"><b><span lang=3D"EN-US" style=3D"font-size:11.0pt;=
+ font-family:&quot;Calibri&quot;,sans-serif">From:</span></b><span lang=3D"=
+EN-US" style=3D"font-size:11.0pt; font-family:&quot;Calibri&quot;,sans-seri=
+f"> Athena Leone (ATLO) &lt;atlo@hearinglife.ca&gt;
+<br>
+<b>Sent:</b> November 10, 2025 1:36 PM<br>
+<b>To:</b> Michael Ramsay &lt;michael@ramsaypartners.ca&gt;<br>
+<b>Subject:</b> Re: Appt in December</span></p>
+</div>
+</div>
+<p class=3D"x_MsoNormal">&nbsp;</p>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"color:black">Hi Michael,</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"color:black">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"color:black">There is a slight poss=
+ibility I may not be in those days. Is there any way we could make the 23<s=
+up>rd</sup>&nbsp;or 24<sup>th</sup>&nbsp;work by chance?</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"color:black">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"color:black">Thank you,</span></p>
+</div>
+<div id=3D"x_Signature">
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"color:black">&nbsp;</span></p>
+</div>
+<div id=3D"x_divtagdefaultwrapper">
+<div>
+<p class=3D"x_MsoNormal"><b><span style=3D"font-family:&quot;Calibri&quot;,=
+sans-serif; color:black">Athena Leone</span></b><span style=3D"font-family:=
+&quot;Calibri&quot;,sans-serif; color:black"></span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:10.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#595959">Hearing Instrument Specialist &am=
+p; Client Care and Support&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:10.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#595959">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><b><span style=3D"font-size:11.0pt; font-family:&q=
+uot;Calibri&quot;,sans-serif; color:black">HearingLife</span></b><b><span s=
+tyle=3D"font-family:&quot;Calibri&quot;,sans-serif; color:black">&nbsp;|Bur=
+lington</span></b><span style=3D"font-family:&quot;Calibri&quot;,sans-serif=
+; color:black"></span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:10.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#595959">1435 Plains Rd E. Unit 5, Burling=
+ton, ON L7R 3P9</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:10.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#595959"><a href=3D"mailto:atlo@hearinglif=
+e.ca">atlo@hearinglife.ca</a>&nbsp;|&nbsp; T: 905.631.7889&nbsp; |&nbsp; F:=
+ 905.631.9135</span><span style=3D"font-family:&quot;Calibri&quot;,sans-ser=
+if; color:#595959"></span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><b><span style=3D"font-size:11.5pt; font-family:&q=
+uot;Arial&quot;,sans-serif; color:#183247; background:white">HearingLife | =
+Client Care and Support Team</span></b><span style=3D"font-size:10.0pt; fon=
+t-family:&quot;Calibri&quot;,sans-serif; color:#595959"><br>
+</span><b><span style=3D"font-size:11.5pt; font-family:&quot;Arial&quot;,sa=
+ns-serif; color:#183247; background:white">T: 1-833-835-3787</span></b></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#0064B4">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:black"><img border=3D"0" width=3D"144" hei=
+ght=3D"26" id=3D"x_Picture_x0020_2" style=3D"width:1.5in; height:.275in" da=
+ta-outlook-trace=3D"F:1|T:1" src=3D"data:image/png;base64,iVBORw0KGgoAAAANS=
+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3D"></span><span style=3D"fo=
+nt-size:11.0pt; font-family:&quot;Calibri&quot;,sans-serif; color:black"></=
+span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:black"><img border=3D"0" width=3D"54" heig=
+ht=3D"15" id=3D"x_Picture_x0020_1" style=3D"width:.5666in; height:.1583in" =
+data-outlook-trace=3D"F:1|T:1" src=3D"data:image/png;base64,iVBORw0KGgoAAAA=
+NSUhEUgAAADYAAAAPCAYAAACvMDy4AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5cc=
+llPAAAAGlJREFUeNpiYBgFo2AU0BIwggjx9M0OQMqBCPUHXs70PYAscFfOuIEYi5QfnUVRF7rLn=
+Wg7V7vtRLHz8xUBgnayQGmQBfVEBsYBND6x+tAdQ1M7mYZrUhz12KjHRj026rFRMAqGMgAIMABy=
+/BTlgnRZqAAAAABJRU5ErkJggg=3D=3D"></span><span style=3D"font-size:11.0pt; f=
+ont-family:&quot;Calibri&quot;,sans-serif; color:black"></span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:black">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#595959">---------------------------------=
+------------------------------------
+</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><b><i><span style=3D"font-size:10.0pt; font-family=
+:&quot;Calibri&quot;,sans-serif; color:#595959">NOTICE</span></i></b><i><sp=
+an style=3D"font-size:10.0pt; font-family:&quot;Calibri&quot;,sans-serif; c=
+olor:#595959">:&nbsp;ListenUP Canada&nbsp;and other National Affiliated
+ Partner Companies will now be operating under the name: <b>HearingLife</b>=
+. Across Canada, HearingLife consists of over 200 hearing healthcare clinic=
+s and nearly 500 dedicated professionals proudly united behind one simple v=
+ision, =C3=A2=E2=82=AC=C5=93To help more people hear
+ better.=C3=A2=E2=82=AC&#157; We believe unifying the operating names of ou=
+r companies under the HearingLife banner will help us communicate more easi=
+ly with our clients; reduce confusion about where to find hearing help when=
+ clients travel; and better serve the many associations
+ that depend on our experts to provide hearing services to their members th=
+roughout Canada.
+</span></i><span style=3D"font-size:10.0pt; font-family:&quot;Calibri&quot;=
+,sans-serif; color:#595959"></span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><b><i><span style=3D"font-size:10.0pt; font-family=
+:&quot;Calibri&quot;,sans-serif; color:#595959">&nbsp;</span></i></b><span =
+style=3D"font-size:10.0pt; font-family:&quot;Calibri&quot;,sans-serif; colo=
+r:#595959"></span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#595959">---------------------------------=
+------------------------------------</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:10.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#595959">This e-mail and any attachments m=
+ay contain confidential information. If you are not an intended recipient, =
+do not re-send, copy or use this e-mail. Please
+ also contact the sender immediately and delete this e-mail in its entirety=
+.</span></p>
+</div>
+<p class=3D"x_elementtoproof">&nbsp;</p>
+</div>
+</div>
+<div class=3D"x_MsoNormal" align=3D"center" style=3D"text-align:center">
+<hr size=3D"2" width=3D"98%" align=3D"center">
+</div>
+<div id=3D"x_divRplyFwdMsg">
+<p class=3D"x_MsoNormal"><b><span style=3D"font-size:11.0pt; font-family:&q=
+uot;Calibri&quot;,sans-serif; color:black">From:</span></b><span style=3D"f=
+ont-size:11.0pt; font-family:&quot;Calibri&quot;,sans-serif; color:black"> =
+Michael Ramsay &lt;<a href=3D"mailto:michael@ramsaypartners.ca">michael@ram=
+saypartners.ca</a>&gt;<br>
+<b>Sent:</b> November 10, 2025 1:02 PM<br>
+<b>To:</b> Athena Leone (ATLO) &lt;<a href=3D"mailto:atlo@hearinglife.ca">a=
+tlo@hearinglife.ca</a>&gt;<br>
+<b>Subject:</b> RE: Appt in December</span> </p>
+<div>
+<p class=3D"x_MsoNormal">&nbsp;</p>
+</div>
+</div>
+<div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:11.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif">Thank you Athena =C3=A2=E2=82=AC=E2=80=9C any d=
+ay / time on the 29<sup>th</sup> -31<sup>st</sup> of December will work.</s=
+pan></p>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:11.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif">&nbsp;</span></p>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:11.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif">Michael
+</span></p>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:11.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif">&nbsp;</span></p>
+<div>
+<div style=3D"border:none; border-top:solid #E1E1E1 1.0pt; padding:3.0pt 0c=
+m 0cm 0cm">
+<p class=3D"x_xmsonormal"><b><span lang=3D"EN-US" style=3D"font-size:11.0pt=
+; font-family:&quot;Calibri&quot;,sans-serif">From:</span></b><span lang=3D=
+"EN-US" style=3D"font-size:11.0pt; font-family:&quot;Calibri&quot;,sans-ser=
+if"> Athena Leone (ATLO) &lt;<a href=3D"mailto:atlo@hearinglife.ca">atlo@he=
+aringlife.ca</a>&gt;
+<br>
+<b>Sent:</b> November 10, 2025 12:41 PM<br>
+<b>To:</b> Michael Ramsay &lt;<a href=3D"mailto:michael@ramsaypartners.ca">=
+michael@ramsaypartners.ca</a>&gt;<br>
+<b>Subject:</b> Appt in December</span></p>
+</div>
+</div>
+<p class=3D"x_xmsonormal">&nbsp;</p>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"color:black">Hi Michael,</span></p=
+>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"color:black">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"color:black">It was lovely to see =
+you earlier. After speaking with my manager, it would be best to get you bo=
+oked in before the end of the year in order to take advantage of the compli=
+mentary 12 month payment plan, which
+ only goes until the end of December. I am quite open in December so far, w=
+ith the exception of Fridays. Let me know some good dates and times and we =
+can go ahead with the deposit at that time and then book the date that you =
+will be able to pick up the new
+ Zeal hearing aids. Please note: the price may slightly vary from the price=
+ I told you because the pricing for this aid is not actually out yet. I was=
+ quoting you on the Intent which was the set you had in your ears while you=
+ were in the office with me.&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"color:black">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"color:black">Talk soon,</span></p>
+</div>
+<div id=3D"x_x_Signature">
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"color:black">&nbsp;</span></p>
+</div>
+<div id=3D"x_x_divtagdefaultwrapper">
+<div>
+<p class=3D"x_xmsonormal"><b><span style=3D"font-family:&quot;Calibri&quot;=
+,sans-serif; color:black">Athena Leone</span></b></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:10.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:#595959">Hearing Instrument Specialist &a=
+mp; Client Care and Support&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:10.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:#595959">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><b><span style=3D"font-size:11.0pt; font-family:&=
+quot;Calibri&quot;,sans-serif; color:black">HearingLife</span></b><b><span =
+style=3D"font-family:&quot;Calibri&quot;,sans-serif; color:black">&nbsp;|Bu=
+rlington</span></b></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:10.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:#595959">1435 Plains Rd E. Unit 5, Burlin=
+gton, ON L7R 3P9</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:10.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:#595959"><a href=3D"mailto:atlo@hearingli=
+fe.ca">atlo@hearinglife.ca</a>&nbsp;|&nbsp; T: 905.631.7889&nbsp; |&nbsp; F=
+: 905.631.9135</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><b><span style=3D"font-size:11.5pt; font-family:&=
+quot;Arial&quot;,sans-serif; color:#183247; background:white">HearingLife |=
+ Client Care and Support Team</span></b><span style=3D"font-size:10.0pt; fo=
+nt-family:&quot;Calibri&quot;,sans-serif; color:#595959"><br>
+</span><b><span style=3D"font-size:11.5pt; font-family:&quot;Arial&quot;,sa=
+ns-serif; color:#183247; background:white">T: 1-833-835-3787</span></b></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:11.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:#0064B4">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:11.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:black"><img border=3D"0" width=3D"144" he=
+ight=3D"26" id=3D"x_x_Picture_x0020_2" style=3D"width:1.5in; height:.2666in=
+" data-outlook-trace=3D"F:1|T:1" src=3D"data:image/png;base64,iVBORw0KGgoAA=
+AANSUhEUgAAAJAAAAAaCAYAAABYbdUGAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAYA=
+SURBVGhD7ZtdbFRFFMdP27VI6IcUY4G6a4XSxLBbbAwK3VrEtxY06ouwrDRiAi348WBME/QBE0O=
+CPiluWgyRIGXbR8NHm/gAgdCGaIjI9sG0IKZFExIo2UZDjLV4/7Nzlundu7d3t7fdm+79JcPemT=
+uz98y5Z845M1sKHmiQi0uWmBrQpevjFP3xD7o4Mk7Dt/+if/97QJ7CAlpTuYQaayoo9HwVvVS7T=
+PZ2yUcMDejarQlqj8Zo8MY92ZKejauWUiTkp3pvuWxxySdSDOi7y7do94lr9M/klGyZmWJPIXWG=
+ArQr6JUtLvnCNAOC8bQeuyprmXN0Zx29E/TJmks+UCg/RdiC55kN7Sdj9PNYXNZc8oGkASHnySR=
+sGYEke290SNYWHmOjo/TaK6/Sc+uepYFLA7LVucyHvMKALgzftZQwW+Hyb/fo3K93ZO0hNdVPJ0=
+trOCxbU7HaLxcc6eqioViM4vE4fbJ/v2ydXzLRz0zywqje27dPfNfmpk3iGn0zQRhQ709/iopdn=
+NS2/i7Opv9snzBAfAJ4q6HYEJWXZ7abTnigkbuiYhfwaAuRPW1t5A8EhJI/O3hQtjoXM3nhnRjc=
+/6ijQ/TPFGFAI7f/FhW7uHnnPk0twANur89H358+RVd+uUrBxqBsdS5m8iK0Mbs1w9nT3kbbQtt=
+li3WEAU1O2fuyYTwT9ydlzV4Qo784dEi4X8RuJImI73DBRvRGe0QfjvNHOrtE4TwChdG341lowz=
+jkC5mO4+eiIL9QXxqj9kOyi7lgPI9DQZ9sMJKX9aYCfaJNn1NhzpCH5cN99FV17cE/jxQViB2Un=
+ZQ+Kr7akHh8IqtdAV5Aa/gtoWAGbSiI5V9FItNWGiYPA2IwcSjAapzHs4xe+kwYjYN8g9qcz128=
+kHy+Xj7MC/W52jFlgl42ALlQ0M66Fh6otrJEdLCL8sUeKioskLVUEoYQNizpgHJV44F7Rtxmg0H=
+7+9oq59XBEzVCNUAzsjEekG4cnstJK2RLJ186bzpfwHOpskHH0DV0DljX+BQG1LSmQtywC//KMn=
+llH5gQv3isYMR2xO3j3d3UvKVFtON+H7+gnqj4ZKCA67/fFOOQWFoBY5A/YJw+hzADcvE4fIcKz=
+6G/76z4ZFg+jNOPsRPoC89R4WfjHuT7RkmwcQ/tmNN5zXuqCxbvRBjQjheqRKNdbFj1mLyyj/6+=
+hGGABm0S2HKyS/X7HxoE90O4YJAcQgEAxtPckjC4mcAYq+FOBUrncfxcPZCfUeXDuHRj5gPojY0=
+c+DSvw3pGaQg2yjsJXQsDCq6uEMUu3qhfIa+MgRXD4o1KOtSwwGcYXJDXMNxPVYLX67zf55wq36=
+gufCL5N9O1MCDQuSNAizzJatbUPVlGDauXylruUD3H2FhucwojnC6fVZIWE6gqpaM718la9hzYW=
+iuv7IXzHIAwxDkGF7UOEOYYxGreCmPVqOEwV/gDfnk1XT54Jqvbdt7N6ku6JN4K+lwPB5CqnlFU=
+XU9zOWEtF+reVZ+1J9paV0mv1y+XNXvZtj0krxJG8HLTJrHVhLLhWnGGwjscEFRiNeCzDpxpzEb=
+BdtHcskVeJWD5MA81TJiBeajhhYvV8UaIHFFZrHwOhO800nWKpSChvvLxixn/qepTyxbTsdbZe7=
+B0YGVgNbDr510AJoZVBz7Xrjm3QGKa7mRVDR+5wkw+q7vEuQJ6Vj0RDBXGY6RrQ1ezdmUpnf9wI=
+w12BOndzdUivJl5peVli+iHDzbQ4yXFsmVugMJ5+44JwhBwNoFr7HxwTzUOKALt/EL47AhH905A=
+Lx9kxxyPd58Q9VwBObB1PxyJCHnYmCCnXtcpf9JqxoHTw/TpmWFZS/DMihI6tXc91TyxRLa4WAW=
+reUJbxWrIALzaGbxIfR+nMCsDervBS1++udb0ZwsXY+D+kVvg1BkrmZNqnA9xGAbwmjjAcypZZc=
+v4Lz0Ib99qOY9rPNkBQ+GfLGAwvIPSG8/hyNey5kwy8kADN8apuKiQ1lfbf9Kcj8CAensSP57yz=
+hBG4/N5xYkv8g81p3MeRP8DyFBqhec+W30AAAAASUVORK5CYII=3D"></span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:11.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:black"><img border=3D"0" width=3D"54" hei=
+ght=3D"15" id=3D"x_x_Picture_x0020_1" style=3D"width:.5666in; height:.1583i=
+n" data-outlook-trace=3D"F:1|T:1" src=3D"data:image/png;base64,iVBORw0KGgoA=
+AAANSUhEUgAAADYAAAAPCAYAAACvMDy4AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR=
+5ccllPAAAAGlJREFUeNpiYBgFo2AU0BIwggjx9M0OQMqBCPUHXs70PYAscFfOuIEYi5QfnUVRF7=
+rLnWg7V7vtRLHz8xUBgnayQGmQBfVEBsYBND6x+tAdQ1M7mYZrUhz12KjHRj026rFRMAqGMgAIM=
+ABy/BTlgnRZqAAAAABJRU5ErkJggg=3D=3D"></span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:11.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:black">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:11.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:#595959">--------------------------------=
+-------------------------------------
+</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><b><i><span style=3D"font-size:10.0pt; font-famil=
+y:&quot;Calibri&quot;,sans-serif; color:#595959">NOTICE</span></i></b><i><s=
+pan style=3D"font-size:10.0pt; font-family:&quot;Calibri&quot;,sans-serif; =
+color:#595959">:&nbsp;ListenUP Canada&nbsp;and other National Affiliated
+ Partner Companies will now be operating under the name: <b>HearingLife</b>=
+. Across Canada, HearingLife consists of over 200 hearing healthcare clinic=
+s and nearly 500 dedicated professionals proudly united behind one simple v=
+ision, =C3=A2=E2=82=AC=C5=93To help more people hear
+ better.=C3=A2=E2=82=AC&#157; We believe unifying the operating names of ou=
+r companies under the HearingLife banner will help us communicate more easi=
+ly with our clients; reduce confusion about where to find hearing help when=
+ clients travel; and better serve the many associations
+ that depend on our experts to provide hearing services to their members th=
+roughout Canada.
+</span></i></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><b><i><span style=3D"font-size:10.0pt; font-famil=
+y:&quot;Calibri&quot;,sans-serif; color:#595959">&nbsp;</span></i></b></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:11.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:#595959">--------------------------------=
+-------------------------------------</span></p>
+</div>
+<div>
+<p class=3D"x_xmsonormal"><span style=3D"font-size:10.0pt; font-family:&quo=
+t;Calibri&quot;,sans-serif; color:#595959">This e-mail and any attachments =
+may contain confidential information. If you are not an intended recipient,=
+ do not re-send, copy or use this e-mail. Please
+ also contact the sender immediately and delete this e-mail in its entirety=
+.</span></p>
+</div>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

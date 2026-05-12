@@ -1,0 +1,493 @@
+<?php
+/**
+ * Blog/Success Stories Page - Niche Society
+ * 
+ * Displays blog posts and success stories with pagination,
+ * categories, and search functionality
+ */
+
+require_once __DIR__ . '/config/config.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/functions/helpers.php';
+
+// Auto-update related news: trigger RSS aggregator if last run was over 1 hour ago.
+// For reliable hourly updates regardless of visits, set a cron: 0 * * * * php /path/to/rss-feed-aggregator.php
+$rssLastRunFile = __DIR__ . '/logs/rss-last-run.txt';
+$rssRunInterval = 3600; // 1 hour
+if (!is_dir(__DIR__ . '/logs')) {
+    @mkdir(__DIR__ . '/logs', 0755, true);
+}
+if (!file_exists($rssLastRunFile) || (time() - (int)@filemtime($rssLastRunFile) >= $rssRunInterval)) {
+    @file_put_contents($rssLastRunFile, (string)time());
+    $aggregatorUrl = rtrim(SITE_URL, '/') . '/rss-feed-aggregator.php';
+    $ctx = stream_context_create(['http' => ['timeout' => 8]]);
+    @file_get_contents($aggregatorUrl, false, $ctx);
+}
+
+// Handle language switch
+handleLanguageSwitch();
+
+$lang = getCurrentLanguage();
+$t = getTranslations($lang);
+$dir = getTextDirection($lang);
+
+// Newsletter form CSRF token (so handler can validate)
+if (!isset($_SESSION['csrf_newsletter'])) {
+    $_SESSION['csrf_newsletter'] = bin2hex(random_bytes(32));
+}
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+setcookie('csrf_newsletter', $_SESSION['csrf_newsletter'], [
+    'expires' => time() + 3600,
+    'path' => '/',
+    'secure' => $isHttps,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
+// Articles per page (main grid) — 3 per row × 8 rows = 24 to fill the page with news
+$blogPostsPerPage = 24;
+// Sidebar "Recent Posts" — fixed at 16 so the sidebar isn't too long
+$sidebarRecentPostsLimit = 16;
+
+// Pagination settings
+$postsPerPage = $blogPostsPerPage;
+$currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($currentPage - 1) * $postsPerPage;
+
+// Category filter
+$categoryFilter = isset($_GET['category']) ? htmlspecialchars($_GET['category']) : '';
+
+// Search query
+$searchQuery = isset($_GET['search']) ? trim(htmlspecialchars($_GET['search'])) : '';
+
+// Build SQL query
+$whereClauses = ["status = 'published'", "published_at <= NOW()"];
+$params = [];
+
+if ($categoryFilter) {
+    $whereClauses[] = "category = ?";
+    $params[] = $categoryFilter;
+}
+
+if ($searchQuery) {
+    $whereClauses[] = $lang === 'ar' 
+        ? "(title_ar LIKE ? OR content_ar LIKE ?)"
+        : "(title_en LIKE ? OR content_en LIKE ?)";
+    $searchTerm = "%{$searchQuery}%";
+    $params[] = $searchTerm;
+    $params[] = $searchTerm;
+}
+
+$whereSQL = implode(" AND ", $whereClauses);
+
+// Get total posts count
+$countStmt = $pdo->prepare("SELECT COUNT(*) as total FROM blog_posts WHERE {$whereSQL}");
+$countStmt->execute($params);
+$totalPosts = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+$totalPages = ceil($totalPosts / $postsPerPage);
+
+// Get posts (when Arabic, also fetch _en so we can use as fallback if _ar is empty)
+$titleCol = $lang === 'ar' ? 'title_ar' : 'title_en';
+$excerptCol = $lang === 'ar' ? 'excerpt_ar' : 'excerpt_en';
+$postsStmt = $pdo->prepare("
+    SELECT id, slug, {$titleCol} as title, {$excerptCol} as excerpt,
+           title_en, excerpt_en, featured_image, category, published_at, views as views_count, tags
+    FROM blog_posts
+    WHERE {$whereSQL}
+    ORDER BY published_at DESC
+    LIMIT {$postsPerPage} OFFSET {$offset}
+");
+$postsStmt->execute($params);
+$posts = $postsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Get categories from blog_posts
+$categoriesStmt = $pdo->prepare("SELECT DISTINCT category FROM blog_posts WHERE status = 'published' AND category != '' AND category IS NOT NULL ORDER BY category");
+$categoriesStmt->execute();
+$categories = $categoriesStmt->fetchAll(PDO::FETCH_COLUMN);
+
+$pageTitle = $lang === 'ar' ? 'المدونة وقصص النجاح - نيش سوسيتي' : 'Blog & Success Stories - Niche Society';
+$pageDescription = $lang === 'ar' 
+    ? 'اطلع على أحدث المقالات وقصص نجاح عملائنا في إدارة المنازل والفعاليات الفاخرة' 
+    : 'Explore our latest articles and client success stories in luxury household and event management';
+?>
+<!DOCTYPE html>
+<html lang="<?= $lang ?>" dir="<?= $dir ?>">
+<head>
+    <!-- blog 12-per-page (deploy marker: if you see this in View Source, latest code is live) -->
+    <?= getMetaTags($pageTitle, $pageDescription, getCurrentUrl()) ?>
+    <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
+    <link rel="shortcut icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
+    <link rel="apple-touch-icon" href="<?= url('assets/images/favicon.png') ?>">
+    <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
+    <?php if ($lang === 'ar'): ?>
+    <link rel="stylesheet" href="<?= url('assets/css/rtl.css') ?>">
+    <?php endif; ?>
+    <style>
+        /* Force white text for active category links */
+        .sidebar-widget .category-list a.active,
+        .sidebar-widget ul.category-list li a.active {
+            background: #602234 !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+        }
+        .sidebar-widget .category-list a.active .count,
+        .sidebar-widget ul.category-list li a.active .count {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+    </style>
+</head>
+<body>
+    <?php include __DIR__ . '/includes/header.php'; ?>
+
+    <!-- Hero Section -->
+    <section class="page-hero" style="background-image: url('<?= url('assets/images/TEAM-scaled.jpg') ?>');">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title" data-aos="fade-up">
+                    <?= $lang === 'ar' ? 'المدونة وقصص النجاح' : 'Blog & Success Stories' ?>
+                </h1>
+                <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100" style="color: #000F2B !important; opacity: 1 !important; visibility: visible !important; text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);">
+                    <?= $lang === 'ar' 
+                        ? 'رؤى وإلهام من عالم الإدارة الفاخرة'
+                        : 'Insights and inspiration from the world of luxury management'
+                    ?>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feed info strip (what this section is) -->
+    <div class="blog-feed-info" data-aos="fade-up">
+        <div class="container">
+            <div class="blog-feed-info-inner">
+                <span class="blog-feed-info-icon" aria-hidden="true"><i class="bi bi-rss"></i></span>
+                <p class="blog-feed-info-text">
+                    <?= $lang === 'ar' 
+                        ? 'أخبار صناعية ذات صلة من المنطقة والعالم — تُحدَّث تلقائياً (كل ساعة تقريباً عند زيارة الصفحة). تُرشَّح حسب تركيزنا على الإدارة الفاخرة والعقارات والفعاليات والبروتوكول. المقالات الأقدم من 7 أيام تُزال تلقائياً.'
+                        : 'Related industry news from the Middle East and worldwide — updated automatically (about every hour when you visit). Filtered to our focus on luxury management, property, events, and protocol. Articles older than 7 days are removed automatically.'
+                    ?>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <section class="section">
+        <div class="container">
+            <div class="row blog-layout-row">
+                <!-- Sidebar: stretches to match grid height -->
+                <div class="col-lg-3 mb-5 mb-lg-0 blog-sidebar-col" data-aos="fade-right">
+                    <!-- Categories -->
+                    <div class="sidebar-widget">
+                        <h3 class="widget-title"><?= $lang === 'ar' ? 'التصنيفات' : 'Categories' ?></h3>
+                        <?php
+                        // Get categories with counts
+                        $categoriesWithCountsStmt = $pdo->prepare("
+                            SELECT category, COUNT(*) as count 
+                            FROM blog_posts 
+                            WHERE status = 'published' AND category != '' AND category IS NOT NULL 
+                            GROUP BY category 
+                            ORDER BY category
+                        ");
+                        $categoriesWithCountsStmt->execute();
+                        $categoriesWithCounts = $categoriesWithCountsStmt->fetchAll(PDO::FETCH_ASSOC);
+                        ?>
+                        <ul class="category-list">
+                            <li>
+                                <a href="<?= url('blog.php') ?>" class="<?= !$categoryFilter ? 'active' : '' ?>">
+                                    <?= $lang === 'ar' ? 'جميع المقالات' : 'All Articles' ?>
+                                    <span class="count"><?= $totalPosts ?></span>
+                                </a>
+                            </li>
+                            <?php foreach ($categoriesWithCounts as $cat): ?>
+                            <li>
+                                <a href="<?= url('blog.php?category=' . urlencode($cat['category'])) ?>" 
+                                   class="<?= $categoryFilter == $cat['category'] ? 'active' : '' ?>">
+                                    <?= htmlspecialchars($cat['category']) ?>
+                                    <span class="count"><?= $cat['count'] ?></span>
+                                </a>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+
+                    <!-- Recent Posts -->
+                    <div class="sidebar-widget">
+                        <h3 class="widget-title"><?= $lang === 'ar' ? 'المقالات الحديثة' : 'Recent Posts' ?></h3>
+                        <?php
+                        $recentStmt = $pdo->prepare("
+                            SELECT slug, {$titleCol} as title, published_at 
+                            FROM blog_posts 
+                            WHERE status = 'published' AND published_at <= NOW()
+                            ORDER BY published_at DESC 
+                            LIMIT " . (int) $sidebarRecentPostsLimit . "
+                        ");
+                        $recentStmt->execute();
+                        $recentPosts = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
+                        ?>
+                        <ul class="recent-posts-list">
+                            <?php foreach ($recentPosts as $recent): ?>
+                            <li>
+                                <a href="<?= url('blog-post.php?slug=' . $recent['slug']) ?>">
+                                    <?= htmlspecialchars($recent['title']) ?>
+                                </a>
+                                <span class="post-date">
+                                    <?= $lang === 'ar' ? formatDate($recent['published_at']) : date('M d, Y', strtotime($recent['published_at'])) ?>
+                                </span>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Posts Grid -->
+                <div class="col-lg-9" data-aos="fade-left">
+                    <!-- Active Filters -->
+                    <?php if ($searchQuery || $categoryFilter): ?>
+                    <div class="active-filters mb-4">
+                        <?php if ($searchQuery): ?>
+                        <span class="filter-tag">
+                            <?= $lang === 'ar' ? 'البحث:' : 'Search:' ?> "<?= htmlspecialchars($searchQuery) ?>"
+                            <a href="<?= url('blog.php' . ($categoryFilter ? '?category=' . $categoryFilter : '')) ?>">×</a>
+                        </span>
+                        <?php endif; ?>
+                        
+                        <?php if ($categoryFilter): ?>
+                        <span class="filter-tag">
+                            <?= $lang === 'ar' ? 'التصنيف:' : 'Category:' ?> <?= htmlspecialchars($categoryFilter) ?>
+                            <a href="<?= url('blog.php' . ($searchQuery ? '?search=' . urlencode($searchQuery) : '')) ?>">×</a>
+                        </span>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Results Count -->
+                    <div class="results-info mb-4">
+                        <p class="text-muted">
+                            <?= $lang === 'ar' 
+                                ? "عرض {$offset}-" . min($offset + $postsPerPage, $totalPosts) . " من {$totalPosts} مقالة"
+                                : "Showing {$offset}-" . min($offset + $postsPerPage, $totalPosts) . " of {$totalPosts} articles"
+                            ?>
+                        </p>
+                    </div>
+
+                    <?php if (empty($posts)): ?>
+                    <!-- No Results -->
+                    <div class="no-results text-center py-5">
+                        <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
+                        <h3 class="mt-3"><?= $lang === 'ar' ? 'لا توجد مقالات' : 'No Articles Found' ?></h3>
+                        <p class="text-muted">
+                            <?= $lang === 'ar' 
+                                ? 'لم نتمكن من العثور على أي مقالات تطابق معايير البحث'
+                                : 'We couldn\'t find any articles matching your criteria'
+                            ?>
+                        </p>
+                        <a href="<?= url('blog.php') ?>" class="btn btn-primary mt-3">
+                            <?= $lang === 'ar' ? 'عرض جميع المقالات' : 'View All Articles' ?>
+                        </a>
+                    </div>
+                    <?php else: ?>
+                    <!-- Posts Grid -->
+                    <div class="blog-posts-grid">
+                        <?php foreach ($posts as $post): 
+                            // Always use internal blog post URL (articles display on our website)
+                            $articleUrl = url('blog-post.php?slug=' . $post['slug']);
+                            
+                            // Fix image URL - handle various cases
+                            $defaultImage = url('assets/images/niche-society-homepage-1-scaled.jpg');
+                            $imageUrl = $defaultImage; // Default fallback
+                            
+                            if (!empty($post['featured_image'])) {
+                                $featuredImage = trim($post['featured_image']);
+                                // If it's an absolute URL (starts with http/https), use as-is
+                                if (preg_match('/^https?:\/\//i', $featuredImage)) {
+                                    $imageUrl = $featuredImage;
+                                } 
+                                // If it's a relative path, use url() helper
+                                elseif (!empty($featuredImage) && $featuredImage !== 'assets/images/niche-society-homepage-1-scaled.jpg') {
+                                    $imageUrl = url($featuredImage);
+                                }
+                            }
+                            
+                            // Date and author in current language
+                            $dateTag = formatBlogDateTag($post['published_at'], $lang);
+                            $authorName = 'Niche Society';
+                            if (!empty($post['tags']) && preg_match('/author:([^\s]+)/', $post['tags'], $matches)) {
+                                $authorName = $matches[1];
+                            }
+                            $authorName = translateAuthorForDisplay($authorName, $lang);
+                            // When Arabic, use title/excerpt; if empty or same as English, show English as fallback
+                            $displayTitle = $post['title'];
+                            $displayExcerpt = $post['excerpt'];
+                            if ($lang === 'ar' && (trim($displayTitle) === '' || trim($displayTitle) === trim($post['title_en'] ?? ''))) {
+                                $displayTitle = $post['title_en'] ?? $displayTitle;
+                            }
+                            if ($lang === 'ar' && (trim($displayExcerpt) === '' || trim($displayExcerpt) === trim($post['excerpt_en'] ?? ''))) {
+                                $displayExcerpt = $post['excerpt_en'] ?? $displayExcerpt;
+                            }
+                            $displayCategory = translateCategoryForDisplay($post['category'] ?? '', $lang);
+                        ?>
+                        <article class="blog-card-vertical" data-aos="fade-up">
+                                <div class="blog-card-image-wrapper">
+                                    <a href="<?= $articleUrl ?>">
+                                        <img src="<?= htmlspecialchars($imageUrl) ?>" 
+                                             alt="<?= htmlspecialchars($post['title']) ?>"
+                                             onerror="this.onerror=null; this.src='<?= $defaultImage ?>';"
+                                             loading="lazy"
+                                             referrerpolicy="no-referrer"
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </a>
+                                    <div class="blog-date-tag">
+                                        <?= htmlspecialchars($dateTag) ?>
+                                    </div>
+                                </div>
+                                <div class="blog-card-content">
+                                    <h3 class="blog-card-title">
+                                        <a href="<?= $articleUrl ?>">
+                                            <?= htmlspecialchars($displayTitle) ?>
+                                        </a>
+                                    </h3>
+                                    <div class="blog-card-meta">
+                                        <span class="author"><?= htmlspecialchars($authorName) ?></span>
+                                        <?php if ($displayCategory !== ''): ?>
+                                        <span class="separator">/</span>
+                                        <span class="category"><?= htmlspecialchars($displayCategory) ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <p class="blog-card-excerpt">
+                                        <?= htmlspecialchars($displayExcerpt) ?>
+                                    </p>
+                                    <a href="<?= $articleUrl ?>" class="blog-read-more-link">
+                                        <?= $lang === 'ar' ? 'اقرأ المزيد' : 'Read More' ?>
+                                        <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?>"></i>
+                                    </a>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Pagination -->
+                    <?php if ($totalPages > 1): ?>
+                    <nav aria-label="Page navigation" class="blog-pagination-nav">
+                        <ul class="pagination justify-content-center">
+                            <!-- Previous -->
+                            <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                                <a class="page-link" href="<?= url('blog.php?page=' . ($currentPage - 1) . ($categoryFilter ? '&category=' . $categoryFilter : '') . ($searchQuery ? '&search=' . urlencode($searchQuery) : '')) ?>">
+                                    <i class="bi bi-chevron-<?= $dir === 'rtl' ? 'right' : 'left' ?>"></i>
+                                </a>
+                            </li>
+
+                            <!-- Page Numbers -->
+                            <?php
+                            $startPage = max(1, $currentPage - 2);
+                            $endPage = min($totalPages, $currentPage + 2);
+                            
+                            if ($startPage > 1): ?>
+                                <li class="page-item"><a class="page-link" href="<?= url('blog.php?page=1' . ($categoryFilter ? '&category=' . $categoryFilter : '') . ($searchQuery ? '&search=' . urlencode($searchQuery) : '')) ?>">1</a></li>
+                                <?php if ($startPage > 2): ?>
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                <?php endif; ?>
+                            <?php endif; ?>
+
+                            <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                            <li class="page-item <?= $i === $currentPage ? 'active' : '' ?>">
+                                <a class="page-link" href="<?= url('blog.php?page=' . $i . ($categoryFilter ? '&category=' . $categoryFilter : '') . ($searchQuery ? '&search=' . urlencode($searchQuery) : '')) ?>">
+                                    <?= $i ?>
+                                </a>
+                            </li>
+                            <?php endfor; ?>
+
+                            <?php if ($endPage < $totalPages): ?>
+                                <?php if ($endPage < $totalPages - 1): ?>
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                <?php endif; ?>
+                                <li class="page-item"><a class="page-link" href="<?= url('blog.php?page=' . $totalPages . ($categoryFilter ? '&category=' . $categoryFilter : '') . ($searchQuery ? '&search=' . urlencode($searchQuery) : '')) ?>"><?= $totalPages ?></a></li>
+                            <?php endif; ?>
+
+                            <!-- Next -->
+                            <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                                <a class="page-link" href="<?= url('blog.php?page=' . ($currentPage + 1) . ($categoryFilter ? '&category=' . $categoryFilter : '') . ($searchQuery ? '&search=' . urlencode($searchQuery) : '')) ?>">
+                                    <i class="bi bi-chevron-<?= $dir === 'rtl' ? 'left' : 'right' ?>"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter signup (functional: saves to newsletter_subscribers) -->
+    <section class="section bg-cream" id="newsletter-section">
+        <div class="container">
+            <?php
+            $newsletterMsg = isset($_GET['newsletter']) ? $_GET['newsletter'] : '';
+            $newsletterCode = isset($_GET['code']) ? $_GET['code'] : '';
+            if ($newsletterMsg === 'success'): ?>
+                <div class="alert alert-success text-center" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <?= $lang === 'ar' ? 'شكراً! تم تسجيل بريدك بنجاح. سنرسل لك آخر الأخبار والمقالات.' : 'Thank you! You’re subscribed. We’ll send you the latest news and articles.' ?>
+                </div>
+            <?php elseif ($newsletterMsg === 'already'): ?>
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <?= $lang === 'ar' ? 'هذا البريد مسجّل مسبقاً في قائمتنا.' : 'This email is already on our list.' ?>
+                </div>
+            <?php elseif ($newsletterMsg === 'error'): ?>
+                <div class="alert alert-danger text-center" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <?php
+                    if ($newsletterCode === 'invalid_email') {
+                        echo $lang === 'ar' ? 'يرجى إدخال بريد إلكتروني صحيح.' : 'Please enter a valid email address.';
+                    } elseif ($newsletterCode === 'csrf') {
+                        echo $lang === 'ar' ? 'انتهت صلاحية الجلسة. يرجى تحديث الصفحة والمحاولة مرة أخرى.' : 'Session expired. Please refresh and try again.';
+                    } else {
+                        echo $lang === 'ar' ? 'حدث خطأ. يرجى المحاولة لاحقاً.' : 'Something went wrong. Please try again later.';
+                    }
+                    ?>
+                </div>
+            <?php endif; ?>
+            <div class="row align-items-center">
+                <div class="col-lg-7 mb-4 mb-lg-0 text-center text-lg-start" data-aos="fade-right">
+                    <h2><?= $lang === 'ar' ? 'اشترك في النشرة الإخبارية' : 'Subscribe to Our Newsletter' ?></h2>
+                    <p class="lead-text mb-0">
+                        <?= $lang === 'ar'
+                            ? 'احصل على آخر الأخبار والمقالات مباشرة إلى بريدك الإلكتروني'
+                            : 'Get the latest news and articles directly to your inbox'
+                        ?>
+                    </p>
+                </div>
+                <div class="col-lg-5" data-aos="fade-left">
+                    <form method="post" action="<?= url('newsletter-subscribe.php') ?>" class="newsletter-signup-form d-flex flex-column flex-sm-row gap-2 align-items-stretch align-items-sm-center">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_newsletter']) ?>">
+                        <input type="hidden" name="source" value="blog">
+                        <input type="email" name="email" class="form-control" placeholder="<?= $lang === 'ar' ? 'بريدك الإلكتروني' : 'Your email address' ?>" required aria-label="Email">
+                        <button type="submit" class="btn btn-primary btn-lg flex-shrink-0">
+                            <?= $lang === 'ar' ? 'اشترك' : 'Subscribe' ?>
+                            <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?> ms-1"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <?php include __DIR__ . '/includes/footer.php'; ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100
+        });
+    </script>
+    <script src="<?= url('assets/js/main.js') ?>"></script>
+</body>
+</html>

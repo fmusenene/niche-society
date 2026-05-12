@@ -1,0 +1,20 @@
+<?php
+/**
+ * Mailchimp API Configuration - EXAMPLE
+ *
+ * Copy this file to mailchimp.php and fill in your details.
+ * Do NOT commit mailchimp.php (add to .gitignore).
+ *
+ * Get your API key: Mailchimp → Account → Extras → API keys → Create A Key
+ * Get List ID: Audience → Settings → Audience ID
+ * Data center is the suffix of your API key (e.g. us20 in key-xxx-us20).
+ */
+
+// Set to true only after you create mailchimp.php with real values
+if (!defined('MAILCHIMP_ENABLED')) define('MAILCHIMP_ENABLED', false);
+
+// Your full API key (e.g. a1b2c3d4e5f6g7h8i9j0-us20)
+if (!defined('MAILCHIMP_API_KEY')) define('MAILCHIMP_API_KEY', 'your-api-key-here');
+
+// Your audience/list ID (e.g. a1b2c3d4e5)
+if (!defined('MAILCHIMP_LIST_ID')) define('MAILCHIMP_LIST_ID', 'your-list-id-here');
