@@ -212,9 +212,12 @@ $maintenance_message = isset($maintenance_settings['message']) ? $maintenance_se
                             </div>
                         </div>
                         
-                        <!-- Company Logo -->
+                        <!-- Company Logo and Maintenance Icon -->
                         <div class="text-center mb-5">
-                            <img src="<?php echo ASSETS_URL; ?>/images/logo 2.png" alt="<?php echo SITE_NAME; ?>" class="brand-logo">
+                            <img src="<?php echo ASSETS_URL; ?>/images/logo%202.png" alt="<?php echo SITE_NAME; ?>" class="brand-logo" onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='inline-block';">
+                            <div id="fallback-icon" class="d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: rgba(255, 250, 243, 0.1); border-radius: 50%; backdrop-filter: blur(10px); display: none;">
+                                <i class="bi bi-gear-fill gear" style="font-size: 3rem;"></i>
+                            </div>
                         </div>
                         
                         <!-- Maintenance Message -->
