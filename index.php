@@ -54,7 +54,7 @@ if (!file_exists($config_file)) {
     if (!defined('CONTACT_PHONE')) define('CONTACT_PHONE', '+966 1 1 296 7735');
     if (!defined('DEFAULT_LANG')) define('DEFAULT_LANG', 'ar');
     if (!defined('AVAILABLE_LANGS')) define('AVAILABLE_LANGS', ['ar', 'en']);
-if (!defined('SUPPORTED_LANGUAGES')) define('SUPPORTED_LANGUAGES', ['ar', 'en']);
+    if (!defined('SUPPORTED_LANGUAGES')) define('SUPPORTED_LANGUAGES', ['ar', 'en']);
     if (!defined('CONTACT_ADDRESS_AR')) define('CONTACT_ADDRESS_AR', 'الرياض، المملكة العربية السعودية');
     if (!defined('CONTACT_ADDRESS_EN')) define('CONTACT_ADDRESS_EN', 'Riyadh, Saudi Arabia');
     if (!defined('SOCIAL_FACEBOOK')) define('SOCIAL_FACEBOOK', 'https://facebook.com/nichesociety');
