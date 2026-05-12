@@ -214,7 +214,7 @@ $maintenance_message = isset($maintenance_settings['message']) ? $maintenance_se
                         
                         <!-- Company Logo -->
                         <div class="text-center mb-4">
-                            <img src="<?php echo ASSETS_URL; ?>/images/logo%202.png" alt="<?php echo SITE_NAME; ?>" class="brand-logo" onerror="this.style.display='none';">
+                            <img src="<?php echo ASSETS_URL; ?>/images/logo 2.png" alt="<?php echo SITE_NAME; ?>" class="brand-logo" onerror="this.style.display='none';">
                         </div>
                         
                         <!-- Maintenance Icon -->
