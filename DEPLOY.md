@@ -1,5 +1,21 @@
 # cPanel deployment
 
+## White screen (blank page)?
+
+The site needs **database credentials** on the server. GitHub does not include them.
+
+**Fix in File Manager (no SSH):**
+
+1. Go to **`config`** folder
+2. **Copy** `database.local.php.example` → paste → rename to **`database.local.php`**
+3. **Edit** `database.local.php` — set your cPanel MySQL name, user, and password  
+   (cPanel → **MySQL® Databases**)
+4. Pull latest from GitHub so **`config/config.php`** and **`config/database.php`** exist
+5. Open **`https://niche-society.com/health.php`** — shows exactly what is wrong
+6. When the site works, **delete `health.php`**
+
+---
+
 ## One-time fix (run once in cPanel Terminal)
 
 If you see **“local changes would be overwritten by merge”**:

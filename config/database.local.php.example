@@ -1,17 +1,23 @@
 <?php
 /**
- * Production database overrides — copy to database.local.php (never commit database.local.php)
+ * Production database credentials — copy to database.local.php on cPanel.
+ *
+ * cPanel → MySQL® Databases:
+ *   - Create database (e.g. username_niche)
+ *   - Create user + password
+ *   - Add user to database (ALL PRIVILEGES)
+ *   - Use those values below
  */
 
 if (!defined('DB_HOST')) {
     define('DB_HOST', 'localhost');
 }
 if (!defined('DB_NAME')) {
-    define('DB_NAME', 'your_database_name');
+    define('DB_NAME', 'yourcpanel_user_niche_society'); // e.g. fmusenene_niche
 }
 if (!defined('DB_USER')) {
-    define('DB_USER', 'your_db_user');
+    define('DB_USER', 'yourcpanel_user_dbuser');       // e.g. fmusenene_nsuser
 }
 if (!defined('DB_PASS')) {
-    define('DB_PASS', 'your_strong_db_password');
+    define('DB_PASS', 'your_database_password_here');
 }

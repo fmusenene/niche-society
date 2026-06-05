@@ -1,10 +1,8 @@
-# Config files (use .example files as templates)
-config/config.php
-config/database.php
-config/email.php
-config/mailchimp.php
+# Local secrets (never commit)
 config/secrets.local.php
 config/database.local.php
+config/email.php
+config/mailchimp.php
 config/admin-settings.php
 
 # Logs
