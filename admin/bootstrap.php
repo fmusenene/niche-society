@@ -8,16 +8,23 @@ require_once __DIR__ . '/../functions/cms.php';
 require_once __DIR__ . '/lib/password.php';
 require_once __DIR__ . '/lib/security.php';
 
-cmsEnsureTables($pdo);
-adminEnsureResetTable($pdo);
-adminEnsureLoginAttemptsTable($pdo);
-cmsEnsureDefaultServiceCategories($pdo);
+try {
+    cmsEnsureTables($pdo);
+    adminEnsureResetTable($pdo);
+    adminEnsureLoginAttemptsTable($pdo);
+    cmsEnsureDefaultServiceCategories($pdo);
 
-// Auto-import hardcoded content when database has no services yet
-$serviceCount = (int) $pdo->query("SELECT COUNT(*) FROM services")->fetchColumn();
-if ($serviceCount === 0 && empty($_GET['skip_auto_seed'])) {
-    require_once __DIR__ . '/seed-defaults.php';
-    cmsSeedDefaults($pdo, true);
+    // Auto-import hardcoded content when database has no services yet
+    $serviceCount = (int) $pdo->query('SELECT COUNT(*) FROM services')->fetchColumn();
+    if ($serviceCount === 0 && empty($_GET['skip_auto_seed'])) {
+        require_once __DIR__ . '/seed-defaults.php';
+        cmsSeedDefaults($pdo, true);
+    }
+} catch (Throwable $adminBootstrapError) {
+    error_log('Admin bootstrap error: ' . $adminBootstrapError->getMessage());
+    if (!defined('ADMIN_BOOTSTRAP_ERROR')) {
+        define('ADMIN_BOOTSTRAP_ERROR', $adminBootstrapError->getMessage());
+    }
 }
 
 $admin_settings_file = __DIR__ . '/../config/admin-settings.php';

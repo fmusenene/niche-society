@@ -4,6 +4,8 @@
  */
 require_once __DIR__ . '/bootstrap.php';
 
+$adminBootstrapError = defined('ADMIN_BOOTSTRAP_ERROR') ? ADMIN_BOOTSTRAP_ERROR : null;
+
 $error = null;
 $loginSuccess = null;
 $view = $_GET['view'] ?? 'login';
@@ -159,7 +161,19 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
 <span id="adminCsrfToken" data-token="<?= htmlspecialchars(adminCsrfToken()) ?>" hidden></span>
 <?php endif; ?>
 <?php if (!$authenticated): ?>
+<?php if ($adminBootstrapError): ?>
+<div class="admin-login-page">
+    <div class="admin-login-card">
+        <div class="alert alert-danger">
+            <strong>Admin setup error:</strong> <?= htmlspecialchars($adminBootstrapError) ?>
+        </div>
+        <p class="small text-muted mb-0">Check <code>logs/error.log</code> on the server, confirm <code>config/database.local.php</code> and <code>config/admin-settings.php</code>, then try
+            <a href="?skip_auto_seed=1">skip auto-import</a>.</p>
+    </div>
+</div>
+<?php else: ?>
 <?php include __DIR__ . '/partials/login-forms.php'; ?>
+<?php endif; ?>
 <?php else: ?>
 <div class="admin-shell">
     <?php include __DIR__ . '/partials/sidebar.php'; ?>
