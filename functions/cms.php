@@ -247,6 +247,21 @@ function cmsServiceImageUrl(?string $path): string
     return url('assets/images/' . ltrim($path, '/'));
 }
 
+/** Original full detail pages — keep layout/content exactly as shipped */
+function cmsServiceLegacyUrl(string $slug): string
+{
+    $map = [
+        'household-management' => 'service-household-management.php',
+        'property-management' => 'service-property-management.php',
+        'event-management' => 'service-event-management.php',
+        'protocol-etiquette' => 'service-protocol-etiquette.php',
+        'vip-concierge' => 'service-vip-concierge.php',
+        'staff-recruitment' => 'service-staff-recruitment.php',
+    ];
+
+    return url($map[$slug] ?? ('service.php?slug=' . urlencode($slug)));
+}
+
 function cmsParseLines(?string $text): array
 {
     if ($text === null || trim($text) === '') {

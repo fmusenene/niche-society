@@ -1,12 +1,11 @@
 <?php
 /**
- * Dynamic service detail page (CMS-driven)
+ * Service detail router — known services use original full pages; new CMS-only slugs use the simple template.
  */
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/functions/helpers.php';
 require_once __DIR__ . '/functions/cms.php';
 
-cmsEnsureTables($pdo);
 handleLanguageSwitch();
 
 $lang = getCurrentLang();
@@ -18,6 +17,20 @@ if ($slug === '') {
     exit;
 }
 
+$legacyMap = [
+    'household-management' => 'service-household-management.php',
+    'property-management' => 'service-property-management.php',
+    'event-management' => 'service-event-management.php',
+    'protocol-etiquette' => 'service-protocol-etiquette.php',
+    'vip-concierge' => 'service-vip-concierge.php',
+    'staff-recruitment' => 'service-staff-recruitment.php',
+];
+if (isset($legacyMap[$slug])) {
+    header('Location: ' . url($legacyMap[$slug]), true, 301);
+    exit;
+}
+
+cmsEnsureTables($pdo);
 $service = cmsGetServiceBySlug($pdo, $slug);
 if (!$service) {
     header('Location: ' . url('services.php'));
@@ -67,7 +80,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <?php if (!empty($service['image'])): ?>
-                <img src="<?= url($service['image']) ?>" alt="" class="img-fluid rounded">
+                <img src="<?= cmsServiceImageUrl($service['image']) ?>" alt="" class="img-fluid rounded">
                 <?php endif; ?>
             </div>
             <div class="col-lg-6">

@@ -43,7 +43,7 @@ foreach ($cmsServices as $svc):
                         <?php endforeach; ?>
                     </ul>
                     <?php endif; ?>
-                    <a href="<?= url('service.php?slug=' . urlencode($svc['slug'])) ?>" class="btn btn-primary mt-3">
+                    <a href="<?= cmsServiceLegacyUrl($svc['slug']) ?>" class="btn btn-primary mt-3">
                         <?= $lang === 'ar' ? 'تفاصيل الخدمة' : 'Service Details' ?>
                         <i class="bi bi-<?= $dir === 'rtl' ? 'arrow-left' : 'arrow-right' ?>"></i>
                     </a>

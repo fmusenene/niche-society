@@ -44,7 +44,7 @@ foreach ($homeServices as $svc):
                         <?php endforeach; ?>
                     </ul>
                     <?php endif; ?>
-                    <a href="<?= url('service.php?slug=' . urlencode($svc['slug'])) ?>" class="service-link-elegant">
+                    <a href="<?= cmsServiceLegacyUrl($svc['slug']) ?>" class="service-link-elegant">
                         <span><?= t('learn_more', 'اعرف المزيد') ?></span>
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="<?= $arrowPath ?>" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>
