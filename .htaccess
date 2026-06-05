@@ -3,7 +3,7 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /niche-society-main/
+    # RewriteBase is auto-detected from this folder (works at domain root and in subfolders)
 
     # Force HTTPS on live domains (localhost stays HTTP unless you enable SSL in XAMPP)
     RewriteCond %{HTTPS} off

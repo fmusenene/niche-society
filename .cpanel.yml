@@ -1,0 +1,5 @@
+---
+# cPanel Git — runs when you click "Deploy HEAD commit"
+deployment:
+  tasks:
+    - /bin/bash scripts/cpanel-sync.sh
