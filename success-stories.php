@@ -78,21 +78,9 @@ $pageTitle = $lang === 'ar' ? 'قصص النجاح - نيش سوسيتي' : 'Suc
 $pageDescription = $lang === 'ar' 
     ? 'اكتشف قصص نجاح عملائنا المميزين في إدارة المنازل والفعاليات الفاخرة' 
     : 'Discover success stories from our distinguished clients in luxury household and event management';
+
+include __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="<?= $lang ?>" dir="<?= $dir ?>">
-<head>
-    <?= getMetaTags($pageTitle, $pageDescription, getCurrentUrl()) ?>
-    <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="shortcut icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="apple-touch-icon" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
-    <?php if ($lang === 'ar'): ?>
-    <link rel="stylesheet" href="<?= url('assets/css/rtl.css') ?>">
-    <?php endif; ?>
-</head>
-<body>
-    <?php include __DIR__ . '/includes/header.php'; ?>
 
     <!-- Hero Section -->
     <section class="page-hero" style="background-image: url('<?= url('assets/images/sunlit-library-escape-701x1024.jpg') ?>');">
@@ -377,18 +365,12 @@ $pageDescription = $lang === 'ar'
         <span class="success-stories-fab-label"><?= $lang === 'ar' ? 'شارك قصتك' : 'Share your story' ?></span>
     </a>
 
-    <?php include __DIR__ . '/includes/footer.php'; ?>
-
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true,
-            offset: 100
-        });
-        // Show floating Share Your Story button after user scrolls past hero
-        (function () {
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js" defer></script>
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof AOS !== 'undefined') {
+                AOS.init({ duration: 600, easing: 'ease-in-out', once: true, offset: 80 });
+            }
             var fab = document.getElementById('successStoriesFab');
             if (!fab) return;
             var threshold = 400;
@@ -398,8 +380,6 @@ $pageDescription = $lang === 'ar'
             }
             window.addEventListener('scroll', function () { requestAnimationFrame(updateFab); }, { passive: true });
             updateFab();
-        })();
+        });
     </script>
-    <script src="<?= url('assets/js/main.js') ?>"></script>
-</body>
-</html>
+<?php include __DIR__ . '/includes/footer.php'; ?>

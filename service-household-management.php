@@ -12,7 +12,7 @@ $dir = getTextDirection($lang);
 
 // Page settings
 $currentPage = 'services';
-$pageTitle = $lang === 'ar' ? 'إدارة المنازل الذكية - نيش سوسايتي' : 'Smart Household Management - Niche Society';
+$pageTitle = $lang === 'ar' ? 'إدارة المنازل - نيش سوسايتي' : 'Household Management - Niche Society';
 $pageDescription = $lang === 'ar' ? 'خدمات إدارة منازل احترافية تجمع بين الفخامة والكفاءة. فريق متخصص لإدارة جميع احتياجات منزلك بسرية تامة.' : 'Professional household management services combining luxury and efficiency. Specialized team to manage all your home needs with complete discretion.';
 
 // CSRF token for contact form
@@ -43,7 +43,7 @@ require_once 'includes/header.php';
         </div>
         <div class="service-detail-title-section">
             <div class="service-badge-header"><?php echo formatNumber('01'); ?></div>
-            <h1 class="service-detail-title"><?php echo $lang === 'ar' ? 'إدارة المنازل الذكية' : 'Smart Household Management'; ?></h1>
+            <h1 class="service-detail-title"><?php echo $lang === 'ar' ? 'إدارة المنازل' : 'Household Management'; ?></h1>
             <p class="service-detail-subtitle">
                 <?php echo $lang === 'ar' 
                     ? 'الحل المتكامل لإدارة منزلك بكفاءة واحترافية عالية' 

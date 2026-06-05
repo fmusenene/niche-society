@@ -6,6 +6,9 @@
 
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/functions/helpers.php';
+require_once __DIR__ . '/functions/cms.php';
+
+cmsEnsureTables($pdo);
 
 // Handle language switch
 handleLanguageSwitch();
@@ -17,21 +20,11 @@ $pageTitle = $lang === 'ar' ? 'من نحن - نيش سوسيتي' : 'About Us - 
 $pageDescription = $lang === 'ar'
     ? 'شركة نيش سوسيتي - خبرة في إدارة الممتلكات والفعاليات والخدمات الفاخرة'
     : 'Niche Society - Excellence in estate management, events, and luxury services';
+
+$aboutCms = cmsGetPage($pdo, 'about');
+
+include __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="<?= $lang ?>" dir="<?= $dir ?>">
-<head>
-    <?= getMetaTags($pageTitle, $pageDescription, getCurrentUrl()) ?>
-    <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="shortcut icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="apple-touch-icon" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
-    <?php if ($lang === 'ar'): ?>
-        <link rel="stylesheet" href="<?= url('assets/css/rtl.css') ?>">
-    <?php endif; ?>
-</head>
-<body>
-<?php include __DIR__ . '/includes/header.php'; ?>
 
 <!-- Hero Section -->
 <section class="hero-premium">
@@ -49,7 +42,7 @@ $pageDescription = $lang === 'ar'
                     <!-- Title -->
             <div class="hero-text-animated">
                         <h1 class="hero-main-title">
-                    <?= $lang === 'ar' ? 'من نحن' : 'About Us' ?>
+                    <?= htmlspecialchars(cmsPageSection($aboutCms, 'hero', $lang, 'title', $lang === 'ar' ? 'من نحن' : 'About Us')) ?>
                 </h1>
                     </div>
                 </div>
@@ -73,14 +66,14 @@ $pageDescription = $lang === 'ar'
                     </h2>
                     <div class="divider-professional"></div>
                     <p class="lead-text-professional">
-                        <?= $lang === 'ar'
-                            ? 'نيش سوسيتي شركة متخصصة في تقديم حلول إدارية وتنظيمية بمعايير تعيد تعريف معنى التميز، تشمل إدارة الممتلكات الخاصة، العقارات، البروتوكول والإتيكيت الرسمي، اللوجستيات، العلاقات العامة، والخدمات التشغيلية الفاخرة.'
-                            : 'Niche Society is a company specialized in providing administrative and organizational solutions with standards that redefine the meaning of excellence, including private property management, real estate, official etiquette and protocols, logistics, public relations, and high-end operational services.' ?>
+                        <?= htmlspecialchars(cmsPageSection($aboutCms, 'overview', $lang, 'lead', $lang === 'ar'
+                            ? 'نيش سوسيتي شركة متخصصة في تقديم حلول إدارية وتنظيمية بمعايير تعيد تعريف معنى التميز.'
+                            : 'Niche Society is a company specialized in providing administrative and organizational solutions with standards that redefine excellence.')) ?>
                     </p>
                     <p class="text-professional">
-                        <?= $lang === 'ar'
-                            ? 'مع أكثر من 25 عاماً من الخبرة في خدمة الشخصيات البارزة والعملاء الدوليين، ندير العمليات وننسق التفاصيل بأسلوب يجمع بين الدقة والخصوصية والأناقة.'
-                            : 'With over 25 years of experience serving high-profile individuals and international clients, we manage operations and coordinate details in a style that combines precision, privacy, and sophistication.' ?>
+                        <?= htmlspecialchars(cmsPageSection($aboutCms, 'overview', $lang, 'text', $lang === 'ar'
+                            ? 'مع أكثر من 25 عاماً من الخبرة في خدمة الشخصيات البارزة والعملاء الدوليين.'
+                            : 'With over 25 years of experience serving high-profile individuals and international clients.')) ?>
                     </p>
                 </div>
             </div>
@@ -152,9 +145,9 @@ $pageDescription = $lang === 'ar'
                     <h3 class="mvv-card-title"><?= $lang === 'ar' ? 'الرسالة' : 'Our Mission' ?></h3>
                     <div class="mvv-card-underline"></div>
                     <p class="mvv-card-text">
-                        <?= $lang === 'ar'
+                        <?= htmlspecialchars(cmsPageSection($aboutCms, 'mission', $lang, 'text', $lang === 'ar'
                             ? 'تقديم حلول إدارية وتنظيمية استثنائية تجمع بين الكفاءة التشغيلية والأناقة، مع الحفاظ على أعلى معايير الخصوصية والسرية للعملاء المميزين.'
-                            : 'To deliver exceptional administrative and organizational solutions that combine operational efficiency with elegance, while maintaining the highest standards of privacy and confidentiality for distinguished clients.' ?>
+                            : 'To deliver exceptional administrative and organizational solutions that combine operational efficiency with elegance, while maintaining the highest standards of privacy and confidentiality for distinguished clients.')) ?>
                     </p>
                 </div>
             </div>
@@ -165,9 +158,9 @@ $pageDescription = $lang === 'ar'
                     <h3 class="mvv-card-title"><?= $lang === 'ar' ? 'الرؤية' : 'Our Vision' ?></h3>
                     <div class="mvv-card-underline"></div>
                     <p class="mvv-card-text">
-                        <?= $lang === 'ar'
+                        <?= htmlspecialchars(cmsPageSection($aboutCms, 'vision', $lang, 'text', $lang === 'ar'
                             ? 'أن نكون المرجع الأول في مجال الخدمات الإدارية الفاخرة، معترف بنا عالمياً لتميزنا في خدمة الشخصيات الرفيعة.'
-                            : 'To be the leading reference in luxury administrative services, globally recognized for our excellence in serving distinguished personalities.' ?>
+                            : 'To be the leading reference in luxury administrative services, globally recognized for our excellence in serving distinguished personalities.')) ?>
                     </p>
                 </div>
             </div>
@@ -178,9 +171,9 @@ $pageDescription = $lang === 'ar'
                     <h3 class="mvv-card-title"><?= $lang === 'ar' ? 'قيمنا' : 'Our Values' ?></h3>
                     <div class="mvv-card-underline"></div>
                     <p class="mvv-card-text">
-                        <?= $lang === 'ar'
+                        <?= htmlspecialchars(cmsPageSection($aboutCms, 'values', $lang, 'text', $lang === 'ar'
                             ? 'التميز، الخصوصية، الإتقان، والأناقة الهادئة. نؤمن أن الرقي الحقيقي يُشعر به قبل أن يُرى.'
-                            : 'Excellence, Privacy, Mastery, and Quiet Elegance. We believe that true sophistication is felt before it is seen.' ?>
+                            : 'Excellence, Privacy, Mastery, and Quiet Elegance. We believe that true sophistication is felt before it is seen.')) ?>
                     </p>
                 </div>
             </div>
@@ -199,23 +192,23 @@ $pageDescription = $lang === 'ar'
                         <?= $lang === 'ar' ? 'قصتنا' : 'Our Story' ?>
                     </span>
                     <h2 class="section-title-professional">
-                        <?= $lang === 'ar' ? '25 عاماً من التميز' : '25 Years of Excellence' ?>
+                        <?= htmlspecialchars(cmsPageSection($aboutCms, 'story', $lang, 'title', $lang === 'ar' ? '25 عاماً من التميز' : '25 Years of Excellence')) ?>
                     </h2>
                     <div class="divider-professional mx-auto"></div>
                     <p class="lead-text-professional">
-                        <?= $lang === 'ar'
+                        <?= htmlspecialchars(cmsPageSection($aboutCms, 'story', $lang, 'lead', $lang === 'ar'
                             ? 'بدأت نيش سوسيتي من شغف عميق بالتحدي ورغبة لا تتزعزع في خلق حلول حديثة تترجم أعلى معايير الجودة والدقة.'
-                            : 'Niche Society was born from a deep passion for challenge and an unwavering desire to create modern solutions that translate the highest standards of quality and accuracy.' ?>
+                            : 'Niche Society was born from a deep passion for challenge and an unwavering desire to create modern solutions that translate the highest standards of quality and accuracy.')) ?>
                     </p>
                     <p class="text-professional">
-                        <?= $lang === 'ar'
-                            ? 'بناء الأنظمة، متابعة التفاصيل، وتحقيق نتائج ملموسة كان دائماً ما يلهمنا ويدفعنا للمضي قدماً. المستحيل لم يكن موجوداً في قاموسنا، بل كان دافعاً لمزيد من الإصرار على تطوير المهارات، مواكبة أحدث التقنيات، وتقديم خدمات تلبي تطلعات العملاء وتجسد طموحنا.'
-                            : 'Building systems, following details, and achieving tangible results has always been what inspires and motivates us to keep going. The impossible had no place in our dictionary, but it was a motivation to further insist on developing skills, keeping up with the latest technologies, and providing services that meet customer aspirations and embody our ambition.' ?>
+                        <?= htmlspecialchars(cmsPageSection($aboutCms, 'story', $lang, 'text', $lang === 'ar'
+                            ? 'بناء الأنظمة، متابعة التفاصيل، وتحقيق نتائج ملموسة كان دائماً ما يلهمنا ويدفعنا للمضي قدماً.'
+                            : 'Building systems, following details, and achieving tangible results has always been what inspires and motivates us to keep going.')) ?>
                     </p>
                     <p class="text-professional mb-0">
-                        <?= $lang === 'ar'
-                            ? 'نيش سوسيتي ليست مجرد مشروع، بل نتيجة لسنوات من الخبرة، التنوع الثقافي، والتحديات التي واجهناها خلال مسيرتنا المهنية. تأسست لتقديم خدمات تعزز الخصوصية، تعزز الإنتاجية، وتُنفذ بأعلى مستويات الحرفية، بهدوء وسلاسة، وتعزز الأناقة التي لا تُخطئها العين ولا يغفلها الحس.'
-                            : 'Niche Society is not just a project, but the result of years of experience, cultural diversity, and the challenges we faced during our professional career. It was founded to provide services that enhance privacy, enhance productivity, and are executed with the highest levels of craftsmanship, with calmness and smoothness, and enhance elegance that is unmistakable to the eye and not overlooked by the senses.' ?>
+                        <?= htmlspecialchars(cmsPageSection($aboutCms, 'story', $lang, 'text2', $lang === 'ar'
+                            ? 'نيش سوسيتي ليست مجرد مشروع، بل نتيجة لسنوات من الخبرة والتحديات التي واجهناها خلال مسيرتنا المهنية.'
+                            : 'Niche Society is not just a project, but the result of years of experience and the challenges we faced during our professional career.')) ?>
                     </p>
                 </div>
             </div>
@@ -492,17 +485,12 @@ $pageDescription = $lang === 'ar'
     </div>
 </section>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
-
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true,
-        offset: 100
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js" defer></script>
+<script defer>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof AOS !== 'undefined') {
+            AOS.init({ duration: 600, easing: 'ease-in-out', once: true, offset: 80 });
+        }
     });
 </script>
-<script src="<?= url('assets/js/main.js') ?>"></script>
-</body>
-</html>
+<?php include __DIR__ . '/includes/footer.php'; ?>

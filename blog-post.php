@@ -119,14 +119,8 @@ $content = $post['content'] ?? '';
 $contentLength = mb_strlen(strip_tags($content));
 $isContentShort = $contentLength < 500; // Less than 500 characters is likely just an excerpt
 
-// Try to fetch full content if it's short and we have a source URL
-$fullContent = null;
-if ($isContentShort && $sourceUrl) {
-    $fullContent = fetchFullArticleContent($sourceUrl);
-    if ($fullContent) {
-        $content = $fullContent;
-    }
-}
+// Never fetch external URLs during page view (was blocking loads up to 10s per article).
+// Full text should come from the RSS aggregator / database.
 
 // Get related posts (prefer same category, then recent; 9 articles, refreshed hourly via RSS)
 $relatedStmt = $pdo->prepare("
@@ -146,21 +140,9 @@ $imageUrl = (!empty($post['featured_image']) && preg_match('/^https?:\/\//', $po
 
 $pageTitle = htmlspecialchars($post['title']) . ' - ' . ($lang === 'ar' ? 'نيش سوسيتي' : 'Niche Society');
 $pageDescription = htmlspecialchars($post['excerpt']);
+
+include __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="<?= $lang ?>" dir="<?= $dir ?>">
-<head>
-    <?= getMetaTags($pageTitle, $pageDescription, getCurrentUrl()) ?>
-    <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="shortcut icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="apple-touch-icon" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
-    <?php if ($lang === 'ar'): ?>
-    <link rel="stylesheet" href="<?= url('assets/css/rtl.css') ?>">
-    <?php endif; ?>
-</head>
-<body>
-    <?php include __DIR__ . '/includes/header.php'; ?>
 
     <!-- Article Header -->
     <section class="page-hero" style="background-image: url('<?= $imageUrl ?>'); min-height: 50vh;">
@@ -517,17 +499,12 @@ $pageDescription = htmlspecialchars($post['excerpt']);
         </div>
     </section>
 
-    <?php include __DIR__ . '/includes/footer.php'; ?>
-
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true,
-            offset: 100
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js" defer></script>
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof AOS !== 'undefined') {
+                AOS.init({ duration: 600, easing: 'ease-in-out', once: true, offset: 80 });
+            }
         });
     </script>
-    <script src="<?= url('assets/js/main.js') ?>"></script>
-</body>
-</html>
+<?php include __DIR__ . '/includes/footer.php'; ?>

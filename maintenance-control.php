@@ -45,6 +45,8 @@ if ($password !== CONTROL_PASSWORD) {
 // Load admin settings
 $admin_settings_file = __DIR__ . '/config/admin-settings.php';
 $maintenance_settings = [];
+$site_settings = [];
+$admin_credentials = ['username' => 'admin', 'password' => ''];
 
 if (file_exists($admin_settings_file)) {
     include $admin_settings_file;
@@ -74,10 +76,14 @@ if ($action && $message) {
     $settings_content .= "// Maintenance Settings\n";
     $settings_content .= "\$maintenance_settings = [\n";
     $settings_content .= "    'enabled' => " . ($maintenance_settings['enabled'] ? 'true' : 'false') . ",\n";
-    $settings_content .= "    'message' => '" . ($maintenance_settings['message'] ?? 'We are currently performing scheduled maintenance to improve your experience.') . "',\n";
+    $settings_content .= "    'message' => '" . addslashes($maintenance_settings['message'] ?? 'We are currently performing scheduled maintenance to improve your experience.') . "',\n";
     $settings_content .= "    'admin_bypass' => true\n";
+    $settings_content .= "];\n\n";
+    $settings_content .= "\$admin_credentials = [\n";
+    $settings_content .= "    'username' => '" . addslashes($admin_credentials['username'] ?? 'admin') . "',\n";
+    $settings_content .= "    'password' => '" . addslashes($admin_credentials['password'] ?? '') . "'\n";
     $settings_content .= "];\n";
-    
+
     file_put_contents($admin_settings_file, $settings_content);
 }
 

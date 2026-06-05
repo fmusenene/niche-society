@@ -1,0 +1,17 @@
+<?php
+/**
+ * Production database overrides — copy to database.local.php (never commit database.local.php)
+ */
+
+if (!defined('DB_HOST')) {
+    define('DB_HOST', 'localhost');
+}
+if (!defined('DB_NAME')) {
+    define('DB_NAME', 'your_database_name');
+}
+if (!defined('DB_USER')) {
+    define('DB_USER', 'your_db_user');
+}
+if (!defined('DB_PASS')) {
+    define('DB_PASS', 'your_strong_db_password');
+}

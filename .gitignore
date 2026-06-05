@@ -3,6 +3,9 @@ config/config.php
 config/database.php
 config/email.php
 config/mailchimp.php
+config/secrets.local.php
+config/database.local.php
+config/admin-settings.php
 
 # Logs
 logs/*.log

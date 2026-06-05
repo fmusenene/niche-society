@@ -148,13 +148,13 @@ $pageDescription = $lang === 'ar'
         </div>
     </section>
 
-    <!-- Service 1: Smart Household Management -->
+    <!-- Service 1: Household Management -->
     <section id="service-1" class="service-detail-section bg-white">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 order-lg-2" data-aos="fade-left">
                     <div class="service-image">
-                        <img src="<?= url('assets/images/service.png') ?>" alt="<?= $lang === 'ar' ? 'إدارة المنزل الذكية' : 'Smart Household Management' ?>" class="img-fluid">
+                        <img src="<?= url('assets/images/service.png') ?>" alt="<?= $lang === 'ar' ? 'إدارة المنزل' : 'Household Management' ?>" class="img-fluid">
                         <div class="service-badge"><?php echo formatNumber('01'); ?></div>
                     </div>
                 </div>
@@ -164,7 +164,7 @@ $pageDescription = $lang === 'ar'
                             <i class="bi bi-house-door"></i>
                         </div>
                         <h2 class="service-title">
-                            <?= $lang === 'ar' ? 'إدارة المنزل الذكية' : 'Smart Household Management' ?>
+                            <?= $lang === 'ar' ? 'إدارة المنزل' : 'Household Management' ?>
                         </h2>
                     </div>
                     <div class="divider"></div>

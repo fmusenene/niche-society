@@ -79,6 +79,10 @@ if ($errorMessage === '' && isset($_GET['contact']) && $_GET['contact'] === 'err
             'ar' => 'لقد تجاوزت الحد المسموح. يرجى المحاولة بعد ساعة.',
             'en' => 'Too many attempts. Please try again in an hour.',
         ],
+        'captcha' => [
+            'ar' => 'يرجى إكمال التحقق من أنك لست روبوتاً.',
+            'en' => 'Please complete the CAPTCHA verification.',
+        ],
     ];
     if ($errorCode !== '' && isset($errorMessagesByCode[$errorCode])) {
         $errorMessage = $errorMessagesByCode[$errorCode][$lang] ?? $errorMessagesByCode[$errorCode]['en'];
@@ -90,6 +94,9 @@ if ($errorMessage === '' && isset($_GET['contact']) && $_GET['contact'] === 'err
 }
 $formData = isset($_SESSION['form_data']) ? $_SESSION['form_data'] : [];
 unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_data']);
+
+require_once __DIR__ . '/functions/recaptcha.php';
+$recaptchaEnabled = recaptchaIsEnabled();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>" dir="<?= $dir ?>">
@@ -382,6 +389,20 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
                                     </div>
                                 </div>
 
+                                <?php if ($recaptchaEnabled): ?>
+                                <div class="col-12 mb-4 d-flex justify-content-center">
+                                    <div class="g-recaptcha" data-sitekey="<?= htmlspecialchars(RECAPTCHA_SITE_KEY) ?>"></div>
+                                </div>
+                                <?php elseif (!defined('IS_LOCAL') || !IS_LOCAL): ?>
+                                <div class="col-12 mb-3">
+                                    <div class="alert alert-warning py-2 small mb-0">
+                                        <?= $lang === 'ar'
+                                            ? 'التحقق الآلي غير مفعّل على الخادم. يرجى تفعيل reCAPTCHA في إعدادات الموقع.'
+                                            : 'Automated verification is not configured on this server. Please enable reCAPTCHA in site settings.' ?>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+
                                 <!-- Submit Button -->
                                 <div class="col-12 text-center">
                                     <button type="submit" class="btn btn-primary" id="submitBtn" style="min-width: 200px; max-width: 300px; padding: 0.5rem 1.75rem; font-size: 0.95rem; height: auto; line-height: 1.4;">
@@ -444,6 +465,9 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error'], $_SESSION['form_
 
     <?php include __DIR__ . '/includes/footer.php'; ?>
 
+    <?php if ($recaptchaEnabled): ?>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <?php endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
         AOS.init({

@@ -7,22 +7,10 @@
  */
 
 require_once __DIR__ . '/config/config.php';
-require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/functions/helpers.php';
 
-// Auto-update related news: trigger RSS aggregator if last run was over 1 hour ago.
-// For reliable hourly updates regardless of visits, set a cron: 0 * * * * php /path/to/rss-feed-aggregator.php
-$rssLastRunFile = __DIR__ . '/logs/rss-last-run.txt';
-$rssRunInterval = 3600; // 1 hour
-if (!is_dir(__DIR__ . '/logs')) {
-    @mkdir(__DIR__ . '/logs', 0755, true);
-}
-if (!file_exists($rssLastRunFile) || (time() - (int)@filemtime($rssLastRunFile) >= $rssRunInterval)) {
-    @file_put_contents($rssLastRunFile, (string)time());
-    $aggregatorUrl = rtrim(SITE_URL, '/') . '/rss-feed-aggregator.php';
-    $ctx = stream_context_create(['http' => ['timeout' => 8]]);
-    @file_get_contents($aggregatorUrl, false, $ctx);
-}
+// RSS news updates run automatically in the background (see functions/rss-scheduler.php).
+// Optional: server cron still works: php rss-feed-aggregator.php
 
 // Handle language switch
 handleLanguageSwitch();
@@ -110,21 +98,9 @@ $pageTitle = $lang === 'ar' ? 'المدونة وقصص النجاح - نيش س�
 $pageDescription = $lang === 'ar' 
     ? 'اطلع على أحدث المقالات وقصص نجاح عملائنا في إدارة المنازل والفعاليات الفاخرة' 
     : 'Explore our latest articles and client success stories in luxury household and event management';
-?>
-<!DOCTYPE html>
-<html lang="<?= $lang ?>" dir="<?= $dir ?>">
-<head>
-    <!-- blog 12-per-page (deploy marker: if you see this in View Source, latest code is live) -->
-    <?= getMetaTags($pageTitle, $pageDescription, getCurrentUrl()) ?>
-    <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="shortcut icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="apple-touch-icon" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
-    <?php if ($lang === 'ar'): ?>
-    <link rel="stylesheet" href="<?= url('assets/css/rtl.css') ?>">
-    <?php endif; ?>
+
+$pageHeadExtra = <<<'HTML'
     <style>
-        /* Force white text for active category links */
         .sidebar-widget .category-list a.active,
         .sidebar-widget ul.category-list li a.active {
             background: #602234 !important;
@@ -138,9 +114,10 @@ $pageDescription = $lang === 'ar'
             border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
         }
     </style>
-</head>
-<body>
-    <?php include __DIR__ . '/includes/header.php'; ?>
+HTML;
+
+include __DIR__ . '/includes/header.php';
+?>
 
     <!-- Hero Section -->
     <section class="page-hero" style="background-image: url('<?= url('assets/images/TEAM-scaled.jpg') ?>');">
@@ -477,17 +454,12 @@ $pageDescription = $lang === 'ar'
         </div>
     </section>
 
-    <?php include __DIR__ . '/includes/footer.php'; ?>
-
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true,
-            offset: 100
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js" defer></script>
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof AOS !== 'undefined') {
+                AOS.init({ duration: 600, easing: 'ease-in-out', once: true, offset: 80 });
+            }
         });
     </script>
-    <script src="<?= url('assets/js/main.js') ?>"></script>
-</body>
-</html>
+<?php include __DIR__ . '/includes/footer.php'; ?>

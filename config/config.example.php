@@ -12,7 +12,8 @@ ini_set('error_log', __DIR__ . '/../logs/error.log');
 
 // Site Configuration
 define('SITE_NAME', 'Niche Society');
-define('SITE_URL', 'http://localhost:8888/niche-society'); // Update for production
+// SITE_URL is auto-detected from HTTPS + host + folder in config.php (no manual edit needed).
+// On production with SSL, visitors are redirected to HTTPS via .htaccess.
 define('ASSETS_URL', SITE_URL . '/assets');
 define('UPLOADS_URL', SITE_URL . '/uploads');
 
@@ -34,7 +35,7 @@ define('AVAILABLE_LANGS', ['ar', 'en']);
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);
     ini_set('session.use_only_cookies', 1);
-    ini_set('session.cookie_secure', 0); // Set to 1 in production with HTTPS
+    ini_set('session.cookie_secure', 0); // config.php sets this automatically when HTTPS is on
     session_start();
 }
 
@@ -65,7 +66,7 @@ define('TRANSLATE_API_KEY', ''); // e.g. AIza... Leave empty if not using; then 
 // Google Analytics (optional)
 define('GA_TRACKING_ID', ''); // Add your GA tracking ID
 
-// reCAPTCHA (optional)
+// reCAPTCHA — set keys in config/secrets.local.php (see secrets.local.php.example)
 define('RECAPTCHA_SITE_KEY', '');
 define('RECAPTCHA_SECRET_KEY', '');
 
@@ -77,8 +78,8 @@ define('SMTP_PASSWORD', 'your-password');
 define('SMTP_FROM_EMAIL', 'noreply@niche-society.com');
 define('SMTP_FROM_NAME', 'Niche Society');
 
-// Security
-define('ENCRYPTION_KEY', 'your-random-32-character-key-here'); // Generate a random key
+// Security — copy secrets.local.php.example → secrets.local.php on production
+define('ENCRYPTION_KEY', 'your-random-32-character-key-here');
 define('HASH_ALGO', 'sha256');
 
 // Rate Limiting

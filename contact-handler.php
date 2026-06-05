@@ -16,6 +16,7 @@ ob_start();
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/functions/helpers.php';
+require_once __DIR__ . '/functions/recaptcha.php';
 
 // Redirect back to contact page; use ?contact=success|error so message shows even if session is lost (e.g. cPanel)
 $redirectToContact = function ($contactParam = null, $errorCode = null) {
@@ -448,7 +449,24 @@ try {
         $redirectToContact('error', 'ratelimit');
     }
 
-// 4. Sanitize Input (store clean raw text, escape later in HTML output)
+    // 3b. reCAPTCHA (required when keys are configured; optional on localhost)
+    if (recaptchaIsEnabled()) {
+        if (!recaptchaVerify($_POST['g-recaptcha-response'] ?? null, $ipAddress)) {
+            logSecurityEvent($pdo, 'captcha_failed', $ipAddress, 'Invalid reCAPTCHA');
+            $_SESSION['contact_error'] = $lang === 'ar'
+                ? 'يرجى إكمال التحقق من أنك لست روبوتاً'
+                : 'Please complete the CAPTCHA verification';
+            $redirectToContact('error', 'captcha');
+        }
+    } elseif (!recaptchaRequireOnProduction()) {
+        logSecurityEvent($pdo, 'captcha_missing', $ipAddress, 'reCAPTCHA not configured on production');
+        $_SESSION['contact_error'] = $lang === 'ar'
+            ? 'التحقق الآلي غير مفعّل. يرجى التواصل عبر البريد مباشرة.'
+            : 'Automated verification is not configured. Please email us directly.';
+        $redirectToContact('error', 'captcha');
+    }
+
+    // 4. Sanitize Input (store clean raw text, escape later in HTML output)
 $data = [
     'name' => trim($_POST['name'] ?? ''),
     'email' => trim(filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL)),

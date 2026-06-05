@@ -16,8 +16,24 @@
  */
 
 require_once __DIR__ . '/config/config.php';
-require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/functions/helpers.php';
+require_once __DIR__ . '/functions/rss-scheduler.php';
+
+// Prevent duplicate runs when cron and auto-scheduler overlap
+if (!rssMarkAggregatorStarted()) {
+    $msg = 'RSS aggregator already running. Exiting.';
+    if (php_sapi_name() === 'cli') {
+        echo $msg . PHP_EOL;
+    }
+    exit(0);
+}
+
+register_shutdown_function(static function (): void {
+    $paths = rssSchedulerPaths();
+    if (is_file($paths['lock'])) {
+        @unlink($paths['lock']);
+    }
+});
 
 // Enable error reporting for debugging
 error_reporting(E_ALL);
@@ -847,6 +863,8 @@ logMessage("Total new articles saved: {$totalSaved}");
 logMessage("Old articles deleted: {$deletedCount}");
 logMessage("Note: Articles are filtered to Niche Society profile only: luxury/property/estate management, event management, protocol/etiquette, concierge/VIP, hospitality.");
 logMessage("Note: Middle East articles are prioritized. Aggregated articles older than {$retentionDays} days are automatically removed.");
+
+rssMarkAggregatorFinished();
 
 // Output summary
 echo PHP_EOL . "=== RSS Feed Aggregator Summary ===" . PHP_EOL;

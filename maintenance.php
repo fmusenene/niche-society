@@ -3,26 +3,24 @@
  * Maintenance Mode Page - Niche Society
  */
 
-// Define essential constants first
-if (!defined('SITE_NAME')) {
-    define('SITE_NAME', 'Niche Society');
-}
-if (!defined('SITE_URL')) {
-    define('SITE_URL', 'http://localhost/niche-society-main');
-}
-if (!defined('ASSETS_URL')) {
-    define('ASSETS_URL', SITE_URL . '/assets');
-}
-if (!defined('CONTACT_EMAIL')) {
-    define('CONTACT_EMAIL', 'info@niche-society.com');
-}
-if (!defined('CONTACT_PHONE')) {
-    define('CONTACT_PHONE', '+966532447976');
-}
-
-// Load configuration without database dependency
+// Load site configuration (defines constants once)
 $config_file = __DIR__ . '/config/config.php';
 if (!file_exists($config_file)) {
+    if (!defined('SITE_NAME')) {
+        define('SITE_NAME', 'Niche Society');
+    }
+    if (!defined('SITE_URL')) {
+        define('SITE_URL', 'http://localhost/niche-society-main');
+    }
+    if (!defined('ASSETS_URL')) {
+        define('ASSETS_URL', SITE_URL . '/assets');
+    }
+    if (!defined('CONTACT_EMAIL')) {
+        define('CONTACT_EMAIL', 'info@niche-society.com');
+    }
+    if (!defined('CONTACT_PHONE')) {
+        define('CONTACT_PHONE', '+966532447976');
+    }
     // Define essential constants directly without eval()
     // These are the key constants needed for maintenance page
     if (!defined('DEFAULT_LANG')) define('DEFAULT_LANG', 'ar');
@@ -214,7 +212,7 @@ $maintenance_message = isset($maintenance_settings['message']) ? $maintenance_se
                         
                         <!-- Company Logo -->
                         <div class="text-center mb-4">
-                            <img src="<?php echo ASSETS_URL; ?>/images/logo%202.png" alt="<?php echo SITE_NAME; ?>" class="brand-logo" onerror="this.style.display='none';">
+                            <img src="<?php echo ASSETS_URL; ?>/images/logo 2.png" alt="<?php echo SITE_NAME; ?>" class="brand-logo" onerror="this.style.display='none';">
                         </div>
                         
                         <!-- Maintenance Icon -->

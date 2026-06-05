@@ -467,6 +467,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const navLinks = navbarCollapse.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             link.addEventListener('click', function(e) {
+                // Dropdown toggles open a menu — don't treat as page navigation
+                if (this.classList.contains('dropdown-toggle')) {
+                    return;
+                }
                 // If it's the services dropdown link and we're on mobile, handle specially
                 if (this.id === 'servicesDropdown' && window.innerWidth < 992) {
                     const menu = this.nextElementSibling;
@@ -525,23 +529,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (isShowing && this.href) {
                             window.location.href = this.href;
                         }
-                    }
-                }
-            });
-        } else {
-            // For other dropdowns, use standard behavior
-            toggle.addEventListener('click', function(e) {
-                if (window.innerWidth <= 991) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const menu = this.nextElementSibling;
-                    if (menu && menu.classList.contains('dropdown-menu')) {
-                        const isShowing = menu.classList.contains('show');
-                        document.querySelectorAll('.dropdown-menu').forEach(m => {
-                            if (m !== menu) m.classList.remove('show');
-                        });
-                        menu.classList.toggle('show');
-                        this.setAttribute('aria-expanded', !isShowing);
                     }
                 }
             });
@@ -606,9 +593,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // ========================================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
+            if (this.classList.contains('dropdown-toggle')) {
+                return;
+            }
             const href = this.getAttribute('href');
             
-            if (href === '#' || href === '') return;
+            if (href === '#' || href === '') {
+                e.preventDefault();
+                return;
+            }
             
             e.preventDefault();
             
@@ -757,8 +750,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     navLinks.forEach(link => {
         link.addEventListener('click', function() {
+            if (this.classList.contains('dropdown-toggle')) {
+                return;
+            }
             if (window.innerWidth < 992 && navbarCollapse && navbarCollapse.classList.contains('show')) {
-                if (navbarToggler) navbarToggler.click();
+                navbarCollapse.classList.remove('show');
+                if (navbarToggler) {
+                    navbarToggler.classList.remove('active');
+                    navbarToggler.setAttribute('aria-expanded', 'false');
+                }
             }
         });
     });

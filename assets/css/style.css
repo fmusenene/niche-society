@@ -495,9 +495,14 @@ body.en-lang {
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 999;
+    z-index: 1001;
     background-color: #fffaf3 !important;
     transition: top 0.3s ease-in-out;
+}
+
+.navbar .nav-link {
+    position: relative;
+    z-index: 2;
 }
 
 .navbar.sticky-top.top-bar-hidden {

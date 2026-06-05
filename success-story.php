@@ -63,21 +63,9 @@ $imageUrl = (!empty($story['image']) && preg_match('/^https?:\/\//', $story['ima
 
 $pageTitle = htmlspecialchars($story['title']) . ' - ' . ($lang === 'ar' ? 'قصص النجاح - نيش سوسيتي' : 'Success Stories - Niche Society');
 $pageDescription = htmlspecialchars($story['description']);
+
+include __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="<?= $lang ?>" dir="<?= $dir ?>">
-<head>
-    <?= getMetaTags($pageTitle, $pageDescription, getCurrentUrl()) ?>
-    <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="shortcut icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="apple-touch-icon" href="<?= url('assets/images/favicon.png') ?>">
-    <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
-    <?php if ($lang === 'ar'): ?>
-    <link rel="stylesheet" href="<?= url('assets/css/rtl.css') ?>">
-    <?php endif; ?>
-</head>
-<body>
-    <?php include __DIR__ . '/includes/header.php'; ?>
 
     <!-- Story Header -->
     <section class="page-hero" style="background-image: url('<?= $imageUrl ?>'); min-height: 50vh;">
@@ -205,17 +193,12 @@ $pageDescription = htmlspecialchars($story['description']);
         </div>
     </section>
 
-    <?php include __DIR__ . '/includes/footer.php'; ?>
-
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true,
-            offset: 100
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js" defer></script>
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof AOS !== 'undefined') {
+                AOS.init({ duration: 600, easing: 'ease-in-out', once: true, offset: 80 });
+            }
         });
     </script>
-    <script src="<?= url('assets/js/main.js') ?>"></script>
-</body>
-</html>
+<?php include __DIR__ . '/includes/footer.php'; ?>

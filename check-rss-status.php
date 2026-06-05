@@ -8,6 +8,20 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/database.php';
 
 echo "<h1>RSS Aggregator Status</h1>";
+
+$autoEnabled = defined('RSS_AUTO_UPDATE') && RSS_AUTO_UPDATE;
+$interval = defined('RSS_AUTO_UPDATE_INTERVAL') ? (int) RSS_AUTO_UPDATE_INTERVAL : 3600;
+echo "<p><strong>Automatic updates:</strong> " . ($autoEnabled ? 'ON (runs in background when someone visits the site, about every ' . round($interval / 60) . ' minutes)' : 'OFF') . "</p>";
+
+if (is_file(__DIR__ . '/logs/rss-last-run.txt')) {
+    $lastAuto = (int) trim(file_get_contents(__DIR__ . '/logs/rss-last-run.txt'));
+    if ($lastAuto > 0) {
+        echo "<p><strong>Last automatic run:</strong> " . date('Y-m-d H:i:s', $lastAuto) . "</p>";
+    }
+}
+if (is_file(__DIR__ . '/logs/rss-aggregator.lock')) {
+    echo "<p class='success'>Aggregator is running or was recently started (lock file present).</p>";
+}
 echo "<style>
     body { font-family: Arial, sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto; }
     .info { background: #f0f0f0; padding: 15px; margin: 10px 0; border-left: 4px solid #602234; }

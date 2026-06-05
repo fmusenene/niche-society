@@ -4,45 +4,6 @@
  * Niche Society Website
  */
 
-// Start session for admin bypass
-session_start();
-
-// DIRECT MAINTENANCE MODE CHECK
-// Load admin settings
-$admin_settings_file = __DIR__ . '/config/admin-settings.php';
-$maintenance_enabled = false;
-
-if (file_exists($admin_settings_file)) {
-    include $admin_settings_file;
-    $maintenance_enabled = $maintenance_settings['enabled'] ?? false;
-}
-
-// Check if user should bypass maintenance
-$allow_bypass = false;
-if ($maintenance_enabled) {
-    // Allow admin bypass if enabled
-    $admin_bypass = $maintenance_settings['admin_bypass'] ?? true;
-    
-    if ($admin_bypass) {
-        // Check if user is admin
-        $current_uri = $_SERVER['REQUEST_URI'] ?? '';
-        $is_admin_page = strpos($current_uri, '/admin/') !== false;
-        $is_admin_session = isset($_SESSION['admin_authenticated']) && $_SESSION['admin_authenticated'] === true;
-        
-        $allow_bypass = $is_admin_page || $is_admin_session;
-    }
-}
-
-// If maintenance is enabled and user is not allowed to bypass, redirect to maintenance page
-if ($maintenance_enabled && !$allow_bypass) {
-    // Don't redirect if already on maintenance page
-    $current_file = basename($_SERVER['PHP_SELF']);
-    if ($current_file !== 'maintenance.php') {
-        header('Location: maintenance.php');
-        exit;
-    }
-}
-
 // Load configuration - check if config.php exists, otherwise use example
 $config_file = __DIR__ . '/config/config.php';
 if (!file_exists($config_file)) {
@@ -83,9 +44,8 @@ $pageTitle = t('home_title', 'نيش سوسايتي - خدمات الإدارة 
 $pageDescription = t('home_description', 'نقدم حلولاً متكاملة لإدارة الممتلكات والفعاليات الفاخرة مع 25 عاماً من الخبرة في خدمة الشخصيات الرفيعة في المملكة العربية السعودية');
 $pageKeywords = t('home_keywords', 'إدارة فاخرة، إدارة ممتلكات، إدارة فعاليات، بروتوكول ملكي، خدمات VIP، نيش سوسايتي');
 
+$pageImage = 'Logo 1.jpg';
 include __DIR__ . '/includes/header.php';
-
-generateMetaTags($pageTitle, $pageDescription, $pageKeywords, 'Logo 1.jpg');
 ?>
 
 <!-- Main Content -->

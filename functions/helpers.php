@@ -153,10 +153,20 @@ function handleLanguageSwitch() {
 }
 
 /**
- * Get current page URL
+ * Get current request path (e.g. /niche-society-main/about.php)
  */
 function getCurrentUrl() {
-    return $_SERVER['REQUEST_URI'];
+    return $_SERVER['REQUEST_URI'] ?? '/';
+}
+
+/**
+ * Full canonical URL for this page (no double path segments)
+ */
+function getCanonicalUrl() {
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $uri = getCurrentUrl();
+    $https = defined('IS_HTTPS') && IS_HTTPS;
+    return ($https ? 'https' : 'http') . '://' . $host . $uri;
 }
 
 /**
@@ -345,6 +355,7 @@ function generateMetaTags($title, $description, $keywords = '', $image = '') {
     $description = sanitize($description);
     
     echo "<title>$title - " . SITE_NAME . "</title>\n";
+    echo "<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n";
     echo "<meta name='description' content='$description'>\n";
     
     if ($keywords) {
@@ -358,7 +369,8 @@ function generateMetaTags($title, $description, $keywords = '', $image = '') {
     echo "<meta property='og:title' content='$title'>\n";
     echo "<meta property='og:description' content='$description'>\n";
     echo "<meta property='og:type' content='website'>\n";
-    echo "<meta property='og:url' content='" . SITE_URL . getCurrentUrl() . "'>\n";
+    echo "<meta property='og:url' content='" . htmlspecialchars(getCanonicalUrl(), ENT_QUOTES, 'UTF-8') . "'>\n";
+    echo "<link rel='canonical' href='" . htmlspecialchars(getCanonicalUrl(), ENT_QUOTES, 'UTF-8') . "'>\n";
     echo "<meta property='og:image' content='" . ($image ? ASSETS_URL . "/images/$image" : $logoUrl) . "'>\n";
     echo "<meta property='og:image:width' content='1200'>\n";
     echo "<meta property='og:image:height' content='630'>\n";
