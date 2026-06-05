@@ -128,7 +128,12 @@ if ($authenticated && $section === 'services') {
     }
 }
 
-$maintenance_enabled = $maintenance_settings['enabled'] ?? false;
+$freshSettings = adminLoadSettingsFile();
+$maintenance_settings = $freshSettings['maintenance_settings'];
+$site_settings = $freshSettings['site_settings'];
+$admin_credentials = $freshSettings['admin_credentials'];
+
+$maintenance_enabled = !empty($maintenance_settings['enabled']);
 $maintenance_message = $maintenance_settings['message'] ?? '';
 $serviceCategories = $authenticated ? cmsGetServiceCategories($pdo) : [];
 $activeServiceCount = count(array_filter($allServices, fn($s) => ($s['status'] ?? '') === 'active'));
@@ -246,6 +251,17 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                 <div class="summary-row"><span class="summary-label">Message</span><span class="text-truncate" style="max-width:280px"><?= $maintenance_message ? htmlspecialchars(mb_strimwidth($maintenance_message, 0, 60, '…')) : '—' ?></span></div>
             </div>
             <div class="section-actions">
+                <form method="post" action="actions.php" class="d-inline">
+                    <input type="hidden" name="admin_csrf" value="<?= htmlspecialchars(adminCsrfToken()) ?>">
+                    <input type="hidden" name="section" value="maintenance">
+                    <input type="hidden" name="maintenance_message" value="<?= htmlspecialchars($maintenance_message) ?>">
+                    <?php if (!$maintenance_enabled): ?>
+                    <input type="hidden" name="maintenance_enabled" value="1">
+                    <button type="submit" class="btn btn-warning btn-sm"><i class="bi bi-toggle-off"></i> Enable now</button>
+                    <?php else: ?>
+                    <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-toggle-on"></i> Disable now</button>
+                    <?php endif; ?>
+                </form>
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalMaintenance"><i class="bi bi-pencil"></i> Edit settings</button>
                 <a href="<?= url('maintenance.php') ?>" class="btn btn-outline-secondary btn-sm" target="_blank"><i class="bi bi-eye"></i> Preview</a>
             </div>

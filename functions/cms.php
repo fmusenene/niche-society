@@ -230,6 +230,23 @@ function cmsLang(array $row, string $field, string $lang): string
     return $row[$fallback] ?? '';
 }
 
+function cmsServiceImageUrl(?string $path): string
+{
+    if ($path === null || $path === '') {
+        return url('assets/images/service.png');
+    }
+    if (preg_match('#^https?://#i', $path) || str_starts_with($path, '//')) {
+        return $path;
+    }
+    if (str_starts_with($path, 'assets/') || str_starts_with($path, 'uploads/')) {
+        return url($path);
+    }
+    if (function_exists('getImageUrl')) {
+        return getImageUrl($path);
+    }
+    return url('assets/images/' . ltrim($path, '/'));
+}
+
 function cmsParseLines(?string $text): array
 {
     if ($text === null || trim($text) === '') {

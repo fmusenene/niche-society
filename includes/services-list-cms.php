@@ -16,7 +16,7 @@ foreach ($cmsServices as $svc):
     if (empty($features)) {
         $features = cmsParseLines($svc['listing_features_' . ($lang === 'ar' ? 'en' : 'ar')] ?? '');
     }
-    $img = !empty($svc['image']) ? url($svc['image']) : url('assets/images/service.png');
+    $img = cmsServiceImageUrl($svc['image'] ?? '');
     $icon = !empty($svc['icon']) ? $svc['icon'] : 'bi-star';
     $anchor = (int) ($svc['display_order'] ?: $index);
 ?>

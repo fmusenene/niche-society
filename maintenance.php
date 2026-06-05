@@ -47,13 +47,10 @@ if (file_exists($helpers_file)) {
 }
 
 // Load admin settings for dynamic contact information
-$admin_settings_file = __DIR__ . '/config/admin-settings.php';
-$site_settings = [];
-$maintenance_settings = [];
-
-if (file_exists($admin_settings_file)) {
-    include $admin_settings_file;
-}
+require_once __DIR__ . '/functions/admin-settings.php';
+$loadedAdminSettings = adminLoadSettingsFile();
+$site_settings = $loadedAdminSettings['site_settings'];
+$maintenance_settings = $loadedAdminSettings['maintenance_settings'];
 
 // Use admin settings if available, otherwise fall back to defaults
 $admin_email = isset($site_settings['admin_email']) ? $site_settings['admin_email'] : CONTACT_EMAIL;

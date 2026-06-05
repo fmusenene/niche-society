@@ -36,6 +36,12 @@ if (file_exists($helpers_file)) {
     require_once $helpers_file;
 }
 
+$lang = getCurrentLang();
+if (file_exists($config_file) && isset($pdo) && $pdo instanceof PDO) {
+    require_once __DIR__ . '/functions/cms.php';
+    cmsEnsureTables($pdo);
+}
+
 // Handle language switch
 handleLanguageSwitch();
 
@@ -381,138 +387,9 @@ include __DIR__ . '/includes/header.php';
         
         <!-- Services Grid -->
         <div class="services-grid-elegant">
-            <!-- Service 1: Smart Property Management -->
-            <div class="service-card-elegant" data-aos="fade-up" data-aos-delay="100">
-                <div class="service-image-elegant">
-                    <div class="service-badge-number"><?php echo formatNumber('01'); ?></div>
-                    <!-- Swapped image: now using former Event Management visual -->
-                    <img src="<?php echo getImageUrl('service.png'); ?>" alt="<?php echo t('service1_title', 'خدمات الإدارة الذكية لممتلكاتك'); ?>">
-                    <div class="service-image-overlay"></div>
-                </div>
-                <div class="service-content-elegant">
-                    <h3 class="service-title-elegant"><?php echo t('service1_title', 'خدمات الإدارة الذكية لممتلكاتك'); ?></h3>
-                    <p class="service-description-elegant">
-                        <?php echo t('service1_desc', 'نحوّل كل موقع إلى منظومة متكاملة تُدار بأنظمة ذكية وتُنسّق بتواصل فعّال، لتبقى على اطلاع دائم بكل التفاصيل دون عناء أو تعقيد.'); ?>
-                    </p>
-                    <ul class="service-features-elegant">
-                        <li>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="2" width="12" height="12" stroke="#602234" stroke-width="1.5"/>
-                                <path d="M5 8L7 10L11 6" stroke="#602234" stroke-width="1.5"/>
-                            </svg>
-                            <?php echo t('service1_feat1', 'تأسيس نظام داخلي شامل لكافة الأعمال'); ?>
-                        </li>
-                        <li>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="2" width="12" height="12" stroke="#602234" stroke-width="1.5"/>
-                                <path d="M5 8L7 10L11 6" stroke="#602234" stroke-width="1.5"/>
-                            </svg>
-                            <?php echo t('service1_feat2', 'إدارة العمليات اليومية وتقييمها'); ?>
-                        </li>
-                        <li>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="2" width="12" height="12" stroke="#602234" stroke-width="1.5"/>
-                                <path d="M5 8L7 10L11 6" stroke="#602234" stroke-width="1.5"/>
-                            </svg>
-                            <?php echo t('service1_feat3', 'لوحات تحكم رقمية وتقارير مخصصة'); ?>
-                        </li>
-                    </ul>
-                    <a href="<?php echo url('service-household-management.php'); ?>" class="service-link-elegant">
-                        <span><?php echo t('learn_more', 'اعرف المزيد'); ?></span>
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M<?php echo getCurrentLang() === 'ar' ? '12 4L6 10L12 16' : '8 4L14 10L8 16'; ?>" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Service 2: Event Management -->
-            <div class="service-card-elegant" data-aos="fade-up" data-aos-delay="200">
-                <div class="service-image-elegant">
-                    <div class="service-badge-number"><?php echo formatNumber('02'); ?></div>
-                    <img src="<?php echo getImageUrl('service-5.jpg'); ?>" alt="<?php echo t('service2_title', 'إدارة الفعاليات'); ?>">
-                    <div class="service-image-overlay"></div>
-                </div>
-                <div class="service-content-elegant">
-                    <h3 class="service-title-elegant"><?php echo t('service2_title', 'إدارة الفعاليات'); ?></h3>
-                    <p class="service-description-elegant">
-                        <?php echo t('service2_desc', 'من اللقاءات الخاصة إلى الاحتفالات الكبرى، نُصمّم الانطباع العام، ونُشرف على كل تفصيلة لتنعكس الأناقة في الجو، والخصوصية في التنفيذ.'); ?>
-                    </p>
-                    <ul class="service-features-elegant">
-                        <li>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="2" width="12" height="12" stroke="#602234" stroke-width="1.5"/>
-                                <path d="M5 8L7 10L11 6" stroke="#602234" stroke-width="1.5"/>
-                            </svg>
-                            <?php echo t('service2_feat1', 'تصميم تجارب متخصصة لكل نوع من الفعاليات'); ?>
-                        </li>
-                        <li>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="2" width="12" height="12" stroke="#602234" stroke-width="1.5"/>
-                                <path d="M5 8L7 10L11 6" stroke="#602234" stroke-width="1.5"/>
-                            </svg>
-                            <?php echo t('service2_feat2', 'إدارة الخدمات اللوجستية بدقة وكفاءة'); ?>
-                        </li>
-                        <li>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="2" width="12" height="12" stroke="#602234" stroke-width="1.5"/>
-                                <path d="M5 8L7 10L11 6" stroke="#602234" stroke-width="1.5"/>
-                            </svg>
-                            <?php echo t('service2_feat3', 'إشراف ميداني وتنسيق فريق محترف'); ?>
-                        </li>
-                    </ul>
-                    <a href="<?php echo url('service-event-management.php'); ?>" class="service-link-elegant">
-                        <span><?php echo t('learn_more', 'اعرف المزيد'); ?></span>
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M<?php echo getCurrentLang() === 'ar' ? '12 4L6 10L12 16' : '8 4L14 10L8 16'; ?>" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Service 3: Protocol & Etiquette -->
-            <div class="service-card-elegant" data-aos="fade-up" data-aos-delay="300">
-                <div class="service-image-elegant">
-                    <div class="service-badge-number"><?php echo formatNumber('03'); ?></div>
-                    <img src="<?php echo getImageUrl('service-6.jpg'); ?>" alt="<?php echo t('service3_title', 'البروتوكول وفن الإتيكيت'); ?>">
-                    <div class="service-image-overlay"></div>
-                </div>
-                <div class="service-content-elegant">
-                    <h3 class="service-title-elegant"><?php echo t('service3_title', 'البروتوكول وفن الإتيكيت'); ?></h3>
-                    <p class="service-description-elegant">
-                        <?php echo t('service3_desc', 'نقدم برامج استشارية وتدريبية مخصصة لتعزيز التواصل والسلوك في الإطارات الرسمية واليومية، مع التركيز على الأسلوب الشخصي والحضور الدبلوماسي.'); ?>
-                    </p>
-                    <ul class="service-features-elegant">
-                        <li>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="2" width="12" height="12" stroke="#602234" stroke-width="1.5"/>
-                                <path d="M5 8L7 10L11 6" stroke="#602234" stroke-width="1.5"/>
-                            </svg>
-                            <?php echo t('service3_feat1', 'برامج تدريبية لفن التواصل الدبلوماسي'); ?>
-                        </li>
-                        <li>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="2" width="12" height="12" stroke="#602234" stroke-width="1.5"/>
-                                <path d="M5 8L7 10L11 6" stroke="#602234" stroke-width="1.5"/>
-                            </svg>
-                            <?php echo t('service3_feat2', 'استشارات في السلوك الرسمي والعلاقات العامة'); ?>
-                        </li>
-                        <li>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="2" width="12" height="12" stroke="#602234" stroke-width="1.5"/>
-                                <path d="M5 8L7 10L11 6" stroke="#602234" stroke-width="1.5"/>
-                            </svg>
-                            <?php echo t('service3_feat3', 'تطوير الحضور والأسلوب الشخصي المهني'); ?>
-                        </li>
-                    </ul>
-                    <a href="<?php echo url('service-protocol-etiquette.php'); ?>" class="service-link-elegant">
-                        <span><?php echo t('learn_more', 'اعرف المزيد'); ?></span>
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M<?php echo getCurrentLang() === 'ar' ? '12 4L6 10L12 16' : '8 4L14 10L8 16'; ?>" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
+            <?php if (isset($pdo) && $pdo instanceof PDO): ?>
+                <?php include __DIR__ . '/includes/services-home-cms.php'; ?>
+            <?php endif; ?>
         </div>
         
         <!-- View All Button -->

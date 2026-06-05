@@ -24,7 +24,7 @@ try {
             if (!adminWriteSettingsFile($maintenance_settings, $site_settings, $admin_credentials)) {
                 throw new RuntimeException('Could not save maintenance settings.');
             }
-            adminFlash('success', 'Maintenance settings saved.');
+            adminFlash('success', $maintenance_settings['enabled'] ? 'Maintenance mode enabled.' : 'Maintenance mode disabled.');
             break;
 
         case 'contact':

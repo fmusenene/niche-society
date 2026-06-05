@@ -117,6 +117,14 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+if (!IS_LOCAL && !headers_sent()) {
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    if (strpos($requestUri, '/admin/') === false && strpos($requestUri, '/assets/') === false) {
+        header('Cache-Control: no-cache, no-store, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+    }
+}
+
 if (!defined('SKIP_MAINTENANCE_CHECK') || !SKIP_MAINTENANCE_CHECK) {
     require_once FUNCTIONS_PATH . '/maintenance-check.php';
     checkMaintenanceMode();

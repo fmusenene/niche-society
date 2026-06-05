@@ -5,6 +5,7 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../functions/helpers.php';
 require_once __DIR__ . '/../functions/cms.php';
+require_once __DIR__ . '/../functions/admin-settings.php';
 require_once __DIR__ . '/lib/password.php';
 require_once __DIR__ . '/lib/security.php';
 
@@ -27,19 +28,15 @@ try {
     }
 }
 
-$admin_settings_file = __DIR__ . '/../config/admin-settings.php';
+$admin_settings_file = adminSettingsFilePath();
 $maintenance_settings = ['enabled' => false, 'message' => '', 'admin_bypass' => true];
-$site_settings_file = [];
+$site_settings = [];
 $admin_credentials = ['username' => 'admin', 'password' => ''];
 
-if (file_exists($admin_settings_file)) {
-    include $admin_settings_file;
-}
-
-$admin_credentials = array_merge(
-    ['username' => 'admin', 'password' => ''],
-    is_array($admin_credentials ?? null) ? $admin_credentials : []
-);
+$loadedSettings = adminLoadSettingsFile();
+$maintenance_settings = $loadedSettings['maintenance_settings'];
+$site_settings = $loadedSettings['site_settings'];
+$admin_credentials = $loadedSettings['admin_credentials'];
 
 function adminIsAuthenticated(): bool
 {
@@ -87,12 +84,16 @@ function adminGetFlash(): ?array
 
 function adminWriteSettingsFile(array $maintenance, array $site, array $credentials): bool
 {
-    $path = __DIR__ . '/../config/admin-settings.php';
+    $path = adminSettingsFilePath();
     $content = "<?php\n// Admin Settings — updated " . date('Y-m-d H:i:s') . "\n\n";
     $content .= '$maintenance_settings = ' . var_export($maintenance, true) . ";\n\n";
     $content .= '$site_settings = ' . var_export($site, true) . ";\n\n";
     $content .= '$admin_credentials = ' . var_export($credentials, true) . ";\n";
-    return file_put_contents($path, $content) !== false;
+    $written = file_put_contents($path, $content) !== false;
+    if ($written) {
+        adminInvalidateSettingsCache($path);
+    }
+    return $written;
 }
 
 function adminCsrfToken(): string

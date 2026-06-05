@@ -4,6 +4,8 @@
  * Redirects public visitors to maintenance.php when maintenance mode is enabled.
  */
 
+require_once __DIR__ . '/admin-settings.php';
+
 function checkMaintenanceMode(): bool
 {
     if (PHP_SAPI === 'cli' || (defined('SKIP_MAINTENANCE_CHECK') && SKIP_MAINTENANCE_CHECK)) {
@@ -16,13 +18,8 @@ function checkMaintenanceMode(): bool
         return false;
     }
 
-    $admin_settings_file = __DIR__ . '/../config/admin-settings.php';
-    $maintenance_settings = [];
-
-    if (file_exists($admin_settings_file)) {
-        include $admin_settings_file;
-    }
-
+    $settings = adminLoadSettingsFile();
+    $maintenance_settings = $settings['maintenance_settings'];
     $maintenance_enabled = !empty($maintenance_settings['enabled']);
     if (!$maintenance_enabled) {
         return false;
