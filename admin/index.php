@@ -137,6 +137,40 @@ $maintenance_enabled = !empty($maintenance_settings['enabled']);
 $maintenance_message = $maintenance_settings['message'] ?? '';
 $serviceCategories = $authenticated ? cmsGetServiceCategories($pdo) : [];
 $activeServiceCount = count(array_filter($allServices, fn($s) => ($s['status'] ?? '') === 'active'));
+$allInvoices = $authenticated ? cmsGetAllInvoices($pdo) : [];
+$invoiceStats = ['count' => 0, 'this_month' => 0, 'total_sar' => 0];
+if ($authenticated) {
+    $invoiceMonthPrefix = date('Y-m');
+    foreach ($allInvoices as $inv) {
+        $invoiceStats['count']++;
+        $updatedAt = (string) ($inv['updated_at'] ?? '');
+        if ($updatedAt !== '' && strncmp($updatedAt, $invoiceMonthPrefix, 7) === 0) {
+            $invoiceStats['this_month']++;
+        }
+        if (($inv['currency'] ?? 'SAR') === 'SAR') {
+            $invoiceStats['total_sar'] += (int) ($inv['grand_total'] ?? 0);
+        }
+    }
+}
+$openInvoiceBoot = null;
+if ($authenticated && $section === 'invoices') {
+    if (!empty($_GET['add'])) {
+        $openInvoiceBoot = ['open' => 'new'];
+    } elseif (!empty($_GET['edit'])) {
+        $editInvoiceId = (int) $_GET['edit'];
+        foreach ($allInvoices as $inv) {
+            if ((int) $inv['id'] === $editInvoiceId) {
+                $openInvoiceBoot = [
+                    'open' => 'edit',
+                    'id' => $editInvoiceId,
+                    'subject' => $inv['subject'] ?: 'Untitled proposal',
+                    'number' => $inv['invoice_number'] ?? '',
+                ];
+                break;
+            }
+        }
+    }
+}
 
 $sectionTitles = [
     'dashboard' => 'Dashboard',
@@ -147,6 +181,7 @@ $sectionTitles = [
     'about' => 'About page',
     'contact' => 'Contact & company',
     'account' => 'Account & password',
+    'invoices' => 'Invoices',
 ];
 $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
 ?>
@@ -158,7 +193,7 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
     <title><?= htmlspecialchars($authenticated ? $pageHeading . ' — Site Admin' : 'Site Admin Login') ?> — <?= htmlspecialchars(SITE_NAME) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="assets/admin.css">
+    <link rel="stylesheet" href="assets/admin.css?v=<?= (int) @filemtime(__DIR__ . '/assets/admin.css') ?>">
 </head>
 <body>
 <span id="adminSiteUrl" data-base="<?= htmlspecialchars(rtrim(SITE_URL, '/')) ?>" hidden></span>
@@ -406,6 +441,132 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                     <button type="submit" class="btn btn-primary btn-sm js-admin-password-submit" disabled><i class="bi bi-key"></i> Update password</button>
                 </form>
             </div>
+
+    <?php elseif ($section === 'invoices'): ?>
+    <div class="invoice-list-page">
+        <div class="admin-stats-row invoice-stats-row">
+            <div class="admin-stat-card invoice-stat-card">
+                <i class="bi bi-receipt-cutoff"></i>
+                <div class="admin-stat-value" id="invoiceStatTotal"><?= (int) $invoiceStats['count'] ?></div>
+                <div class="admin-stat-label">Total invoices</div>
+            </div>
+            <div class="admin-stat-card invoice-stat-card invoice-stat-card--filter">
+                <i class="bi bi-eye"></i>
+                <div class="admin-stat-value" id="invoiceVisibleCount"><?= (int) $invoiceStats['count'] ?></div>
+                <div class="admin-stat-label">Showing results</div>
+            </div>
+            <div class="admin-stat-card invoice-stat-card">
+                <i class="bi bi-calendar3"></i>
+                <div class="admin-stat-value"><?= (int) $invoiceStats['this_month'] ?></div>
+                <div class="admin-stat-label">Updated this month</div>
+            </div>
+            <?php if ($invoiceStats['total_sar'] > 0): ?>
+            <div class="admin-stat-card invoice-stat-card">
+                <i class="bi bi-cash-stack"></i>
+                <div class="admin-stat-value"><?= number_format((int) $invoiceStats['total_sar']) ?></div>
+                <div class="admin-stat-label">Total value (SAR)</div>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="card-admin invoice-list-card">
+            <div class="invoice-list-toolbar">
+                <div class="invoice-search-group">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+                        <input type="search" id="invoiceSearch" class="form-control" placeholder="Search…" autocomplete="off" aria-label="Search invoices">
+                    </div>
+                    <button type="button" class="invoice-search-clear" id="invoiceSearchClear" hidden aria-label="Clear search">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm invoice-new-btn" id="btnNewInvoice" title="New invoice">
+                    <i class="bi bi-plus-lg"></i><span class="invoice-new-btn-label"> New invoice</span>
+                </button>
+            </div>
+
+            <?php if (count($allInvoices) === 0): ?>
+            <div class="invoice-empty-state">
+                <div class="invoice-empty-state__icon"><i class="bi bi-receipt"></i></div>
+                <h3 class="invoice-empty-state__title">No invoices yet</h3>
+                <p class="invoice-empty-state__text">Create your first event proposal or invoice. You can edit line items, print, and send to clients.</p>
+                <button type="button" class="btn btn-primary btn-sm invoice-empty-state__cta" id="btnNewInvoiceEmpty">
+                    <i class="bi bi-plus-lg"></i> Create first invoice
+                </button>
+            </div>
+            <?php else: ?>
+            <div class="invoice-table-wrap table-responsive">
+                <table class="table invoice-data-table mb-0" id="invoiceTable">
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Subject</th>
+                            <th>Offer date</th>
+                            <th class="invoice-col-secondary">Event date</th>
+                            <th class="invoice-col-secondary">Client</th>
+                            <th class="text-end">Total</th>
+                            <th class="invoice-col-secondary">Updated</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceTableBody">
+                    <?php foreach ($allInvoices as $inv):
+                        $invSubject = $inv['subject'] ?: 'Untitled proposal';
+                        $invNumber = $inv['invoice_number'] ?? '';
+                        $searchBlob = strtolower(trim($invNumber . ' ' . $invSubject . ' ' . ($inv['client_name'] ?? '')));
+                    ?>
+                    <tr data-invoice-row data-search="<?= htmlspecialchars($searchBlob, ENT_QUOTES) ?>">
+                        <td><span class="invoice-num-badge"><?= htmlspecialchars($invNumber ?: '—') ?></span></td>
+                        <td class="invoice-cell-subject"><?= htmlspecialchars($invSubject) ?></td>
+                        <td class="text-nowrap"><?= htmlspecialchars(cmsInvoiceFormatDisplayDate($inv['offer_date'] ?? '', true)) ?></td>
+                        <td class="text-nowrap invoice-col-secondary"><?= htmlspecialchars(cmsInvoiceFormatDisplayDate($inv['event_date'] ?? '', true)) ?></td>
+                        <td class="invoice-col-secondary"><?= htmlspecialchars($inv['client_name'] ?: '—') ?></td>
+                        <td class="text-end text-nowrap invoice-cell-total">
+                            <strong><?= number_format((int) $inv['grand_total']) ?></strong>
+                            <span class="invoice-cell-currency"><?= htmlspecialchars($inv['currency'] ?? 'SAR') ?></span>
+                        </td>
+                        <td class="text-nowrap text-muted invoice-col-secondary"><?= htmlspecialchars(date('Y-m-d', strtotime($inv['updated_at'] ?? 'now'))) ?></td>
+                        <td class="text-end text-nowrap">
+                            <div class="invoice-row-actions">
+                                <button type="button" class="btn btn-sm btn-outline-primary btn-open-invoice"
+                                    data-id="<?= (int) $inv['id'] ?>"
+                                    data-subject="<?= htmlspecialchars($invSubject, ENT_QUOTES) ?>"
+                                    data-number="<?= htmlspecialchars($invNumber, ENT_QUOTES) ?>"
+                                    title="Edit invoice">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-print-invoice"
+                                    data-id="<?= (int) $inv['id'] ?>"
+                                    data-subject="<?= htmlspecialchars($invSubject, ENT_QUOTES) ?>"
+                                    data-number="<?= htmlspecialchars($invNumber, ENT_QUOTES) ?>"
+                                    title="Print invoice">
+                                    <i class="bi bi-printer"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-delete-invoice"
+                                    data-id="<?= (int) $inv['id'] ?>"
+                                    data-name="<?= htmlspecialchars($invSubject, ENT_QUOTES) ?>"
+                                    title="Delete invoice">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                    <tr id="invoiceSearchEmpty" hidden>
+                        <td colspan="8">
+                            <div class="invoice-search-empty">
+                                <i class="bi bi-search"></i>
+                                <p>No invoices match your search.</p>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="invoiceSearchClearEmpty">Clear search</button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
     <?php endif; ?>
 
     <?php include __DIR__ . '/partials/modals.php'; ?>
@@ -438,6 +599,14 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
         });
     });
 
+    document.querySelectorAll('.btn-delete-invoice').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.getElementById('deleteInvoiceId').value = btn.dataset.id;
+            document.getElementById('deleteInvoiceName').textContent = btn.dataset.name;
+            new bootstrap.Modal(document.getElementById('modalDeleteInvoice')).show();
+        });
+    });
+
     // Clean URL when closing service modal (remove ?edit= / ?add=)
     const serviceModal = document.getElementById('modalService');
     if (serviceModal) {
@@ -449,8 +618,12 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
     }
 })();
 </script>
+<?php if ($authenticated && $section === 'invoices'): ?>
+<script>window.INVOICE_LIST_BOOT = <?= json_encode($openInvoiceBoot) ?>;</script>
+<script src="assets/invoices-list.js?v=<?= (int) @filemtime(__DIR__ . '/assets/invoices-list.js') ?>"></script>
+<?php endif; ?>
 <?php if ($authenticated): ?>
-<script src="assets/admin.js"></script>
+    <script src="assets/admin.js?v=<?= (int) @filemtime(__DIR__ . '/assets/admin.js') ?>"></script>
 <?php endif; ?>
 </body>
 </html>

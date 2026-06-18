@@ -188,6 +188,16 @@ try {
             $section = 'account';
             break;
 
+        case 'invoice_delete':
+            require_once __DIR__ . '/../functions/invoices.php';
+            $id = (int) ($_POST['id'] ?? 0);
+            if ($id > 0) {
+                cmsDeleteInvoice($pdo, $id);
+                adminFlash('success', 'Invoice deleted.');
+            }
+            $section = 'invoices';
+            break;
+
         default:
             adminFlash('danger', 'Unknown action.');
     }
@@ -198,5 +208,8 @@ try {
 $redirectSection = in_array($section, ['service_save', 'service_delete'], true) ? 'services' : $section;
 if ($section === 'password') {
     $redirectSection = 'account';
+}
+if ($section === 'invoice_delete') {
+    $redirectSection = 'invoices';
 }
 adminRedirect('section=' . urlencode($redirectSection));

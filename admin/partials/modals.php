@@ -335,3 +335,29 @@ $categoriesText = implode("\n", $serviceCategories);
         </div>
     </div>
 </div>
+
+<!-- Delete invoice confirmation -->
+<div class="modal fade" id="modalDeleteInvoice" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="actions.php" id="formDeleteInvoice">
+                <input type="hidden" name="admin_csrf" value="<?= htmlspecialchars(adminCsrfToken()) ?>">
+                <div class="modal-header">
+                    <h5 class="modal-title brand">Delete invoice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="section" value="invoice_delete">
+                    <input type="hidden" name="id" id="deleteInvoiceId" value="">
+                    <p class="mb-0">Delete <strong id="deleteInvoiceName"></strong>? This cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<?php include __DIR__ . '/modal-invoice.php'; ?>
