@@ -132,22 +132,9 @@ function cmsInvoiceDefaultCategories(): array
 {
     return [
         [
-            'name' => 'Entertainment',
+            'name' => '',
             'items' => [
-                ['description' => 'Light and sounds: 16 moving head + 30 barcans + 8 speakers + 4 sub', 'price' => 800, 'quantity' => 1],
-                ['description' => 'DJ + Percussion samer wakileh', 'price' => 750, 'quantity' => 1],
-                ['description' => 'Zaffeh hannoun 3 location + 2 shows', 'price' => 750, 'quantity' => 1],
-                ['description' => 'Violin + qanoun 2 part free', 'price' => 0, 'quantity' => 1],
-            ],
-        ],
-        [
-            'name' => 'Furniture & decorations',
-            'items' => [
-                ['description' => 'Family tables: 2 halfmoon tables each table 50 SAR', 'price' => 100, 'quantity' => 1],
-                ['description' => 'Guest tables: 25 tables mix each one 25 SAR', 'price' => 600, 'quantity' => 1],
-                ['description' => 'Chairs: 250 each one 2 SAR', 'price' => 500, 'quantity' => 1],
-                ['description' => 'Dance floor: printed 7m + stage for led screen + stairs', 'price' => 600, 'quantity' => 1],
-                ['description' => 'Led screen: 6x3 + backdrop + columns 40 to 50 meter screens', 'price' => 800, 'quantity' => 1],
+                ['description' => '', 'price' => 0, 'quantity' => 1, 'details' => []],
             ],
         ],
     ];

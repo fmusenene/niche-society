@@ -55,8 +55,11 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     $money = static fn (int $n): string => htmlspecialchars(cmsInvoiceFormatMoney($n, $currency), ENT_QUOTES, 'UTF-8');
 
     $lineRows = '';
-    $rowNum = 0;
     foreach ($state['categories'] as $cat) {
+        $rowNum = 0;
+        $catSubtotal = 0;
+        $catQty = 0;
+        $catHasRows = false;
         $catName = trim($cat['name'] ?? '');
         if ($catName !== '') {
             $lineRows .= '<tr class="cat-row"><td colspan="5">' . $h($catName) . '</td></tr>';
@@ -85,12 +88,23 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
             if ($desc === '' && $descHtml === '' && $qty === 0 && $unit === 0) {
                 continue;
             }
+            $catHasRows = true;
+            $catSubtotal += $amount;
+            $catQty += $qty;
             $lineRows .= '<tr>'
                 . '<td class="num">' . $rowNum . '</td>'
                 . '<td class="desc">' . ($descHtml !== '' ? $descHtml : '—') . '</td>'
                 . '<td class="qty">' . $qty . '</td>'
                 . '<td class="unit">' . $money($unit) . '</td>'
                 . '<td class="amount">' . $money($amount) . '</td>'
+                . '</tr>';
+        }
+        if ($catName !== '' || $catHasRows) {
+            $lineRows .= '<tr class="cat-total-row">'
+                . '<td colspan="2" class="cat-total-label">Total</td>'
+                . '<td class="qty">' . $catQty . '</td>'
+                . '<td></td>'
+                . '<td class="amount">' . $money($catSubtotal) . '</td>'
                 . '</tr>';
         }
     }
@@ -129,6 +143,8 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     $location = trim($fields['location'] ?? '') ?: '—';
     $prepared = trim($fields['prepared'] ?? '') ?: '—';
     $subject = trim($fields['subject'] ?? $invoice['subject'] ?? '') ?: '—';
+    $proposalTel = $clientPhone !== '' ? $clientPhone : trim($company['phone']);
+    $proposalTelDisplay = $proposalTel !== '' ? $proposalTel : '—';
     $autoPrintJs = $autoPrint ? 'window.addEventListener("load",function(){window.print();});' : '';
 
     $proposalDefaults = cmsInvoiceDefaultProposalFields();
@@ -403,6 +419,19 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       font-family: "Domine", Georgia, serif;
       border-bottom: 1px solid #d9c8bc;
     }
+    table.items tr.cat-total-row td {
+      background: #f3ebe3;
+      border-bottom: 2px solid #d9c8bc;
+      font-weight: 700;
+      color: var(--burgundy);
+    }
+    table.items tr.cat-total-row td.cat-total-label {
+      text-align: right;
+      font-family: "Domine", Georgia, serif;
+      text-transform: uppercase;
+      font-size: 8pt;
+      letter-spacing: .06em;
+    }
     table.items td.desc .desc-detail {
       color: var(--muted);
       font-size: 0.92em;
@@ -618,6 +647,10 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
           <span class="proposal-label">Prepared by</span>
           <span class="proposal-value"><?= $h($prepared) ?></span>
         </div>
+        <div class="proposal-field">
+          <span class="proposal-label">Tel</span>
+          <span class="proposal-value"><?= $h($proposalTelDisplay) ?></span>
+        </div>
       </div>
 
       <?php if ($intro1 || $intro2 || $intro3): ?>
@@ -681,14 +714,6 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
           </tr>
         </thead>
         <tbody><?= $lineRows ?></tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2" style="text-align:right;font-weight:600;">Line items total</td>
-            <td class="qty" style="text-align:right;"><?= (int) $totals['qty_total'] ?></td>
-            <td></td>
-            <td class="amount"><?= $money($totals['subtotal']) ?></td>
-          </tr>
-        </tfoot>
       </table>
 
       <div class="summary-wrap">

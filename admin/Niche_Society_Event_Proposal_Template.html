@@ -477,6 +477,23 @@
       text-align: right;
     }
 
+    .cat-total td {
+      background: #f3ebe3;
+      color: var(--burgundy);
+      font-weight: 600;
+      font-size: 8.5pt;
+      border-color: #d9c8bc;
+      padding: 7px 8px;
+    }
+
+    .cat-total .price,
+    .cat-total .qty {
+      font-family: var(--font-headline);
+      font-size: 10pt;
+      font-weight: 700;
+      text-align: right;
+    }
+
     /* ── Totals & sections ── */
     .calc-box {
       width: 100%;
@@ -1180,14 +1197,6 @@
           </tr>
         </thead>
         <tbody id="services-body"></tbody>
-        <tfoot>
-          <tr class="total">
-            <td colspan="2" id="label-total">TOTAL</td>
-            <td class="qty" id="table-qty-total">0</td>
-            <td class="price" id="table-price-total">0</td>
-            <td class="no-print"></td>
-          </tr>
-        </tfoot>
       </table>
       </div>
 
@@ -1316,22 +1325,9 @@
   <script>
     const DEFAULT_CATEGORIES = [
       {
-        name: "Entertainment",
+        name: "",
         items: [
-          { description: "Light and sounds: 16 moving head + 30 barcans + 8 speakers + 4 sub", price: 800, quantity: 1 },
-          { description: "DJ + Percussion samer wakileh", price: 750, quantity: 1 },
-          { description: "Zaffeh hannoun 3 location + 2 shows", price: 750, quantity: 1 },
-          { description: "Violin + qanoun 2 part free", price: 0, quantity: 1 }
-        ]
-      },
-      {
-        name: "Furniture & decorations",
-        items: [
-          { description: "Family tables: 2 halfmoon tables each table 50 SAR", price: 100, quantity: 1 },
-          { description: "Guest tables: 25 tables mix each one 25 SAR", price: 600, quantity: 1 },
-          { description: "Chairs: 250 each one 2 SAR", price: 500, quantity: 1 },
-          { description: "Dance floor: printed 7m + stage for led screen + stairs", price: 600, quantity: 1 },
-          { description: "Led screen: 6x3 + backdrop + columns 40 to 50 meter screens", price: 800, quantity: 1 }
+          { description: "", price: 0, quantity: 1 }
         ]
       }
     ];
@@ -1630,7 +1626,6 @@
       document.getElementById("th-details").textContent = tr("details");
       document.getElementById("th-qty").textContent = tr("qty");
       document.getElementById("th-actions").textContent = tr("actions");
-      document.getElementById("label-total").textContent = tr("total");
       document.getElementById("label-services-subtotal").textContent = tr("servicesSubtotal");
       document.getElementById("label-discount").textContent = tr("discount");
       document.getElementById("label-discount-amount").textContent = tr("discountAmount");
@@ -1781,8 +1776,6 @@
       const discountAmount = Math.round(priceTotal * (discountPercent / 100));
       const grandTotal = Math.max(0, priceTotal + feesAmount - discountAmount);
 
-      document.getElementById("table-price-total").textContent = priceTotal;
-      document.getElementById("table-qty-total").textContent = qtyTotal;
       document.getElementById("services-subtotal").textContent = priceTotal;
       document.getElementById("discount-amount").textContent = discountAmount;
       document.getElementById("discount-row").hidden = discountPercent <= 0;
@@ -1885,6 +1878,25 @@
             if (finalize) qtyInput.value = String(qty);
           });
         });
+
+        let catPriceTotal = 0;
+        let catQtyTotal = 0;
+        category.items.forEach((item) => {
+          const qty = Math.max(0, Number(item.quantity) || 0);
+          const price = Math.max(0, Number(item.price) || 0);
+          catPriceTotal += price * qty;
+          catQtyTotal += qty;
+        });
+
+        const catTotalRow = document.createElement("tr");
+        catTotalRow.className = "cat-total";
+        catTotalRow.innerHTML = `
+          <td colspan="2" style="text-align:right;">${tr("total")}</td>
+          <td class="qty">${catQtyTotal}</td>
+          <td class="price">${catPriceTotal.toLocaleString()}</td>
+          <td class="no-print"></td>
+        `;
+        body.appendChild(catTotalRow);
       });
 
       body.querySelectorAll("button[data-action]").forEach(button => {

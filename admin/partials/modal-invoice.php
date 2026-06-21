@@ -21,7 +21,10 @@
                         This proposal has a linked invoice (<strong id="invoiceProposalLinkedNumber"></strong>). Saving the proposal updates the invoice automatically. Use <strong>Print invoice</strong> to open the invoice PDF.
                     </div>
 
-                    <div class="invoice-form-block">
+                    <section class="invoice-form-section" aria-labelledby="invoiceSectionProposalTitle">
+                        <h6 class="invoice-form-heading" id="invoiceSectionProposalTitle">
+                            <i class="bi bi-file-earmark-text" aria-hidden="true"></i> Proposal
+                        </h6>
                         <div class="row g-3">
                             <div class="col-12 col-sm-6 col-md-3 invoice-only-field" id="wrapInvoiceNumber">
                                 <label class="form-label" for="invoiceFormNumber">Invoice number</label>
@@ -56,14 +59,21 @@
                                 <label class="form-label" for="invoiceFormPrepared">Prepared by</label>
                                 <input type="text" class="form-control" id="invoiceFormPrepared" name="prepared" placeholder="e.g. Eng. Mohammad Tarifi">
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 col-md-8">
                                 <label class="form-label" for="invoiceFormSubject">Subject / title</label>
                                 <input type="text" class="form-control" id="invoiceFormSubject" name="subject" placeholder="e.g. Wedding of Mr. Mohammed">
                             </div>
+                            <div class="col-12 col-md-4 proposal-only-field">
+                                <label class="form-label" for="invoiceFormProposalTel">Tel</label>
+                                <input type="text" class="form-control" id="invoiceFormProposalTel" name="proposalTel" placeholder="+966 …">
+                            </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <div class="invoice-form-block invoice-only-field">
+                    <section class="invoice-form-section" id="invoiceSectionClient" aria-labelledby="invoiceSectionClientTitle">
+                        <h6 class="invoice-form-heading" id="invoiceSectionClientTitle">
+                            <i class="bi bi-person-lines-fill" aria-hidden="true"></i> Client details
+                        </h6>
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="invoiceFormClientName">Client name</label>
@@ -73,34 +83,40 @@
                                 <label class="form-label" for="invoiceFormClientEmail">Email</label>
                                 <input type="email" class="form-control" id="invoiceFormClientEmail" name="clientEmail" placeholder="client@email.com">
                             </div>
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6 invoice-only-field">
                                 <label class="form-label" for="invoiceFormClientPhone">Phone</label>
                                 <input type="text" class="form-control" id="invoiceFormClientPhone" name="clientPhone" placeholder="+966 …">
                             </div>
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6 invoice-only-field">
                                 <label class="form-label" for="invoiceFormSignatureDate">Date signed</label>
                                 <input type="date" class="form-control invoice-date-input" id="invoiceFormSignatureDate" name="signatureDate">
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 invoice-only-field">
                                 <label class="form-label" for="invoiceFormClientAddress">Address</label>
                                 <textarea class="form-control" id="invoiceFormClientAddress" name="clientAddress" rows="2" placeholder="Street, city, country"></textarea>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <div class="invoice-form-block">
+                    <section class="invoice-form-section invoice-form-section--categories" aria-labelledby="invoiceSectionCategoriesTitle">
+                        <h6 class="invoice-form-heading" id="invoiceSectionCategoriesTitle">
+                            <i class="bi bi-list-ul" aria-hidden="true"></i> Categories &amp; line items
+                        </h6>
                         <div class="invoice-lines-wrap">
                             <div id="invoiceLinesBody" class="invoice-categories-wrap"></div>
                         </div>
-                        <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                        <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
                             <button type="button" class="btn btn-outline-primary btn-sm" id="btnInvoiceAddCategory">
                                 <i class="bi bi-plus-lg"></i> Add category
                             </button>
-                            <span class="invoice-lines-hint text-muted small">Each category groups its own line items (e.g. Entertainment, Furniture &amp; decorations). Use <strong>Add item</strong> inside a category for more rows.</span>
+                            <span class="invoice-lines-hint text-muted small">Group services by category. Use <strong>Add item</strong> inside each category for more rows.</span>
                         </div>
-                    </div>
+                    </section>
 
-                    <div class="invoice-form-block invoice-form-block--last">
+                    <section class="invoice-form-section invoice-form-section--last" aria-labelledby="invoiceSectionTotalsTitle">
+                        <h6 class="invoice-form-heading" id="invoiceSectionTotalsTitle">
+                            <i class="bi bi-calculator" aria-hidden="true"></i> Totals
+                        </h6>
                         <div class="row g-3">
                             <div class="col-12 col-lg-5">
                                 <label class="form-label" for="invoiceFormDiscount">Discount (%)</label>
@@ -126,7 +142,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                     <p id="invoiceFormError" class="alert alert-danger invoice-modal__error d-none" role="alert"></p>
 

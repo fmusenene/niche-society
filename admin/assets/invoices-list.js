@@ -15,6 +15,133 @@
   const emptyRow = document.getElementById('invoiceSearchEmpty');
   const modal = new bootstrap.Modal(modalEl);
   const MANAGEMENT_FEE = 0.15;
+  const AUTO_SAVE_DELAY_MS = 2000;
+  let refreshListOnModalClose = false;
+  let suppressListRefreshOnClose = false;
+  let formDirty = false;
+  let sessionTouched = false;
+  let autoSaveTimer = null;
+  let autoSaveInFlight = null;
+
+  function cleanInvoicesListUrl() {
+    if (location.search.match(/[?&](add|edit)=/)) {
+      history.replaceState(null, '', '?section=invoices');
+    }
+  }
+
+  function markFormDirty() {
+    if (!modalEl.classList.contains('show')) return;
+    formDirty = true;
+    sessionTouched = true;
+    scheduleAutoSave();
+  }
+
+  function resetFormTracking() {
+    formDirty = false;
+    sessionTouched = false;
+    clearTimeout(autoSaveTimer);
+    window.setTimeout(function () {
+      lastSavedJson = JSON.stringify(prepareState(buildState()));
+    }, 0);
+  }
+
+  let lastSavedJson = '';
+
+  function scheduleAutoSave() {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = window.setTimeout(function () {
+      if (!modalEl.classList.contains('show') || !formDirty) return;
+      autoSaveInvoice({ silent: true }).catch(function () {});
+    }, AUTO_SAVE_DELAY_MS);
+  }
+
+  function autoSaveInvoice(options) {
+    const opts = options || {};
+    const id = parseInt(fieldValue('invoiceFormId') || '0', 10);
+    if (!id) return Promise.resolve(null);
+
+    const state = prepareState(buildState());
+    if (!isProposalMode() && !state.fields.clientName && opts.requireClientName) {
+      return Promise.reject(new Error('Enter a client name (or a subject / title).'));
+    }
+
+    if (opts.skipIfClean && !formDirty) {
+      return Promise.resolve({ skipped: true });
+    }
+
+    const payload = {
+      id: id,
+      admin_csrf: csrf,
+      state: state,
+    };
+
+    const runSave = function () {
+      return fetch('api/invoice-save.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        credentials: 'same-origin',
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { ok: res.ok, data: data };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok || !result.data.ok) {
+            throw new Error((result.data && result.data.error) || 'Save failed');
+          }
+          formDirty = false;
+          lastSavedJson = JSON.stringify(state);
+          return result.data;
+        });
+    };
+
+    if (autoSaveInFlight) {
+      return autoSaveInFlight.then(function () {
+        if (opts.skipIfClean && !formDirty) {
+          return { skipped: true };
+        }
+        return runSave();
+      });
+    }
+
+    autoSaveInFlight = runSave().finally(function () {
+      autoSaveInFlight = null;
+    });
+    return autoSaveInFlight;
+  }
+
+  function flushAutoSaveOnClose() {
+    clearTimeout(autoSaveTimer);
+    const id = parseInt(fieldValue('invoiceFormId') || '0', 10);
+    const shouldReload = refreshListOnModalClose || sessionTouched;
+
+    if (!id) {
+      refreshListOnModalClose = false;
+      sessionTouched = false;
+      cleanInvoicesListUrl();
+      return;
+    }
+
+    if (!sessionTouched && !refreshListOnModalClose) {
+      cleanInvoicesListUrl();
+      return;
+    }
+
+    autoSaveInvoice({ silent: true })
+      .catch(function () {})
+      .finally(function () {
+        refreshListOnModalClose = false;
+        formDirty = false;
+        sessionTouched = false;
+        if (shouldReload) {
+          window.location.href = '?section=invoices';
+        } else {
+          cleanInvoicesListUrl();
+        }
+      });
+  }
 
   function notifySuccess(message, options) {
     if (window.AdminNotify) {
@@ -175,9 +302,22 @@
     modalEl.querySelectorAll('.invoice-only-field').forEach(function (el) {
       el.hidden = proposal;
     });
+    modalEl.querySelectorAll('.proposal-only-field').forEach(function (el) {
+      el.hidden = !proposal;
+    });
     const offerLabel = document.getElementById('labelOfferDate');
     if (offerLabel) {
       offerLabel.textContent = proposal ? 'Offer date' : 'Invoice date';
+    }
+    const sectionProposalTitle = document.getElementById('invoiceSectionProposalTitle');
+    if (sectionProposalTitle) {
+      sectionProposalTitle.innerHTML = proposal
+        ? '<i class="bi bi-file-earmark-text" aria-hidden="true"></i> Proposal'
+        : '<i class="bi bi-receipt" aria-hidden="true"></i> Invoice';
+    }
+    const clientSection = document.getElementById('invoiceSectionClient');
+    if (clientSection) {
+      clientSection.hidden = false;
     }
     if (fields.makeInvoiceBtn) {
       fields.makeInvoiceBtn.hidden = !proposal || !recordId || linkedId > 0;
@@ -233,17 +373,14 @@
 
   function blankCategory(name) {
     return {
-      name: name || 'New category',
+      name: name ?? '',
       items: [blankItem()],
     };
   }
 
   function defaultState() {
     return {
-      categories: [
-        blankCategory('Entertainment'),
-        blankCategory('Furniture & decorations'),
-      ],
+      categories: [blankCategory('')],
       fields: {
         offerDate: '',
         dueDate: '',
@@ -359,7 +496,7 @@
     block.innerHTML =
       '<div class="invoice-cat-header">' +
       '<input type="text" class="form-control form-control-sm js-cat-name" value="' + escapeHtml(cat.name || '') + '" placeholder="Category name (e.g. Entertainment)" aria-label="Category name">' +
-      '<button type="button" class="btn btn-sm btn-outline-danger js-remove-cat" title="Remove category"><i class="bi bi-trash"></i><span class="invoice-cat-remove-label"> Remove</span></button>' +
+      '<button type="button" class="btn btn-sm btn-outline-danger js-remove-cat" title="Delete category"><i class="bi bi-trash" aria-hidden="true"></i><span class="invoice-cat-remove-label">Delete</span></button>' +
       '</div>' +
       '<div class="table-responsive">' +
       '<table class="table table-sm invoice-lines-table invoice-cat-items-table mb-0">' +
@@ -371,7 +508,14 @@
       '<th class="text-end col-amount">Amount</th>' +
       '<th class="col-actions"></th>' +
       '</tr></thead>' +
-      '<tbody class="invoice-cat-items">' + itemsHtml + '</tbody>' +
+      '<tbody class="invoice-cat-items">' + itemsHtml +
+      '<tr class="invoice-cat-total-row">' +
+      '<td colspan="2" class="text-end invoice-cat-total-label">Total</td>' +
+      '<td class="text-end"><span class="js-cat-qty-total">0</span></td>' +
+      '<td></td>' +
+      '<td class="text-end"><span class="js-cat-total fw-semibold" data-amount="0">0</span></td>' +
+      '<td></td>' +
+      '</tr></tbody>' +
       '</table></div>' +
       '<div class="invoice-cat-footer">' +
       '<button type="button" class="btn btn-outline-secondary btn-sm js-add-item"><i class="bi bi-plus-lg"></i> Add item</button>' +
@@ -387,7 +531,7 @@
     linesBody.querySelectorAll('.invoice-cat-block').forEach(function (block) {
       const name = String(block.querySelector('.js-cat-name')?.value ?? '').trim();
       const items = [];
-      block.querySelectorAll('.invoice-cat-items tr').forEach(function (row) {
+      block.querySelectorAll('.invoice-cat-items tr:not(.invoice-cat-total-row)').forEach(function (row) {
         items.push({
           description: String(row.querySelector('.js-item-desc')?.value ?? '').trim(),
           quantity: Math.max(0, parseInt(row.querySelector('.js-item-qty')?.value || '0', 10) || 0),
@@ -417,16 +561,18 @@
 
   function updateRowNumbers() {
     if (!linesBody) return;
-    let num = 0;
-    linesBody.querySelectorAll('.invoice-cat-items tr').forEach(function (row) {
-      num += 1;
-      const el = row.querySelector('.js-row-num');
-      if (el) el.textContent = String(num);
+    linesBody.querySelectorAll('.invoice-cat-items').forEach(function (tbody) {
+      let num = 0;
+      tbody.querySelectorAll('tr:not(.invoice-cat-total-row)').forEach(function (row) {
+        num += 1;
+        const el = row.querySelector('.js-row-num');
+        if (el) el.textContent = String(num);
+      });
     });
   }
 
   function updateRowAmounts() {
-    linesBody?.querySelectorAll('.invoice-cat-items tr').forEach(function (row) {
+    linesBody?.querySelectorAll('.invoice-cat-items tr:not(.invoice-cat-total-row)').forEach(function (row) {
       const qty = Math.max(0, parseInt(row.querySelector('.js-item-qty')?.value || '0', 10) || 0);
       const unit = Math.max(0, parseInt(row.querySelector('.js-item-price')?.value || '0', 10) || 0);
       const amount = lineAmount(qty, unit);
@@ -458,6 +604,7 @@
         }
         updateRowNumbers();
         updateTotals();
+        markFormDirty();
       };
     });
 
@@ -465,11 +612,18 @@
       btn.onclick = function () {
         const tbody = btn.closest('.invoice-cat-block')?.querySelector('.invoice-cat-items');
         if (!tbody) return;
-        tbody.insertAdjacentHTML('beforeend', buildItemRowHtml(blankItem()));
+        const totalRow = tbody.querySelector('.invoice-cat-total-row');
+        const rowHtml = buildItemRowHtml(blankItem());
+        if (totalRow) {
+          totalRow.insertAdjacentHTML('beforebegin', rowHtml);
+        } else {
+          tbody.insertAdjacentHTML('beforeend', rowHtml);
+        }
         bindCategoryEvents();
         updateRowNumbers();
-        const rows = tbody.querySelectorAll('tr');
-        rows[rows.length - 1]?.querySelector('.js-item-desc')?.focus();
+        const itemRows = tbody.querySelectorAll('tr:not(.invoice-cat-total-row)');
+        itemRows[itemRows.length - 1]?.querySelector('.js-item-desc')?.focus();
+        markFormDirty();
       };
     });
 
@@ -478,9 +632,9 @@
         const tbody = btn.closest('.invoice-cat-items');
         const block = btn.closest('.invoice-cat-block');
         if (!tbody || !block) return;
-        const rows = tbody.querySelectorAll('tr');
-        if (rows.length <= 1) {
-          const row = rows[0];
+        const itemRows = tbody.querySelectorAll('tr:not(.invoice-cat-total-row)');
+        if (itemRows.length <= 1) {
+          const row = itemRows[0];
           row.querySelector('.js-item-desc').value = '';
           row.querySelector('.js-item-qty').value = '1';
           row.querySelector('.js-item-price').value = '0';
@@ -490,19 +644,43 @@
         updateRowNumbers();
         updateRowAmounts();
         updateTotals();
+        markFormDirty();
       };
     });
 
     linesBody.querySelectorAll('input').forEach(function (input) {
       input.oninput = function () {
+        markFormDirty();
         updateRowAmounts();
         updateTotals();
       };
     });
   }
 
+  function updateCategoryTotals() {
+    if (!linesBody) return;
+    linesBody.querySelectorAll('.invoice-cat-block').forEach(function (block) {
+      let subtotal = 0;
+      let qtyTotal = 0;
+      block.querySelectorAll('.invoice-cat-items tr:not(.invoice-cat-total-row)').forEach(function (row) {
+        const qty = Math.max(0, parseInt(row.querySelector('.js-item-qty')?.value || '0', 10) || 0);
+        const unit = Math.max(0, parseInt(row.querySelector('.js-item-price')?.value || '0', 10) || 0);
+        subtotal += lineAmount(qty, unit);
+        qtyTotal += qty;
+      });
+      const totalEl = block.querySelector('.js-cat-total');
+      const qtyEl = block.querySelector('.js-cat-qty-total');
+      if (totalEl) {
+        totalEl.dataset.amount = String(subtotal);
+        totalEl.textContent = subtotal.toLocaleString();
+      }
+      if (qtyEl) qtyEl.textContent = String(qtyTotal);
+    });
+  }
+
   function updateTotals() {
     updateRowAmounts();
+    updateCategoryTotals();
     let subtotal = 0;
     readCategories().forEach(function (cat) {
       cat.items.forEach(function (item) {
@@ -549,6 +727,10 @@
       stateFields[spec.key] = readFormField(spec.id, spec.key);
     });
 
+    if (isProposalMode()) {
+      stateFields.clientPhone = readFormField('invoiceFormProposalTel', 'clientPhone');
+    }
+
     if (stateFields.discount === '') {
       stateFields.discount = '0';
     }
@@ -574,6 +756,7 @@
     setDateFieldValue('invoiceFormEventDate', f.eventDate || '');
     setFieldValue('invoiceFormLocation', f.location || '');
     setFieldValue('invoiceFormSubject', f.subject || '');
+    setFieldValue('invoiceFormProposalTel', f.clientPhone || '');
     setFieldValue('invoiceFormPrepared', f.prepared || '');
     setFieldValue('invoiceFormDiscount', f.discount || '0');
     setFieldValue('invoiceFormClientName', f.clientName || '');
@@ -609,6 +792,7 @@
     if (fields.printBtn) {
       fields.printBtn.hidden = options?.hidePrint === true;
     }
+    resetFormTracking();
   }
 
   function openNew() {
@@ -641,6 +825,7 @@
           record_type: result.data.record_type || 'proposal',
           state: initialState,
         }, { hidePrint: true });
+        refreshListOnModalClose = true;
         modal.show();
       })
       .catch(function (err) {
@@ -865,39 +1050,19 @@
     const id = parseInt(fieldValue('invoiceFormId') || '0', 10);
     if (!id) return;
 
-    const state = prepareState(buildState());
-    if (!isProposalMode() && !state.fields.clientName) {
-      showError('Enter a client name (or a subject / title).');
-      return;
-    }
-
     showError('');
     if (fields.saveBtn) {
       fields.saveBtn.disabled = true;
       fields.saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving…';
     }
 
-    fetch('api/invoice-save.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: id,
-        admin_csrf: csrf,
-        state: state,
-      }),
-      credentials: 'same-origin',
-    })
-      .then(function (res) {
-        return res.json().then(function (data) {
-          return { ok: res.ok, data: data };
-        });
-      })
-      .then(function (result) {
-        if (!result.ok || !result.data.ok) {
-          throw new Error((result.data && result.data.error) || 'Save failed');
+    autoSaveInvoice({ requireClientName: !isProposalMode() })
+      .then(function (data) {
+        if (!data || data.skipped) {
+          return data;
         }
         if (fields.printBtn) fields.printBtn.hidden = false;
-        if (isProposalMode() && result.data.linked_invoice_updated) {
+        if (isProposalMode() && data.linked_invoice_updated) {
           notifySuccess('Proposal saved and linked invoice updated.', {
             title: 'Saved',
             duration: 4500,
@@ -913,10 +1078,13 @@
             duration: 3500,
           });
         }
+        refreshListOnModalClose = false;
+        suppressListRefreshOnClose = true;
         modal.hide();
         window.setTimeout(function () {
           window.location.href = '?section=invoices';
-        }, isProposalMode() && result.data.linked_invoice_updated ? 900 : 500);
+        }, isProposalMode() && data.linked_invoice_updated ? 900 : 500);
+        return data;
       })
       .catch(function (err) {
         showError(err.message || 'Save failed');
@@ -1056,10 +1224,13 @@
     const cats = readCategories();
     cats.push(blankCategory(''));
     renderCategories(cats);
+    markFormDirty();
     const blocks = linesBody.querySelectorAll('.invoice-cat-block');
     const last = blocks[blocks.length - 1];
     last?.querySelector('.js-cat-name')?.focus();
   });
+  form?.addEventListener('input', markFormDirty);
+  form?.addEventListener('change', markFormDirty);
   form?.addEventListener('submit', saveInvoice);
   searchInput?.addEventListener('input', filterRows);
 
@@ -1073,8 +1244,32 @@
   });
 
   modalEl.addEventListener('hidden.bs.modal', function () {
-    if (location.search.match(/[?&](add|edit)=/)) {
-      history.replaceState(null, '', '?section=invoices');
+    if (suppressListRefreshOnClose) {
+      suppressListRefreshOnClose = false;
+      cleanInvoicesListUrl();
+      return;
+    }
+
+    flushAutoSaveOnClose();
+  });
+
+  window.addEventListener('beforeunload', function () {
+    if (!sessionTouched || !modalEl.classList.contains('show')) return;
+    const id = parseInt(fieldValue('invoiceFormId') || '0', 10);
+    if (!id) return;
+    clearTimeout(autoSaveTimer);
+    const state = prepareState(buildState());
+    const payload = JSON.stringify({ id: id, admin_csrf: csrf, state: state });
+    try {
+      fetch('api/invoice-save.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        credentials: 'same-origin',
+        keepalive: true,
+      });
+    } catch (err) {
+      // Best-effort save when leaving the page.
     }
   });
 
