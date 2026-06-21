@@ -1,4 +1,4 @@
-<!-- Invoice create / edit form -->
+<!-- Proposal / invoice create / edit form -->
 <div class="modal fade" id="modalInvoiceForm" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down invoice-modal-dialog">
         <div class="modal-content invoice-modal">
@@ -6,25 +6,32 @@
             <form id="formInvoice" novalidate>
 
                 <div class="modal-header invoice-modal__header">
-                    <h5 class="modal-title" id="modalInvoiceFormTitle">New invoice</h5>
+                    <h5 class="modal-title" id="modalInvoiceFormTitle">New proposal</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body invoice-modal__body invoice-modal__body--compact">
 
                     <input type="hidden" id="invoiceFormId" value="">
+                    <input type="hidden" id="invoiceFormRecordType" value="proposal">
+                    <input type="hidden" id="invoiceFormLinkedInvoiceId" value="">
+                    <input type="hidden" id="invoiceFormLinkedInvoiceNumber" value="">
+
+                    <div id="invoiceProposalLinkedNote" class="alert alert-info py-2 px-3 small d-none invoice-proposal-linked-note" role="status">
+                        This proposal has a linked invoice (<strong id="invoiceProposalLinkedNumber"></strong>). Saving the proposal updates the invoice automatically. Use <strong>Print invoice</strong> to open the invoice PDF.
+                    </div>
 
                     <div class="invoice-form-block">
                         <div class="row g-3">
-                            <div class="col-12 col-sm-6 col-md-3">
+                            <div class="col-12 col-sm-6 col-md-3 invoice-only-field" id="wrapInvoiceNumber">
                                 <label class="form-label" for="invoiceFormNumber">Invoice number</label>
                                 <input type="text" class="form-control invoice-field-readonly" id="invoiceFormNumber" readonly>
                             </div>
-                            <div class="col-12 col-sm-6 col-md-3">
-                                <label class="form-label" for="invoiceFormOfferDate">Invoice date</label>
+                            <div class="col-12 col-sm-6 col-md-3" id="wrapOfferDate">
+                                <label class="form-label" for="invoiceFormOfferDate" id="labelOfferDate">Offer date</label>
                                 <input type="date" class="form-control invoice-date-input" id="invoiceFormOfferDate" name="offerDate">
                             </div>
-                            <div class="col-12 col-sm-6 col-md-3">
+                            <div class="col-12 col-sm-6 col-md-3 invoice-only-field" id="wrapDueDate">
                                 <label class="form-label" for="invoiceFormDueDate">Due date</label>
                                 <input type="date" class="form-control invoice-date-input" id="invoiceFormDueDate" name="dueDate">
                             </div>
@@ -56,7 +63,7 @@
                         </div>
                     </div>
 
-                    <div class="invoice-form-block">
+                    <div class="invoice-form-block invoice-only-field">
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="invoiceFormClientName">Client name</label>
@@ -126,13 +133,19 @@
                 </div>
 
                 <div class="modal-footer invoice-modal__footer">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnInvoicePrint" hidden>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="btnInvoiceMakeInvoice" hidden>
+                        <i class="bi bi-receipt-cutoff"></i> Make invoice
+                    </button>
+                    <button type="button" class="btn btn-outline-info btn-sm" id="btnInvoiceViewLinked" hidden>
                         <i class="bi bi-printer"></i> Print invoice
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnInvoicePrint" hidden>
+                        <i class="bi bi-printer"></i> <span id="btnInvoicePrintLabel">Print proposal</span>
                     </button>
                     <span class="flex-grow-1"></span>
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary px-4" id="btnInvoiceSave">
-                        <i class="bi bi-check-lg"></i> Save invoice
+                        <i class="bi bi-check-lg"></i> <span id="btnInvoiceSaveLabel">Save proposal</span>
                     </button>
                 </div>
 

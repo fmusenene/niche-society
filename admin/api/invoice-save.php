@@ -61,6 +61,17 @@ try {
     }
 
     cmsSaveInvoice($pdo, $id, $state, $status);
+    $linkedInvoiceUpdated = false;
+    if (cmsInvoiceIsProposal($existing)) {
+        $linked = cmsGetLinkedInvoiceForProposal($pdo, $id);
+        if ($linked) {
+            $updatedProposal = cmsGetInvoice($pdo, $id);
+            if ($updatedProposal) {
+                cmsSaveInvoice($pdo, (int) $linked['id'], $updatedProposal['state']);
+                $linkedInvoiceUpdated = true;
+            }
+        }
+    }
     $updated = cmsGetInvoice($pdo, $id);
 
     echo json_encode([
@@ -68,9 +79,12 @@ try {
         'id' => $id,
         'subject' => $updated['subject'] ?? '',
         'invoice_number' => $updated['invoice_number'] ?? '',
+        'record_type' => cmsInvoiceRecordType($updated),
         'grand_total' => (int) ($updated['grand_total'] ?? 0),
         'currency' => $updated['currency'] ?? 'SAR',
         'status' => $updated['status'] ?? 'draft',
+        'state' => $updated['state'] ?? null,
+        'linked_invoice_updated' => $linkedInvoiceUpdated,
     ], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     http_response_code(500);

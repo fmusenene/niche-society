@@ -7,7 +7,9 @@ function cmsEnsureInvoicesTable(PDO $pdo): void
 {
     $pdo->exec("CREATE TABLE IF NOT EXISTS invoices (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        invoice_number VARCHAR(30) NOT NULL DEFAULT '',
+        invoice_number VARCHAR(30) NULL DEFAULT NULL,
+        record_type ENUM('proposal', 'invoice') NOT NULL DEFAULT 'proposal',
+        source_proposal_id INT UNSIGNED NULL DEFAULT NULL,
         subject VARCHAR(255) NOT NULL DEFAULT '',
         offer_date VARCHAR(50) NOT NULL DEFAULT '',
         due_date VARCHAR(50) NOT NULL DEFAULT '',
@@ -26,7 +28,9 @@ function cmsEnsureInvoicesTable(PDO $pdo): void
         UNIQUE KEY uniq_invoice_number (invoice_number),
         INDEX idx_subject (subject),
         INDEX idx_event_date (event_date),
-        INDEX idx_status (status)
+        INDEX idx_status (status),
+        INDEX idx_record_type (record_type),
+        INDEX idx_source_proposal (source_proposal_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 
     cmsMigrateInvoicesTable($pdo);
@@ -52,23 +56,51 @@ function cmsMigrateInvoicesTable(PDO $pdo): void
     if (!cmsColumnExists($pdo, 'invoices', 'client_address')) {
         $pdo->exec("ALTER TABLE invoices ADD COLUMN client_address TEXT NULL AFTER client_phone");
     }
+    if (!cmsColumnExists($pdo, 'invoices', 'record_type')) {
+        $pdo->exec("ALTER TABLE invoices ADD COLUMN record_type ENUM('proposal', 'invoice') NOT NULL DEFAULT 'proposal' AFTER invoice_number");
+        $pdo->exec("UPDATE invoices SET record_type = 'invoice' WHERE invoice_number IS NOT NULL AND invoice_number != ''");
+        $pdo->exec("UPDATE invoices SET record_type = 'proposal', invoice_number = NULL WHERE invoice_number IS NULL OR invoice_number = ''");
+    }
+    if (!cmsColumnExists($pdo, 'invoices', 'source_proposal_id')) {
+        $pdo->exec('ALTER TABLE invoices ADD COLUMN source_proposal_id INT UNSIGNED NULL DEFAULT NULL AFTER record_type');
+        try {
+            $pdo->exec('ALTER TABLE invoices ADD INDEX idx_source_proposal (source_proposal_id)');
+        } catch (Throwable $e) {
+            /* index may already exist */
+        }
+    }
+
+    try {
+        $pdo->exec('ALTER TABLE invoices MODIFY invoice_number VARCHAR(30) NULL DEFAULT NULL');
+    } catch (Throwable $e) {
+        /* column may already allow NULL */
+    }
 
     $stmt = $pdo->query("SHOW INDEX FROM invoices WHERE Key_name = 'uniq_invoice_number'");
     if (!$stmt->fetch(PDO::FETCH_ASSOC)) {
-        $pdo->exec('UPDATE invoices SET invoice_number = CONCAT("NS-LEGACY-", id) WHERE invoice_number = "" OR invoice_number IS NULL');
         try {
             $pdo->exec('ALTER TABLE invoices ADD UNIQUE KEY uniq_invoice_number (invoice_number)');
         } catch (Throwable $e) {
             /* index may already exist under another name */
         }
     }
+}
 
-    $missing = $pdo->query("SELECT id FROM invoices WHERE invoice_number = '' OR invoice_number IS NULL ORDER BY id ASC")->fetchAll(PDO::FETCH_COLUMN);
-    foreach ($missing as $id) {
-        $number = cmsGenerateInvoiceNumber($pdo);
-        $upd = $pdo->prepare('UPDATE invoices SET invoice_number = ? WHERE id = ?');
-        $upd->execute([$number, (int) $id]);
-    }
+function cmsInvoiceRecordType(array $row): string
+{
+    $type = strtolower(trim((string) ($row['record_type'] ?? 'invoice')));
+
+    return $type === 'proposal' ? 'proposal' : 'invoice';
+}
+
+function cmsInvoiceIsProposal(array $row): bool
+{
+    return cmsInvoiceRecordType($row) === 'proposal';
+}
+
+function cmsInvoiceTypeLabel(array $row): string
+{
+    return cmsInvoiceIsProposal($row) ? 'Proposal' : 'Invoice';
 }
 
 function cmsGenerateInvoiceNumber(PDO $pdo): string
@@ -340,8 +372,57 @@ function cmsInvoiceMetaFromState(array $state): array
 
 function cmsGetAllInvoices(PDO $pdo): array
 {
-    $stmt = $pdo->query('SELECT id, invoice_number, subject, offer_date, event_date, client_name, prepared_by, currency, grand_total, status, created_at, updated_at FROM invoices ORDER BY updated_at DESC, id DESC');
+    $stmt = $pdo->query('SELECT id, invoice_number, record_type, source_proposal_id, subject, offer_date, event_date, client_name, prepared_by, currency, grand_total, status, created_at, updated_at FROM invoices ORDER BY updated_at DESC, id DESC');
     return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+}
+
+/** @return array<int, array{id:int, invoice_number:string}> */
+function cmsGetProposalInvoiceMap(PDO $pdo): array
+{
+    $stmt = $pdo->query("SELECT id, source_proposal_id, invoice_number FROM invoices WHERE record_type = 'invoice' AND source_proposal_id IS NOT NULL");
+    $map = [];
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $proposalId = (int) ($row['source_proposal_id'] ?? 0);
+        if ($proposalId > 0) {
+            $map[$proposalId] = [
+                'id' => (int) $row['id'],
+                'invoice_number' => (string) ($row['invoice_number'] ?? ''),
+            ];
+        }
+    }
+
+    return $map;
+}
+
+function cmsGetLinkedInvoiceForProposal(PDO $pdo, int $proposalId): ?array
+{
+    if ($proposalId <= 0) {
+        return null;
+    }
+    $stmt = $pdo->prepare("SELECT id FROM invoices WHERE source_proposal_id = ? AND record_type = 'invoice' ORDER BY id DESC LIMIT 1");
+    $stmt->execute([$proposalId]);
+    $invoiceId = (int) ($stmt->fetchColumn() ?: 0);
+    if ($invoiceId <= 0) {
+        return null;
+    }
+
+    return cmsGetInvoice($pdo, $invoiceId);
+}
+
+function cmsInvoiceLinkedMeta(PDO $pdo, array $row): array
+{
+    if (!cmsInvoiceIsProposal($row)) {
+        return ['linked_invoice_id' => 0, 'linked_invoice_number' => ''];
+    }
+    $linked = cmsGetLinkedInvoiceForProposal($pdo, (int) ($row['id'] ?? 0));
+    if (!$linked) {
+        return ['linked_invoice_id' => 0, 'linked_invoice_number' => ''];
+    }
+
+    return [
+        'linked_invoice_id' => (int) $linked['id'],
+        'linked_invoice_number' => (string) ($linked['invoice_number'] ?? ''),
+    ];
 }
 
 function cmsGetInvoice(PDO $pdo, int $id): ?array
@@ -377,17 +458,16 @@ function cmsInvoiceEnrichStateFromRow(array $row, array $state): array
     return $state;
 }
 
-function cmsCreateInvoice(PDO $pdo, ?array $state = null): int
+function cmsCreateProposal(PDO $pdo, ?array $state = null): int
 {
     $state = cmsInvoiceNormalizeState($state ?? cmsInvoiceDefaultState());
     $meta = cmsInvoiceMetaFromState($state);
     $json = json_encode($state, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    $invoiceNumber = cmsGenerateInvoiceNumber($pdo);
 
-    $stmt = $pdo->prepare('INSERT INTO invoices (invoice_number, subject, offer_date, due_date, event_date, client_name, client_email, client_phone, client_address, prepared_by, currency, grand_total, status, data_json)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $stmt = $pdo->prepare('INSERT INTO invoices (invoice_number, record_type, subject, offer_date, due_date, event_date, client_name, client_email, client_phone, client_address, prepared_by, currency, grand_total, status, data_json)
+        VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
     $stmt->execute([
-        $invoiceNumber,
+        'proposal',
         $meta['subject'],
         $meta['offer_date'],
         $meta['due_date'],
@@ -404,6 +484,99 @@ function cmsCreateInvoice(PDO $pdo, ?array $state = null): int
     ]);
 
     return (int) $pdo->lastInsertId();
+}
+
+/** @deprecated Use cmsCreateProposal() */
+function cmsCreateInvoice(PDO $pdo, ?array $state = null): int
+{
+    return cmsCreateProposal($pdo, $state);
+}
+
+function cmsConvertProposalToInvoice(PDO $pdo, int $proposalId, ?array $state = null): array
+{
+    $proposal = cmsGetInvoice($pdo, $proposalId);
+    if (!$proposal) {
+        throw new RuntimeException('Proposal not found.');
+    }
+    if (!cmsInvoiceIsProposal($proposal)) {
+        throw new RuntimeException('This record is already an invoice.');
+    }
+
+    $existing = cmsGetLinkedInvoiceForProposal($pdo, $proposalId);
+    if ($existing) {
+        return $existing;
+    }
+
+    if ($state !== null) {
+        cmsSaveInvoice($pdo, $proposalId, $state);
+        $proposal = cmsGetInvoice($pdo, $proposalId);
+        if (!$proposal) {
+            throw new RuntimeException('Proposal not found after save.');
+        }
+    }
+
+    $invoiceState = $proposal['state'];
+    $meta = cmsInvoiceMetaFromState($invoiceState);
+    $json = json_encode($invoiceState, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $invoiceNumber = cmsGenerateInvoiceNumber($pdo);
+
+    $stmt = $pdo->prepare('INSERT INTO invoices (invoice_number, record_type, source_proposal_id, subject, offer_date, due_date, event_date, client_name, client_email, client_phone, client_address, prepared_by, currency, grand_total, status, data_json)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $stmt->execute([
+        $invoiceNumber,
+        'invoice',
+        $proposalId,
+        $meta['subject'],
+        $meta['offer_date'],
+        $meta['due_date'],
+        $meta['event_date'],
+        $meta['client_name'],
+        $meta['client_email'],
+        $meta['client_phone'],
+        $meta['client_address'],
+        $meta['prepared_by'],
+        $meta['currency'],
+        $meta['grand_total'],
+        'draft',
+        $json,
+    ]);
+
+    $invoiceId = (int) $pdo->lastInsertId();
+    $invoice = cmsGetInvoice($pdo, $invoiceId);
+    if (!$invoice) {
+        throw new RuntimeException('Could not load new invoice.');
+    }
+
+    return $invoice;
+}
+
+function cmsSyncInvoiceFromProposal(PDO $pdo, int $proposalId, ?array $state = null): array
+{
+    $proposal = cmsGetInvoice($pdo, $proposalId);
+    if (!$proposal || !cmsInvoiceIsProposal($proposal)) {
+        throw new RuntimeException('Proposal not found.');
+    }
+
+    $invoice = cmsGetLinkedInvoiceForProposal($pdo, $proposalId);
+    if (!$invoice) {
+        throw new RuntimeException('No invoice exists for this proposal yet. Use Make invoice first.');
+    }
+
+    if ($state !== null) {
+        cmsSaveInvoice($pdo, $proposalId, $state);
+        $proposal = cmsGetInvoice($pdo, $proposalId);
+        if (!$proposal) {
+            throw new RuntimeException('Proposal not found after save.');
+        }
+    }
+
+    cmsSaveInvoice($pdo, (int) $invoice['id'], $proposal['state']);
+    $updated = cmsGetInvoice($pdo, (int) $invoice['id']);
+    if (!$updated) {
+        throw new RuntimeException('Could not update linked invoice.');
+    }
+
+    return $updated;
 }
 
 function cmsSaveInvoice(PDO $pdo, int $id, array $state, ?string $status = null): void
@@ -454,5 +627,6 @@ function cmsSaveInvoice(PDO $pdo, int $id, array $state, ?string $status = null)
 
 function cmsDeleteInvoice(PDO $pdo, int $id): void
 {
+    $pdo->prepare("DELETE FROM invoices WHERE source_proposal_id = ? AND record_type = 'invoice'")->execute([$id]);
     $pdo->prepare('DELETE FROM invoices WHERE id = ?')->execute([$id]);
 }

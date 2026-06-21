@@ -17,6 +17,17 @@ function adminRenderInvoiceEditor(PDO $pdo, int $invoiceId, array $options = [])
     }
 
     $html = file_get_contents($templatePath);
+    require_once __DIR__ . '/invoice-print.php';
+    $watermarkUrl = adminInvoiceWatermarkUrl();
+    if ($watermarkUrl !== '') {
+        $wmSrc = htmlspecialchars($watermarkUrl, ENT_QUOTES, 'UTF-8');
+        $html = preg_replace(
+            '/<div class="watermark" aria-hidden="true">\s*<img[^>]*>\s*<\/div>/s',
+            '<div class="watermark" aria-hidden="true"><img src="' . $wmSrc . '" alt=""></div>',
+            $html,
+            1
+        );
+    }
     $adminBase = rtrim(SITE_URL, '/') . '/admin';
     $saveUrl = $adminBase . '/api/invoice-save.php';
     $listUrl = $adminBase . '/index.php?section=invoices';

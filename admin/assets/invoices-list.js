@@ -16,6 +16,30 @@
   const modal = new bootstrap.Modal(modalEl);
   const MANAGEMENT_FEE = 0.15;
 
+  function notifySuccess(message, options) {
+    if (window.AdminNotify) {
+      window.AdminNotify.success(message, options);
+      return;
+    }
+    alert(message);
+  }
+
+  function notifyError(message, options) {
+    if (window.AdminNotify) {
+      window.AdminNotify.error(message, options);
+      return;
+    }
+    alert(message);
+  }
+
+  function notifyConfirm(options) {
+    if (window.AdminNotify) {
+      return window.AdminNotify.confirm(options);
+    }
+    const message = options?.message || 'Are you sure?';
+    return Promise.resolve(window.confirm(message));
+  }
+
   const DEFAULT_PAYMENT_TERMS = [
     'First payment: 30% of total amount is required upon signing the contract',
     'Second payment: 40% of the total amount is required before the event',
@@ -104,6 +128,9 @@
 
   const fields = {
     id: document.getElementById('invoiceFormId'),
+    recordType: document.getElementById('invoiceFormRecordType'),
+    linkedInvoiceId: document.getElementById('invoiceFormLinkedInvoiceId'),
+    linkedInvoiceNumber: document.getElementById('invoiceFormLinkedInvoiceNumber'),
     number: document.getElementById('invoiceFormNumber'),
     offerDate: document.getElementById('invoiceFormOfferDate'),
     dueDate: document.getElementById('invoiceFormDueDate'),
@@ -121,8 +148,64 @@
     title: document.getElementById('modalInvoiceFormTitle'),
     error: document.getElementById('invoiceFormError'),
     printBtn: document.getElementById('btnInvoicePrint'),
+    printLabel: document.getElementById('btnInvoicePrintLabel'),
+    makeInvoiceBtn: document.getElementById('btnInvoiceMakeInvoice'),
+    viewLinkedBtn: document.getElementById('btnInvoiceViewLinked'),
+    linkedNote: document.getElementById('invoiceProposalLinkedNote'),
+    linkedNoteNumber: document.getElementById('invoiceProposalLinkedNumber'),
     saveBtn: document.getElementById('btnInvoiceSave'),
+    saveLabel: document.getElementById('btnInvoiceSaveLabel'),
   };
+
+  function todayIso() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function isProposalMode() {
+    return (fields.recordType?.value || 'proposal') === 'proposal';
+  }
+
+  function applyRecordTypeUI() {
+    const proposal = isProposalMode();
+    const recordId = parseInt(fieldValue('invoiceFormId') || '0', 10);
+    const linkedId = parseInt(fieldValue('invoiceFormLinkedInvoiceId') || '0', 10);
+    const linkedNumber = fieldValue('invoiceFormLinkedInvoiceNumber') || '';
+
+    modalEl.querySelectorAll('.invoice-only-field').forEach(function (el) {
+      el.hidden = proposal;
+    });
+    const offerLabel = document.getElementById('labelOfferDate');
+    if (offerLabel) {
+      offerLabel.textContent = proposal ? 'Offer date' : 'Invoice date';
+    }
+    if (fields.makeInvoiceBtn) {
+      fields.makeInvoiceBtn.hidden = !proposal || !recordId || linkedId > 0;
+    }
+    if (fields.viewLinkedBtn) {
+      fields.viewLinkedBtn.hidden = !proposal || linkedId <= 0;
+    }
+    if (fields.linkedNote) {
+      if (proposal && linkedId > 0) {
+        fields.linkedNote.classList.remove('d-none');
+        if (fields.linkedNoteNumber) {
+          fields.linkedNoteNumber.textContent = linkedNumber || ('#' + linkedId);
+        }
+      } else {
+        fields.linkedNote.classList.add('d-none');
+      }
+    }
+    if (fields.saveLabel) {
+      fields.saveLabel.textContent = proposal ? 'Save proposal' : 'Save invoice';
+    }
+    if (fields.printLabel) {
+      fields.printLabel.textContent = proposal ? 'Print proposal' : 'Print invoice';
+    }
+    if (fields.saveBtn && !fields.saveBtn.disabled) {
+      fields.saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> <span id="btnInvoiceSaveLabel">' + (proposal ? 'Save proposal' : 'Save invoice') + '</span>';
+      fields.saveLabel = document.getElementById('btnInvoiceSaveLabel');
+    }
+  }
 
   function currency() {
     const checked = modalEl.querySelector('input[name="invoiceFormCurrency"]:checked');
@@ -479,8 +562,12 @@
   function populateForm(data, options) {
     const state = data.state || defaultState();
     const f = state.fields || {};
+    const recordType = data.record_type || (data.invoice_number ? 'invoice' : 'proposal');
 
     setFieldValue('invoiceFormId', data.id ? String(data.id) : '');
+    setFieldValue('invoiceFormRecordType', recordType);
+    setFieldValue('invoiceFormLinkedInvoiceId', data.linked_invoice_id ? String(data.linked_invoice_id) : '');
+    setFieldValue('invoiceFormLinkedInvoiceNumber', data.linked_invoice_number || '');
     setFieldValue('invoiceFormNumber', data.invoice_number || '');
     setDateFieldValue('invoiceFormOfferDate', f.offerDate || '');
     setDateFieldValue('invoiceFormDueDate', f.dueDate || '');
@@ -506,12 +593,18 @@
     renderCategories(cats);
     setCurrencyLabels();
     showError('');
+    applyRecordTypeUI();
 
     const isNew = !data.id;
+    const proposal = recordType === 'proposal';
     if (fields.title) {
-      fields.title.textContent = isNew
-        ? 'New invoice'
-        : ((f.subject || 'Invoice') + (data.invoice_number ? ' — ' + data.invoice_number : ''));
+      if (isNew) {
+        fields.title.textContent = 'New proposal';
+      } else if (proposal) {
+        fields.title.textContent = (f.subject || 'Proposal') + ' — Technical & Financial Proposal';
+      } else {
+        fields.title.textContent = (f.subject || 'Invoice') + (data.invoice_number ? ' — ' + data.invoice_number : '');
+      }
     }
     if (fields.printBtn) {
       fields.printBtn.hidden = options?.hidePrint === true;
@@ -538,22 +631,25 @@
       })
       .then(function (result) {
         if (!result.ok || !result.data.ok) {
-          throw new Error((result.data && result.data.error) || 'Could not create invoice');
+          throw new Error((result.data && result.data.error) || 'Could not create proposal');
         }
+        const initialState = defaultState();
+        initialState.fields.offerDate = todayIso();
         populateForm({
           id: result.data.id,
-          invoice_number: result.data.invoice_number,
-          state: defaultState(),
+          invoice_number: '',
+          record_type: result.data.record_type || 'proposal',
+          state: initialState,
         }, { hidePrint: true });
         modal.show();
       })
       .catch(function (err) {
-        alert(err.message || 'Could not create invoice');
+        notifyError(err.message || 'Could not create proposal', { title: 'Could not create proposal' });
       })
       .finally(function () {
         if (fields.saveBtn) {
           fields.saveBtn.disabled = false;
-          fields.saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> Save invoice';
+          applyRecordTypeUI();
         }
       });
   }
@@ -575,17 +671,185 @@
         if (!result.ok || !result.data.ok) {
           throw new Error((result.data && result.data.error) || 'Could not load invoice');
         }
-        populateForm(result.data);
+        const data = result.data;
+        if (
+          data.record_type === 'invoice'
+          && Number(data.source_proposal_id || 0) > 0
+          && Number(data.id) !== Number(data.source_proposal_id)
+        ) {
+          openEdit(Number(data.source_proposal_id));
+          return;
+        }
+        populateForm(data);
         modal.show();
       })
       .catch(function (err) {
-        alert(err.message || 'Could not load invoice');
+        notifyError(err.message || 'Could not load proposal', { title: 'Could not load' });
       })
       .finally(function () {
         if (fields.saveBtn) {
           fields.saveBtn.disabled = false;
-          fields.saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> Save invoice';
+          applyRecordTypeUI();
         }
+      });
+  }
+
+  function makeInvoice(options) {
+    const opts = options || {};
+    const id = parseInt(String(opts.id || fieldValue('invoiceFormId') || '0'), 10);
+    if (!id) return;
+
+    const useModalState = opts.withState !== false && modalEl.classList.contains('show');
+
+    function runMakeInvoice() {
+      const payload = {
+        id: id,
+        admin_csrf: csrf,
+      };
+      if (useModalState) {
+        const state = prepareState(buildState());
+        if (!state.fields.clientName) {
+          showError('Enter a client name (or a subject / title) before creating an invoice.');
+          return;
+        }
+        payload.state = state;
+      }
+
+      showError('');
+      if (fields.makeInvoiceBtn) {
+        fields.makeInvoiceBtn.disabled = true;
+      }
+      if (fields.saveBtn) {
+        fields.saveBtn.disabled = true;
+      }
+
+      fetch('api/invoice-convert.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        credentials: 'same-origin',
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { ok: res.ok, data: data };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok || !result.data.ok) {
+            throw new Error((result.data && result.data.error) || 'Could not create invoice');
+          }
+          const invoiceId = result.data.id;
+          const invoiceNumber = result.data.invoice_number || '';
+          if (useModalState) {
+            setFieldValue('invoiceFormLinkedInvoiceId', String(invoiceId));
+            setFieldValue('invoiceFormLinkedInvoiceNumber', invoiceNumber);
+            applyRecordTypeUI();
+            if (fields.printBtn) fields.printBtn.hidden = false;
+            notifySuccess('Invoice ' + invoiceNumber + ' is ready. Saving this proposal keeps the invoice in sync automatically.', {
+              title: 'Invoice created',
+              duration: 8000,
+            });
+            return;
+          }
+          notifySuccess('Invoice ' + invoiceNumber + ' was created successfully.', {
+            title: 'Invoice created',
+            duration: 5000,
+          });
+          window.setTimeout(function () {
+            window.location.reload();
+          }, 1200);
+        })
+        .catch(function (err) {
+          if (useModalState) {
+            showError(err.message || 'Could not create invoice');
+          } else {
+            notifyError(err.message || 'Could not create invoice', { title: 'Invoice not created' });
+          }
+        })
+        .finally(function () {
+          if (fields.makeInvoiceBtn) {
+            fields.makeInvoiceBtn.disabled = false;
+          }
+          if (fields.saveBtn) {
+            fields.saveBtn.disabled = false;
+            applyRecordTypeUI();
+          }
+        });
+    }
+
+    if (!useModalState) {
+      const subject = opts.subject || 'this proposal';
+      notifyConfirm({
+        title: 'Create invoice',
+        message: 'Convert "' + subject + '" to an invoice? An invoice number will be assigned.',
+        confirmLabel: 'Create invoice',
+        cancelLabel: 'Cancel',
+        variant: 'success',
+      }).then(function (ok) {
+        if (ok) runMakeInvoice();
+      });
+      return;
+    }
+
+    runMakeInvoice();
+  }
+
+  function syncInvoiceFromProposal(options) {
+    const opts = options || {};
+    const proposalId = parseInt(String(opts.id || fieldValue('invoiceFormId') || '0'), 10);
+    if (!proposalId) return;
+
+    const useModalState = opts.withState !== false && modalEl.classList.contains('show');
+    if (!useModalState) {
+      const subject = opts.subject || 'this proposal';
+      if (!confirm('Copy the latest proposal content into the linked invoice for "' + subject + '"?')) {
+        return;
+      }
+    }
+
+    const payload = {
+      proposal_id: proposalId,
+      admin_csrf: csrf,
+    };
+    if (useModalState) {
+      payload.state = prepareState(buildState());
+    }
+
+    if (fields.syncLinkedBtn) fields.syncLinkedBtn.disabled = true;
+
+    fetch('api/invoice-sync.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: 'same-origin',
+    })
+      .then(function (res) {
+        return res.json().then(function (data) {
+          return { ok: res.ok, data: data };
+        });
+      })
+      .then(function (result) {
+        if (!result.ok || !result.data.ok) {
+          throw new Error((result.data && result.data.error) || 'Could not update invoice');
+        }
+        if (useModalState) {
+          notifySuccess('The linked invoice was updated from this proposal.', {
+            title: 'Invoice updated',
+          });
+          return;
+        }
+        const invoiceId = result.data.id;
+        window.location.href = '?section=invoices&edit=' + encodeURIComponent(String(invoiceId));
+      })
+      .catch(function (err) {
+        if (useModalState) {
+          showError(err.message || 'Could not update invoice');
+        } else {
+          notifyError(err.message || 'Could not update invoice', { title: 'Update failed' });
+        }
+      })
+      .finally(function () {
+        if (fields.syncLinkedBtn) fields.syncLinkedBtn.disabled = false;
       });
   }
 
@@ -602,8 +866,8 @@
     if (!id) return;
 
     const state = prepareState(buildState());
-    if (!state.fields.clientName) {
-      showError('Enter a client name in the Bill to section (or a subject / title).');
+    if (!isProposalMode() && !state.fields.clientName) {
+      showError('Enter a client name (or a subject / title).');
       return;
     }
 
@@ -633,8 +897,26 @@
           throw new Error((result.data && result.data.error) || 'Save failed');
         }
         if (fields.printBtn) fields.printBtn.hidden = false;
+        if (isProposalMode() && result.data.linked_invoice_updated) {
+          notifySuccess('Proposal saved and linked invoice updated.', {
+            title: 'Saved',
+            duration: 4500,
+          });
+        } else if (isProposalMode()) {
+          notifySuccess('Proposal saved successfully.', {
+            title: 'Saved',
+            duration: 3500,
+          });
+        } else {
+          notifySuccess('Invoice saved successfully.', {
+            title: 'Saved',
+            duration: 3500,
+          });
+        }
         modal.hide();
-        window.location.href = '?section=invoices';
+        window.setTimeout(function () {
+          window.location.href = '?section=invoices';
+        }, isProposalMode() && result.data.linked_invoice_updated ? 900 : 500);
       })
       .catch(function (err) {
         showError(err.message || 'Save failed');
@@ -642,7 +924,7 @@
       .finally(function () {
         if (fields.saveBtn) {
           fields.saveBtn.disabled = false;
-          fields.saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> Save invoice';
+          applyRecordTypeUI();
         }
       });
   }
@@ -679,8 +961,8 @@
     if (!id) return;
 
     const state = prepareState(buildState());
-    if (!state.fields.clientName) {
-      showError('Enter a client name in the Bill to section (or a subject / title) before printing.');
+    if (!isProposalMode() && !state.fields.clientName) {
+      showError('Enter a client name (or a subject / title) before printing the invoice.');
       return;
     }
 
@@ -711,7 +993,7 @@
         openPrint(id);
       })
       .catch(function (err) {
-        alert(err.message || 'Could not save before printing');
+        notifyError(err.message || 'Could not save before printing', { title: 'Print failed' });
       })
       .finally(function () {
         if (fields.saveBtn) {
@@ -719,6 +1001,51 @@
         }
       });
   }
+
+  fields.makeInvoiceBtn?.addEventListener('click', function () {
+    makeInvoice({ withState: true });
+  });
+
+  fields.viewLinkedBtn?.addEventListener('click', function () {
+    const linkedId = parseInt(fieldValue('invoiceFormLinkedInvoiceId') || '0', 10);
+    if (linkedId > 0) {
+      openPrint(linkedId);
+    }
+  });
+
+  document.querySelectorAll('.btn-make-invoice').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      makeInvoice({
+        id: Number(btn.dataset.id),
+        subject: btn.dataset.subject || '',
+        withState: false,
+      });
+    });
+  });
+
+  document.querySelectorAll('.btn-edit-proposal').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      openEdit(Number(btn.dataset.id));
+    });
+  });
+
+  document.querySelectorAll('.btn-print-linked-invoice').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      openPrint(Number(btn.dataset.id));
+    });
+  });
+
+  document.querySelectorAll('.btn-print-invoice').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const id = Number(btn.dataset.id);
+      const editingId = parseInt(fieldValue('invoiceFormId') || '0', 10);
+      if (modalEl.classList.contains('show') && editingId === id) {
+        saveThenPrint();
+        return;
+      }
+      openPrint(id);
+    });
+  });
 
   document.getElementById('btnNewInvoice')?.addEventListener('click', openNew);
   document.getElementById('btnNewInvoiceEmpty')?.addEventListener('click', openNew);
@@ -740,24 +1067,6 @@
     radio.addEventListener('change', setCurrencyLabels);
   });
   fields.discount?.addEventListener('input', updateTotals);
-
-  document.querySelectorAll('.btn-open-invoice').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      openEdit(Number(btn.dataset.id));
-    });
-  });
-
-  document.querySelectorAll('.btn-print-invoice').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const id = Number(btn.dataset.id);
-      const editingId = parseInt(fieldValue('invoiceFormId') || '0', 10);
-      if (modalEl.classList.contains('show') && editingId === id) {
-        saveThenPrint();
-        return;
-      }
-      openPrint(id);
-    });
-  });
 
   fields.printBtn?.addEventListener('click', function () {
     saveThenPrint();

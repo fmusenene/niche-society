@@ -138,11 +138,16 @@ $maintenance_message = $maintenance_settings['message'] ?? '';
 $serviceCategories = $authenticated ? cmsGetServiceCategories($pdo) : [];
 $activeServiceCount = count(array_filter($allServices, fn($s) => ($s['status'] ?? '') === 'active'));
 $allInvoices = $authenticated ? cmsGetAllInvoices($pdo) : [];
-$invoiceStats = ['count' => 0, 'this_month' => 0, 'total_sar' => 0];
+$proposalInvoiceMap = $authenticated ? cmsGetProposalInvoiceMap($pdo) : [];
+$invoiceStats = ['proposals' => 0, 'invoices' => 0, 'this_month' => 0, 'total_sar' => 0];
 if ($authenticated) {
     $invoiceMonthPrefix = date('Y-m');
     foreach ($allInvoices as $inv) {
-        $invoiceStats['count']++;
+        if (cmsInvoiceIsProposal($inv)) {
+            $invoiceStats['proposals']++;
+        } else {
+            $invoiceStats['invoices']++;
+        }
         $updatedAt = (string) ($inv['updated_at'] ?? '');
         if ($updatedAt !== '' && strncmp($updatedAt, $invoiceMonthPrefix, 7) === 0) {
             $invoiceStats['this_month']++;
@@ -152,6 +157,12 @@ if ($authenticated) {
         }
     }
 }
+$invoiceStats['count'] = $invoiceStats['proposals'];
+$listProposals = array_values(array_filter($allInvoices, static fn(array $inv): bool => cmsInvoiceIsProposal($inv)));
+$invoiceStats['invoiced'] = count(array_filter(
+    $listProposals,
+    static fn(array $inv): bool => isset($proposalInvoiceMap[(int) $inv['id']])
+));
 $openInvoiceBoot = null;
 if ($authenticated && $section === 'invoices') {
     if (!empty($_GET['add'])) {
@@ -159,15 +170,28 @@ if ($authenticated && $section === 'invoices') {
     } elseif (!empty($_GET['edit'])) {
         $editInvoiceId = (int) $_GET['edit'];
         foreach ($allInvoices as $inv) {
-            if ((int) $inv['id'] === $editInvoiceId) {
-                $openInvoiceBoot = [
-                    'open' => 'edit',
-                    'id' => $editInvoiceId,
-                    'subject' => $inv['subject'] ?: 'Untitled proposal',
-                    'number' => $inv['invoice_number'] ?? '',
-                ];
-                break;
+            if ((int) $inv['id'] !== $editInvoiceId) {
+                continue;
             }
+            if (!cmsInvoiceIsProposal($inv)) {
+                $sourceId = (int) ($inv['source_proposal_id'] ?? 0);
+                if ($sourceId > 0) {
+                    $editInvoiceId = $sourceId;
+                    foreach ($allInvoices as $proposalRow) {
+                        if ((int) $proposalRow['id'] === $sourceId) {
+                            $inv = $proposalRow;
+                            break;
+                        }
+                    }
+                }
+            }
+            $openInvoiceBoot = [
+                'open' => 'edit',
+                'id' => $editInvoiceId,
+                'subject' => $inv['subject'] ?: 'Untitled proposal',
+                'number' => $inv['invoice_number'] ?? '',
+            ];
+            break;
         }
     }
 }
@@ -181,7 +205,7 @@ $sectionTitles = [
     'about' => 'About page',
     'contact' => 'Contact & company',
     'account' => 'Account & password',
-    'invoices' => 'Invoices',
+    'invoices' => 'Proposals',
 ];
 $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
 ?>
@@ -237,7 +261,14 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
         </header>
         <main class="admin-content">
             <?php if ($flash): ?>
-            <div class="alert alert-<?= $flash['type'] === 'success' ? 'success' : 'danger' ?>"><?= htmlspecialchars($flash['message']) ?></div>
+            <?php
+                $flashVariant = $flash['type'] === 'success' ? 'success' : 'danger';
+                $flashIcon = $flashVariant === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-octagon-fill';
+            ?>
+            <div class="admin-flash-banner admin-flash-banner--<?= $flashVariant ?>" role="alert">
+                <span class="admin-flash-banner__icon"><i class="bi <?= $flashIcon ?>" aria-hidden="true"></i></span>
+                <span class="admin-flash-banner__text"><?= htmlspecialchars($flash['message']) ?></span>
+            </div>
             <?php endif; ?>
             <?php if ($section === 'dashboard'): ?>
             <div class="admin-stats-row">
@@ -446,13 +477,18 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
     <div class="invoice-list-page">
         <div class="admin-stats-row invoice-stats-row">
             <div class="admin-stat-card invoice-stat-card">
+                <i class="bi bi-file-earmark-text"></i>
+                <div class="admin-stat-value" id="invoiceStatProposals"><?= (int) $invoiceStats['proposals'] ?></div>
+                <div class="admin-stat-label">Proposals</div>
+            </div>
+            <div class="admin-stat-card invoice-stat-card">
                 <i class="bi bi-receipt-cutoff"></i>
-                <div class="admin-stat-value" id="invoiceStatTotal"><?= (int) $invoiceStats['count'] ?></div>
-                <div class="admin-stat-label">Total invoices</div>
+                <div class="admin-stat-value" id="invoiceStatInvoiced"><?= (int) ($invoiceStats['invoiced'] ?? 0) ?></div>
+                <div class="admin-stat-label">Invoiced</div>
             </div>
             <div class="admin-stat-card invoice-stat-card invoice-stat-card--filter">
                 <i class="bi bi-eye"></i>
-                <div class="admin-stat-value" id="invoiceVisibleCount"><?= (int) $invoiceStats['count'] ?></div>
+                <div class="admin-stat-value" id="invoiceVisibleCount"><?= count($listProposals) ?></div>
                 <div class="admin-stat-label">Showing results</div>
             </div>
             <div class="admin-stat-card invoice-stat-card">
@@ -480,18 +516,18 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>
-                <button type="button" class="btn btn-primary btn-sm invoice-new-btn" id="btnNewInvoice" title="New invoice">
-                    <i class="bi bi-plus-lg"></i><span class="invoice-new-btn-label"> New invoice</span>
+                <button type="button" class="btn btn-primary btn-sm invoice-new-btn" id="btnNewInvoice" title="New proposal">
+                    <i class="bi bi-plus-lg"></i><span class="invoice-new-btn-label"> New proposal</span>
                 </button>
             </div>
 
-            <?php if (count($allInvoices) === 0): ?>
+            <?php if (count($listProposals) === 0): ?>
             <div class="invoice-empty-state">
-                <div class="invoice-empty-state__icon"><i class="bi bi-receipt"></i></div>
-                <h3 class="invoice-empty-state__title">No invoices yet</h3>
-                <p class="invoice-empty-state__text">Create your first event proposal or invoice. You can edit line items, print, and send to clients.</p>
+                <div class="invoice-empty-state__icon"><i class="bi bi-file-earmark-text"></i></div>
+                <h3 class="invoice-empty-state__title">No proposals yet</h3>
+                <p class="invoice-empty-state__text">Create a Technical &amp; Financial Proposal to send to your client. When they accept, convert it to an invoice with one click.</p>
                 <button type="button" class="btn btn-primary btn-sm invoice-empty-state__cta" id="btnNewInvoiceEmpty">
-                    <i class="bi bi-plus-lg"></i> Create first invoice
+                    <i class="bi bi-plus-lg"></i> Create first proposal
                 </button>
             </div>
             <?php else: ?>
@@ -499,6 +535,7 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                 <table class="table invoice-data-table mb-0" id="invoiceTable">
                     <thead>
                         <tr>
+                            <th>Status</th>
                             <th>Invoice #</th>
                             <th>Subject</th>
                             <th>Offer date</th>
@@ -510,13 +547,21 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                         </tr>
                     </thead>
                     <tbody id="invoiceTableBody">
-                    <?php foreach ($allInvoices as $inv):
+                    <?php foreach ($listProposals as $inv):
                         $invSubject = $inv['subject'] ?: 'Untitled proposal';
-                        $invNumber = $inv['invoice_number'] ?? '';
-                        $searchBlob = strtolower(trim($invNumber . ' ' . $invSubject . ' ' . ($inv['client_name'] ?? '')));
+                        $linkedInvoice = $proposalInvoiceMap[(int) $inv['id']] ?? null;
+                        $linkedNumber = $linkedInvoice['invoice_number'] ?? '';
+                        $searchBlob = strtolower(trim($invSubject . ' ' . ($inv['client_name'] ?? '') . ' ' . $linkedNumber));
                     ?>
-                    <tr data-invoice-row data-search="<?= htmlspecialchars($searchBlob, ENT_QUOTES) ?>">
-                        <td><span class="invoice-num-badge"><?= htmlspecialchars($invNumber ?: '—') ?></span></td>
+                    <tr data-invoice-row data-search="<?= htmlspecialchars($searchBlob, ENT_QUOTES) ?>" data-record-type="proposal"<?= $linkedInvoice ? ' data-linked-invoice-id="' . (int) $linkedInvoice['id'] . '"' : '' ?>>
+                        <td>
+                            <?php if ($linkedInvoice): ?>
+                            <span class="invoice-type-badge invoice-type-badge--proposal invoice-type-badge--linked">Invoiced</span>
+                            <?php else: ?>
+                            <span class="invoice-type-badge invoice-type-badge--proposal">Draft</span>
+                            <?php endif; ?>
+                        </td>
+                        <td><?php if ($linkedInvoice): ?><span class="invoice-num-badge"><?= htmlspecialchars($linkedNumber ?: '—') ?></span><?php else: ?><span class="text-muted">—</span><?php endif; ?></td>
                         <td class="invoice-cell-subject"><?= htmlspecialchars($invSubject) ?></td>
                         <td class="text-nowrap"><?= htmlspecialchars(cmsInvoiceFormatDisplayDate($inv['offer_date'] ?? '', true)) ?></td>
                         <td class="text-nowrap invoice-col-secondary"><?= htmlspecialchars(cmsInvoiceFormatDisplayDate($inv['event_date'] ?? '', true)) ?></td>
@@ -528,18 +573,31 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                         <td class="text-nowrap text-muted invoice-col-secondary"><?= htmlspecialchars(date('Y-m-d', strtotime($inv['updated_at'] ?? 'now'))) ?></td>
                         <td class="text-end text-nowrap">
                             <div class="invoice-row-actions">
-                                <button type="button" class="btn btn-sm btn-outline-primary btn-open-invoice"
+                                <?php if ($linkedInvoice): ?>
+                                <button type="button" class="btn btn-sm btn-outline-info btn-print-linked-invoice"
+                                    data-id="<?= (int) $linkedInvoice['id'] ?>"
+                                    data-number="<?= htmlspecialchars($linkedNumber, ENT_QUOTES) ?>"
+                                    title="Print invoice <?= htmlspecialchars($linkedNumber, ENT_QUOTES) ?>">
+                                    <i class="bi bi-receipt"></i>
+                                </button>
+                                <?php else: ?>
+                                <button type="button" class="btn btn-sm btn-outline-success btn-make-invoice"
                                     data-id="<?= (int) $inv['id'] ?>"
                                     data-subject="<?= htmlspecialchars($invSubject, ENT_QUOTES) ?>"
-                                    data-number="<?= htmlspecialchars($invNumber, ENT_QUOTES) ?>"
-                                    title="Edit invoice">
+                                    title="Make invoice">
+                                    <i class="bi bi-receipt-cutoff"></i>
+                                </button>
+                                <?php endif; ?>
+                                <button type="button" class="btn btn-sm btn-outline-primary btn-edit-proposal"
+                                    data-id="<?= (int) $inv['id'] ?>"
+                                    data-subject="<?= htmlspecialchars($invSubject, ENT_QUOTES) ?>"
+                                    title="Edit proposal">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-secondary btn-print-invoice"
                                     data-id="<?= (int) $inv['id'] ?>"
                                     data-subject="<?= htmlspecialchars($invSubject, ENT_QUOTES) ?>"
-                                    data-number="<?= htmlspecialchars($invNumber, ENT_QUOTES) ?>"
-                                    title="Print invoice">
+                                    title="Print proposal">
                                     <i class="bi bi-printer"></i>
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-danger btn-delete-invoice"
@@ -553,10 +611,10 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                     </tr>
                     <?php endforeach; ?>
                     <tr id="invoiceSearchEmpty" hidden>
-                        <td colspan="8">
+                        <td colspan="9">
                             <div class="invoice-search-empty">
                                 <i class="bi bi-search"></i>
-                                <p>No invoices match your search.</p>
+                                <p>No proposals match your search.</p>
                                 <button type="button" class="btn btn-sm btn-outline-secondary" id="invoiceSearchClearEmpty">Clear search</button>
                             </div>
                         </td>
@@ -619,6 +677,7 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
 })();
 </script>
 <?php if ($authenticated && $section === 'invoices'): ?>
+<script src="assets/admin-notify.js?v=<?= (int) @filemtime(__DIR__ . '/assets/admin-notify.js') ?>"></script>
 <script>window.INVOICE_LIST_BOOT = <?= json_encode($openInvoiceBoot) ?>;</script>
 <script src="assets/invoices-list.js?v=<?= (int) @filemtime(__DIR__ . '/assets/invoices-list.js') ?>"></script>
 <?php endif; ?>

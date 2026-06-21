@@ -27,10 +27,16 @@ if (!$invoice) {
     exit;
 }
 
+$linked = cmsInvoiceLinkedMeta($pdo, $invoice);
+
 echo json_encode([
     'ok' => true,
     'id' => (int) $invoice['id'],
     'invoice_number' => $invoice['invoice_number'] ?? '',
+    'record_type' => cmsInvoiceRecordType($invoice),
     'status' => $invoice['status'] ?? 'draft',
+    'source_proposal_id' => (int) ($invoice['source_proposal_id'] ?? 0),
+    'linked_invoice_id' => (int) ($linked['linked_invoice_id'] ?? 0),
+    'linked_invoice_number' => $linked['linked_invoice_number'] ?? '',
     'state' => $invoice['state'],
 ], JSON_UNESCAPED_UNICODE);

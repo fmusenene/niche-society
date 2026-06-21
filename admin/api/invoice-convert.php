@@ -1,6 +1,6 @@
 <?php
 /**
- * AJAX: create a new technical & financial proposal (draft)
+ * AJAX: convert a proposal to an invoice (assigns invoice number)
  */
 header('Content-Type: application/json; charset=utf-8');
 
@@ -31,20 +31,32 @@ if (!adminVerifyCsrf($payload['admin_csrf'] ?? null)) {
     exit;
 }
 
+$id = (int) ($payload['id'] ?? 0);
+if ($id <= 0) {
+    http_response_code(400);
+    echo json_encode(['ok' => false, 'error' => 'Proposal id is required']);
+    exit;
+}
+
 try {
-    $id = cmsCreateProposal($pdo);
-    $invoice = cmsGetInvoice($pdo, $id);
-    if (!$invoice) {
-        throw new RuntimeException('Could not load new proposal.');
+    $state = isset($payload['state']) && is_array($payload['state']) ? $payload['state'] : null;
+    $proposalId = (int) ($payload['proposal_id'] ?? $payload['id'] ?? 0);
+    if ($proposalId <= 0) {
+        throw new RuntimeException('Proposal id is required.');
     }
+
+    $hadInvoice = cmsGetLinkedInvoiceForProposal($pdo, $proposalId) !== null;
+    $invoice = cmsConvertProposalToInvoice($pdo, $proposalId, $state);
 
     echo json_encode([
         'ok' => true,
-        'id' => $id,
+        'proposal_id' => $proposalId,
+        'id' => (int) $invoice['id'],
         'invoice_number' => $invoice['invoice_number'] ?? '',
         'record_type' => cmsInvoiceRecordType($invoice),
         'subject' => $invoice['subject'] ?? '',
-        'embed_url' => rtrim(SITE_URL, '/') . '/admin/invoice.php?id=' . $id . '&embed=1',
+        'state' => $invoice['state'],
+        'created' => !$hadInvoice,
     ], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     http_response_code(500);

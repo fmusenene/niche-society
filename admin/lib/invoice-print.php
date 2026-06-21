@@ -20,6 +20,17 @@ function adminInvoiceCompanyInfo(PDO $pdo): array
     ];
 }
 
+function adminInvoiceWatermarkUrl(): string
+{
+    $relative = 'assets/images/Icon 1.png';
+    $root = defined('ROOT_PATH') ? ROOT_PATH : dirname(__DIR__, 2);
+    if (!is_file($root . '/' . $relative)) {
+        return '';
+    }
+
+    return str_replace(' ', '%20', url($relative));
+}
+
 function adminInvoiceSocialDisclaimer(): string
 {
     return 'The client may authorize or decline publication of event-related content (photos, videos, and coverage) on the platforms below. Tick Not Approved if Niche Society should not publish event-related content on that platform without separate written consent.';
@@ -33,6 +44,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     }
 
     $company = adminInvoiceCompanyInfo($pdo);
+    $watermarkUrl = adminInvoiceWatermarkUrl();
     $state = $invoice['state'];
     $fields = $state['fields'];
     $currency = $fields['currency'] ?? 'SAR';
@@ -108,12 +120,15 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
 
     $notes = trim($fields['notes'] ?? '');
 
-    $invoiceNumber = $invoice['invoice_number'] ?? '';
+    $isProposal = cmsInvoiceIsProposal($invoice);
+    $docTitle = $isProposal ? 'Technical & Financial Proposal' : 'Invoice';
+    $invoiceNumber = trim((string) ($invoice['invoice_number'] ?? ''));
     $offerDate = cmsInvoiceFormatDisplayDate($fields['offerDate'] ?: ($invoice['offer_date'] ?? ''), true);
     $dueDate = cmsInvoiceFormatDisplayDate($fields['dueDate'] ?: ($invoice['due_date'] ?? ''), true);
     $eventDate = cmsInvoiceFormatDisplayDate($fields['eventDate'] ?? '', true);
-    $location = $fields['location'] ?: '—';
-    $prepared = $fields['prepared'] ?: '—';
+    $location = trim($fields['location'] ?? '') ?: '—';
+    $prepared = trim($fields['prepared'] ?? '') ?: '—';
+    $subject = trim($fields['subject'] ?? $invoice['subject'] ?? '') ?: '—';
     $autoPrintJs = $autoPrint ? 'window.addEventListener("load",function(){window.print();});' : '';
 
     $proposalDefaults = cmsInvoiceDefaultProposalFields();
@@ -189,6 +204,31 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       margin: 0 auto;
       background: #fff;
       box-shadow: 0 8px 28px rgba(0,0,0,.1);
+      position: relative;
+    }
+    .doc-watermark {
+      position: fixed;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 68%;
+      max-width: 5.25in;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .doc-watermark img {
+      width: 100%;
+      height: auto;
+      display: block;
+      opacity: 0.11;
+      mix-blend-mode: screen;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .invoice-top,
+    .invoice-body {
+      position: relative;
+      z-index: 1;
     }
     .invoice-top {
       background: var(--burgundy);
@@ -200,6 +240,22 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       gap: 20px;
     }
     .invoice-top img { height: 52px; width: auto; }
+    .invoice-top--proposal {
+      height: 1.45in;
+      min-height: 140px;
+      padding: 10px 32px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .invoice-top--proposal img { height: 66px; max-width: 340px; }
+    .invoice-top--proposal .header-url {
+      font-family: "Domine", Georgia, serif;
+      font-size: 12pt;
+      font-weight: 500;
+      letter-spacing: .04em;
+      color: var(--cream);
+      white-space: nowrap;
+    }
     .invoice-top .brand h1 {
       margin: 0;
       font-family: "Domine", Georgia, serif;
@@ -213,7 +269,70 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       opacity: .95;
       letter-spacing: .02em;
     }
+    .invoice-top .doc-type .doc-title {
+      display: block;
+      font-family: "Domine", Georgia, serif;
+      font-size: 13pt;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      opacity: 1;
+    }
     .invoice-body { padding: 24px 28px 28px; }
+    .invoice-body--proposal { padding: 22px 28px 28px; }
+    .proposal-doc-title {
+      margin: 0 0 16px;
+      font-family: "Domine", Georgia, serif;
+      font-size: 17pt;
+      font-weight: 600;
+      color: var(--burgundy);
+      text-align: center;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .proposal-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 24px;
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      background: #fdfbf8;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--burgundy);
+    }
+    .proposal-field {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      min-width: 0;
+    }
+    .proposal-label {
+      font-family: "Domine", Georgia, serif;
+      font-size: 7.5pt;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--burgundy);
+      min-width: 88px;
+      flex-shrink: 0;
+    }
+    .proposal-value {
+      flex: 1;
+      font-size: 8.5pt;
+      color: var(--burgundy);
+      word-break: break-word;
+    }
+    .proposal-intro {
+      margin: 0 0 20px;
+    }
+    .proposal-intro p {
+      margin: 0 0 6px;
+      font-size: 8.5pt;
+      color: var(--burgundy);
+      text-align: justify;
+    }
+    .proposal-intro p:last-child { margin-bottom: 0; }
     .meta-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -427,6 +546,24 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       body { background: #fff; padding: 0; }
       .invoice-page { box-shadow: none; }
       .toolbar { display: none !important; }
+      .doc-watermark {
+        position: fixed;
+        top: 52%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 68%;
+        max-width: 5.25in;
+        z-index: 9999;
+        pointer-events: none;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .doc-watermark img {
+        opacity: 0.11 !important;
+        mix-blend-mode: screen !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
       .social-checkbox {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
@@ -442,16 +579,57 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
   </div>
 
   <div class="invoice-page">
-    <header class="invoice-top">
+    <header class="invoice-top<?= $isProposal ? ' invoice-top--proposal' : '' ?>">
       <div class="brand">
         <img src="<?= $h($company['logo']) ?>" alt="<?= $h($company['name']) ?>">
       </div>
+      <?php if ($isProposal): ?>
+      <span class="header-url"><?= $h($company['website']) ?></span>
+      <?php else: ?>
       <div class="doc-type">
+        <span class="doc-title"><?= $h($docTitle) ?></span>
         <span><?= $h($company['website']) ?></span>
       </div>
+      <?php endif; ?>
     </header>
 
-    <div class="invoice-body">
+    <div class="invoice-body<?= $isProposal ? ' invoice-body--proposal' : '' ?>">
+      <?php if ($isProposal): ?>
+      <h1 class="proposal-doc-title"><?= $h($docTitle) ?></h1>
+
+      <div class="proposal-meta-grid">
+        <div class="proposal-field">
+          <span class="proposal-label">Offer Date</span>
+          <span class="proposal-value"><?= $h($offerDate) ?></span>
+        </div>
+        <div class="proposal-field">
+          <span class="proposal-label">Event Date</span>
+          <span class="proposal-value"><?= $h($eventDate) ?></span>
+        </div>
+        <div class="proposal-field">
+          <span class="proposal-label">Event Location</span>
+          <span class="proposal-value"><?= $h($location) ?></span>
+        </div>
+        <div class="proposal-field">
+          <span class="proposal-label">Subject</span>
+          <span class="proposal-value"><?= $h($subject) ?></span>
+        </div>
+        <div class="proposal-field">
+          <span class="proposal-label">Prepared by</span>
+          <span class="proposal-value"><?= $h($prepared) ?></span>
+        </div>
+      </div>
+
+      <?php if ($intro1 || $intro2 || $intro3): ?>
+      <div class="proposal-intro">
+        <?php if ($intro1): ?><p><?= $h($intro1) ?></p><?php endif; ?>
+        <?php if ($intro2): ?><p><?= $h($intro2) ?></p><?php endif; ?>
+        <?php if ($intro3): ?><p><?= $h($intro3) ?></p><?php endif; ?>
+      </div>
+      <?php endif; ?>
+
+      <?php else: ?>
+
       <div class="meta-grid">
         <div class="meta-box">
           <h3>Bill from</h3>
@@ -482,7 +660,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       </div>
 
       <div class="invoice-facts">
-        <div><span>Invoice number</span><strong><?= $h($invoiceNumber) ?></strong></div>
+        <div><span>Invoice number</span><strong><?= $h($invoiceNumber !== '' ? $invoiceNumber : '—') ?></strong></div>
         <div><span>Invoice date</span><strong><?= $h($offerDate) ?></strong></div>
         <div><span>Due date</span><strong><?= $h($dueDate) ?></strong></div>
         <div><span>Event date</span><strong><?= $h($eventDate) ?></strong></div>
@@ -490,12 +668,6 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
         <div><span>Prepared by</span><strong><?= $h($prepared) ?></strong></div>
       </div>
 
-      <?php if ($intro1 || $intro2 || $intro3): ?>
-      <div class="intro-block">
-        <?php if ($intro1): ?><p><?= $h($intro1) ?></p><?php endif; ?>
-        <?php if ($intro2): ?><p><?= $h($intro2) ?></p><?php endif; ?>
-        <?php if ($intro3): ?><p><?= $h($intro3) ?></p><?php endif; ?>
-      </div>
       <?php endif; ?>
 
       <table class="items">
@@ -536,21 +708,21 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
         <div>Third payment (30%)<strong><?= $money($totals['pay3']) ?></strong></div>
       </div>
 
-      <?php if ($paymentTermsHtml !== ''): ?>
+      <?php if ($isProposal && $paymentTermsHtml !== ''): ?>
       <div class="terms prose-block">
         <h4 class="section-title">Method of payments</h4>
         <ul><?= $paymentTermsHtml ?></ul>
       </div>
       <?php endif; ?>
 
-      <?php if ($cancellationHtml !== ''): ?>
+      <?php if ($isProposal && $cancellationHtml !== ''): ?>
       <div class="terms prose-block">
         <h4 class="section-title">Cancelation Policy</h4>
         <ul><?= $cancellationHtml ?></ul>
       </div>
       <?php endif; ?>
 
-      <?php if ($closing1 || $closing2 || $closing3): ?>
+      <?php if ($isProposal && ($closing1 || $closing2 || $closing3)): ?>
       <div class="closing-block prose-block">
         <?php if ($closing1): ?><p><?= $h($closing1) ?></p><?php endif; ?>
         <?php if ($closing2): ?><p><?= $h($closing2) ?></p><?php endif; ?>
@@ -562,11 +734,13 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       </div>
       <?php endif; ?>
 
+      <?php if ($isProposal): ?>
       <div class="social-block">
         <h4 class="section-title">Social Media Coverage Authorization</h4>
         <p class="social-intro"><?= $h($socialIntro) ?></p>
         <?= $socialRowsHtml ?>
       </div>
+      <?php endif; ?>
 
       <div class="footer-grid">
         <div></div>
@@ -594,6 +768,11 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       </p>
     </div>
   </div>
+  <?php if ($watermarkUrl !== ''): ?>
+  <div class="doc-watermark" aria-hidden="true">
+    <img src="<?= $h($watermarkUrl) ?>" alt="">
+  </div>
+  <?php endif; ?>
   <script><?= $autoPrintJs ?></script>
 </body>
 </html>

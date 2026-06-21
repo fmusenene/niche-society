@@ -193,7 +193,7 @@ try {
             $id = (int) ($_POST['id'] ?? 0);
             if ($id > 0) {
                 cmsDeleteInvoice($pdo, $id);
-                adminFlash('success', 'Invoice deleted.');
+                adminFlash('success', 'Proposal deleted.');
             }
             $section = 'invoices';
             break;
