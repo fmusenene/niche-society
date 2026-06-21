@@ -950,6 +950,13 @@ table td, table th { vertical-align: middle; }
     display: flex;
     gap: 0.5rem;
     padding-top: 0.125rem;
+    flex-wrap: wrap;
+}
+
+.invoice-modal[dir="rtl"] .invoice-form-heading,
+.invoice-modal[dir="rtl"] .invoice-cat-header,
+.invoice-modal[dir="rtl"] .invoice-totals-grid > div {
+    flex-direction: row-reverse;
 }
 
 .invoice-currency-pills .btn {
@@ -962,6 +969,20 @@ table td, table th { vertical-align: middle; }
     background: var(--burgundy);
     border-color: var(--burgundy);
     color: #fff;
+}
+
+.invoice-language-pills.is-translating {
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+.invoice-installment-choices .btn {
+    text-align: left;
+    font-weight: 600;
+}
+
+.invoice-modal[dir="rtl"] .invoice-installment-choices .btn {
+    text-align: right;
 }
 
 /* Summary panel */

@@ -173,6 +173,12 @@
     'Third payment: 30% of the total amount is required on the day of the event',
   ].join('\n');
 
+  const DEFAULT_PAYMENT_TERMS_AR = [
+    'الدفعة الأولى: 30% من إجمالي المبلغ عند توقيع العقد',
+    'الدفعة الثانية: 40% من إجمالي المبلغ قبل الفعالية',
+    'الدفعة الثالثة: 30% من إجمالي المبلغ في يوم الفعالية',
+  ].join('\n');
+
   const PROPOSAL_DEFAULTS = {
     intro1: "It's our pleasure for giving us the opportunity to present our proposal regarding the management of your upcoming event.",
     intro2: 'We are writing you to summarize the complete technical and financial proposal that Niche Society has to offer.',
@@ -191,6 +197,410 @@
     socialInstagram: '',
     socialFacebook: '',
   };
+
+  const PROPOSAL_DEFAULTS_AR = {
+    intro1: 'يسعدنا أن تتاح لنا الفرصة لتقديم عرضنا لإدارة فعاليتكم القادمة.',
+    intro2: 'نقدم لكم ملخصًا كاملاً للعرض الفني والمالي الذي توفره نيش سوسايتي.',
+    intro3: 'شكرًا لاختياركم نيش سوسايتي كأحد المرشحين للشراكة في فعاليتكم القادمة.',
+    cancellationPolicy: [
+      'الدفعة الأولى غير مستردة.',
+      'لا يتم رد أي دفعة إذا تم الإلغاء قبل أقل من 60 يومًا من الفعالية.',
+      'عروض التصوير والفيديو لها أسعار خاصة مع خدمات تنظيم حفلات الزفاف.',
+    ].join('\n'),
+    closing1: 'نأمل أن يكون ما ورد أعلاه مناسبًا لكم ونتطلع إلى تأكيدكم قريبًا،',
+    closing2: 'يرجى إرسال بريد إلكتروني يفيد بالموافقة وتأكيد هذه الترتيبات.',
+    closing3: 'لأي استفسار إضافي يرجى التواصل مباشرة على +966 54 694 7915، ويسعدنا تقديم المساعدة.',
+    closingRegards: 'مع أطيب التحيات،',
+    socialIntro: 'يمكن للعميل الموافقة أو عدم الموافقة على نشر محتوى الفعالية (صور، فيديو، وتغطية) على المنصات أدناه. ضع علامة على غير موافق إذا لم تكن نيش سوسايتي تنشر محتوى الفعالية على تلك المنصة دون موافقة خطية منفصلة.',
+    socialSnapchat: '',
+    socialInstagram: '',
+    socialFacebook: '',
+  };
+
+  const FORM_I18N = {
+    en: {
+      sectionProposal: 'Proposal',
+      sectionInvoice: 'Invoice',
+      sectionClient: 'Client details',
+      sectionCategories: 'Categories & line items',
+      sectionTotals: 'Totals',
+      offerDate: 'Offer date',
+      invoiceDate: 'Invoice date',
+      dueDate: 'Due date',
+      currency: 'Currency',
+      language: 'Language',
+      eventDate: 'Event date',
+      eventLocation: 'Event location',
+      preparedBy: 'Prepared by',
+      subject: 'Subject / title',
+      tel: 'Tel',
+      clientName: 'Client name',
+      clientEmail: 'Email',
+      clientPhone: 'Phone',
+      dateSigned: 'Date signed',
+      clientAddress: 'Address',
+      addCategory: 'Add category',
+      linesHint: 'Group services by category. Use <strong>Add item</strong> inside each category for more rows.',
+      discount: 'Discount (%)',
+      notes: 'Notes',
+      subtotal: 'Subtotal (line amounts)',
+      fees: 'Event management fees (15%)',
+      discountAmt: 'Discount',
+      amountDue: 'Amount due',
+      paymentSchedule: 'Payment schedule:',
+      colNum: '#',
+      colDesc: 'Description',
+      colQty: 'Qty',
+      colUnit: 'Unit price',
+      colAmount: 'Amount',
+      colTotal: 'Total',
+      addItem: 'Add item',
+      deleteCategory: 'Delete',
+      catPlaceholder: 'Category name (e.g. Entertainment)',
+      descPlaceholder: 'Description',
+      saveProposal: 'Save proposal',
+      saveInvoice: 'Save invoice',
+      printProposal: 'Print proposal',
+      printInvoice: 'Print invoice',
+      makeInvoice: 'Make invoice',
+      cancel: 'Cancel',
+      newProposal: 'New proposal',
+      docProposalSuffix: ' — Technical & Financial Proposal',
+      printInstallmentTitle: 'Print invoice',
+      printInstallmentDesc: 'Select which payment this invoice is for — one installment or the full contract amount.',
+      installmentFull: 'Full payment (100%)',
+      installment1: '1st payment (30%)',
+      installment2: '2nd payment (40%)',
+      installment3: '3rd payment (30%)',
+      printLinkedInvoice: 'Print invoice',
+    },
+    ar: {
+      sectionProposal: 'العرض',
+      sectionInvoice: 'الفاتورة',
+      sectionClient: 'بيانات العميل',
+      sectionCategories: 'الأقسام والبنود',
+      sectionTotals: 'الإجماليات',
+      offerDate: 'تاريخ العرض',
+      invoiceDate: 'تاريخ الفاتورة',
+      dueDate: 'تاريخ الاستحقاق',
+      currency: 'العملة',
+      language: 'اللغة',
+      eventDate: 'تاريخ الفعالية',
+      eventLocation: 'موقع الفعالية',
+      preparedBy: 'إعداد',
+      subject: 'الموضوع / العنوان',
+      tel: 'هاتف',
+      clientName: 'اسم العميل',
+      clientEmail: 'البريد الإلكتروني',
+      clientPhone: 'الهاتف',
+      dateSigned: 'تاريخ التوقيع',
+      clientAddress: 'العنوان',
+      addCategory: 'إضافة قسم',
+      linesHint: 'جمّع الخدمات حسب القسم. استخدم <strong>إضافة بند</strong> داخل كل قسم لصفوف إضافية.',
+      discount: 'الخصم (%)',
+      notes: 'ملاحظات',
+      subtotal: 'إجمالي البنود',
+      fees: 'رسوم إدارة الفعالية (15%)',
+      discountAmt: 'الخصم',
+      amountDue: 'المبلغ المستحق',
+      paymentSchedule: 'جدول الدفع:',
+      colNum: '#',
+      colDesc: 'التفاصيل',
+      colQty: 'الكمية',
+      colUnit: 'سعر الوحدة',
+      colAmount: 'المبلغ',
+      colTotal: 'الإجمالي',
+      addItem: 'إضافة بند',
+      deleteCategory: 'حذف',
+      catPlaceholder: 'اسم القسم (مثال: ترفيه)',
+      descPlaceholder: 'الوصف',
+      saveProposal: 'حفظ العرض',
+      saveInvoice: 'حفظ الفاتورة',
+      printProposal: 'طباعة العرض',
+      printInvoice: 'طباعة الفاتورة',
+      makeInvoice: 'إنشاء فاتورة',
+      cancel: 'إلغاء',
+      newProposal: 'عرض جديد',
+      docProposalSuffix: ' — العرض الفني والمالي',
+      printInstallmentTitle: 'طباعة الفاتورة',
+      printInstallmentDesc: 'اختر الدفعة التي تخص هذه الفاتورة — قسط واحد أو المبلغ الكامل للعقد.',
+      installmentFull: 'دفع كامل (100%)',
+      installment1: 'الدفعة الأولى (30%)',
+      installment2: 'الدفعة الثانية (40%)',
+      installment3: 'الدفعة الثالثة (30%)',
+      printLinkedInvoice: 'طباعة الفاتورة',
+    },
+  };
+
+  let languageSwitchBusy = false;
+  let lastSavedFormLanguage = 'en';
+  const translationCache = new Map();
+
+  function getFormLanguage() {
+    const checked = modalEl.querySelector('input[name="invoiceFormLanguage"]:checked');
+    return checked && checked.value === 'ar' ? 'ar' : 'en';
+  }
+
+  function setFormLanguageRadio(lang) {
+    const value = lang === 'ar' ? 'ar' : 'en';
+    const radio = modalEl.querySelector('input[name="invoiceFormLanguage"][value="' + value + '"]');
+    if (radio) radio.checked = true;
+  }
+
+  function formTr(key) {
+    const lang = getFormLanguage();
+    return FORM_I18N[lang][key] || FORM_I18N.en[key] || key;
+  }
+
+  function applyFormLanguage() {
+    const lang = getFormLanguage();
+    const proposal = isProposalMode();
+    const modalContent = modalEl.querySelector('.invoice-modal');
+    if (modalContent) {
+      modalContent.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      modalContent.setAttribute('lang', lang);
+    }
+
+    const setText = function (id, key) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = formTr(key);
+    };
+    const setHtml = function (id, key) {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = formTr(key);
+    };
+
+    const sectionProposal = document.getElementById('invoiceSectionProposalTitle');
+    if (sectionProposal) {
+      sectionProposal.innerHTML = proposal
+        ? '<i class="bi bi-file-earmark-text" aria-hidden="true"></i> ' + formTr('sectionProposal')
+        : '<i class="bi bi-receipt" aria-hidden="true"></i> ' + formTr('sectionInvoice');
+    }
+    const sectionClient = document.getElementById('invoiceSectionClientTitle');
+    if (sectionClient) {
+      sectionClient.innerHTML = '<i class="bi bi-person-lines-fill" aria-hidden="true"></i> ' + formTr('sectionClient');
+    }
+    const sectionCategories = document.getElementById('invoiceSectionCategoriesTitle');
+    if (sectionCategories) {
+      sectionCategories.innerHTML = '<i class="bi bi-list-ul" aria-hidden="true"></i> ' + formTr('sectionCategories');
+    }
+    const sectionTotals = document.getElementById('invoiceSectionTotalsTitle');
+    if (sectionTotals) {
+      sectionTotals.innerHTML = '<i class="bi bi-calculator" aria-hidden="true"></i> ' + formTr('sectionTotals');
+    }
+
+    setText('labelOfferDate', proposal ? 'offerDate' : 'invoiceDate');
+    setText('labelInvoiceCurrency', 'currency');
+    setText('labelInvoiceLanguage', 'language');
+    setText('labelEventDate', 'eventDate');
+    setText('labelEventLocation', 'eventLocation');
+    setText('labelPreparedBy', 'preparedBy');
+    setText('labelSubject', 'subject');
+    setText('labelTel', 'tel');
+    setText('labelClientName', 'clientName');
+    setText('labelClientEmail', 'clientEmail');
+    setText('labelClientPhone', 'clientPhone');
+    setText('labelDateSigned', 'dateSigned');
+    setText('labelClientAddress', 'clientAddress');
+    setText('labelAddCategory', 'addCategory');
+    setHtml('invoiceLinesHint', 'linesHint');
+    setText('labelDiscount', 'discount');
+    setText('labelNotes', 'notes');
+    setText('labelSubtotal', 'subtotal');
+    setText('labelFees', 'fees');
+    setText('labelDiscountAmt', 'discountAmt');
+    setText('labelAmountDue', 'amountDue');
+    setText('labelPaymentSchedule', 'paymentSchedule');
+    setText('labelMakeInvoice', 'makeInvoice');
+    setText('labelCancel', 'cancel');
+
+    if (fields.saveLabel) {
+      fields.saveLabel.textContent = proposal ? formTr('saveProposal') : formTr('saveInvoice');
+    }
+    if (fields.printLabel) {
+      fields.printLabel.textContent = proposal ? formTr('printProposal') : formTr('printInvoice');
+    }
+
+    linesBody?.querySelectorAll('.invoice-cat-items-table thead th').forEach(function (th, index) {
+      const keys = ['colNum', 'colDesc', 'colQty', 'colUnit', 'colAmount'];
+      if (keys[index]) th.textContent = formTr(keys[index]);
+    });
+    linesBody?.querySelectorAll('.invoice-cat-total-label').forEach(function (el) {
+      el.textContent = formTr('colTotal');
+    });
+    linesBody?.querySelectorAll('.js-add-item').forEach(function (btn) {
+      btn.innerHTML = '<i class="bi bi-plus-lg"></i> ' + formTr('addItem');
+    });
+    linesBody?.querySelectorAll('.invoice-cat-remove-label').forEach(function (el) {
+      el.textContent = formTr('deleteCategory');
+    });
+    linesBody?.querySelectorAll('.js-cat-name').forEach(function (input) {
+      input.placeholder = formTr('catPlaceholder');
+    });
+    linesBody?.querySelectorAll('.js-item-desc').forEach(function (input) {
+      input.placeholder = formTr('descPlaceholder');
+      input.setAttribute('aria-label', formTr('descPlaceholder'));
+    });
+
+    const instTitle = document.getElementById('modalPrintInstallmentTitle');
+    if (instTitle) instTitle.textContent = formTr('printInstallmentTitle');
+    const instDesc = document.getElementById('modalPrintInstallmentDesc');
+    if (instDesc) instDesc.textContent = formTr('printInstallmentDesc');
+    setText('labelInstallment1', 'installment1');
+    setText('labelInstallment2', 'installment2');
+    setText('labelInstallment3', 'installment3');
+    setText('labelInstallmentFull', 'installmentFull');
+    const viewLinkedLabel = document.getElementById('labelPrintLinkedInvoice');
+    if (viewLinkedLabel) viewLinkedLabel.textContent = formTr('printLinkedInvoice');
+  }
+
+  function updateInstallmentPickerAmounts() {
+    const cur = currency();
+    const fullEl = document.getElementById('labelInstallmentFull');
+    const grandEl = document.getElementById('invoiceGrandTotal');
+    if (fullEl) {
+      const grand = grandEl ? grandEl.textContent.trim() : '';
+      const base = formTr('installmentFull');
+      fullEl.textContent = grand ? base + ' — ' + grand + ' ' + cur : base;
+    }
+    const amounts = ['invoicePay1', 'invoicePay2', 'invoicePay3'];
+    const keys = ['installment1', 'installment2', 'installment3'];
+    const labelIds = ['labelInstallment1', 'labelInstallment2', 'labelInstallment3'];
+    amounts.forEach(function (amountId, index) {
+      const amountEl = document.getElementById(amountId);
+      const labelEl = document.getElementById(labelIds[index]);
+      if (!labelEl) return;
+      const amount = amountEl ? amountEl.textContent.trim() : '';
+      const base = formTr(keys[index]);
+      labelEl.textContent = amount ? base + ' — ' + amount + ' ' + cur : base;
+    });
+  }
+
+  let pendingInvoicePrintId = 0;
+
+  function translationCacheKey(text, fromLang, toLang) {
+    return fromLang + ':' + toLang + ':' + text;
+  }
+
+  async function translateManyViaApi(texts, targetLang) {
+    const sourceLang = targetLang === 'ar' ? 'en' : 'ar';
+    const inputs = texts.map(function (t) { return String(t || '').trim(); });
+    const results = inputs.slice();
+    const pendingIndexes = [];
+    const pendingTexts = [];
+
+    inputs.forEach(function (text, index) {
+      if (!text) return;
+      const cached = translationCache.get(translationCacheKey(text, sourceLang, targetLang));
+      if (cached !== undefined) {
+        results[index] = cached;
+        return;
+      }
+      pendingIndexes.push(index);
+      pendingTexts.push(text);
+    });
+
+    if (pendingTexts.length) {
+      const res = await fetch('api/translate-batch.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts: pendingTexts, from: sourceLang, to: targetLang }),
+        credentials: 'same-origin',
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Translation failed');
+      const translations = data.translations || [];
+      pendingIndexes.forEach(function (originalIndex, i) {
+        const translated = translations[i] ?? results[originalIndex];
+        results[originalIndex] = translated;
+        const sourceText = pendingTexts[i];
+        translationCache.set(translationCacheKey(sourceText, sourceLang, targetLang), translated);
+      });
+    }
+
+    return results;
+  }
+
+  function collectTranslatableFields() {
+    const jobs = [];
+    const fieldIds = [
+      'invoiceFormLocation',
+      'invoiceFormSubject',
+      'invoiceFormPrepared',
+      'invoiceFormProposalTel',
+      'invoiceFormClientName',
+      'invoiceFormClientAddress',
+      'invoiceFormClientEmail',
+      'invoiceFormClientPhone',
+      'invoiceFormNotes',
+    ];
+
+    fieldIds.forEach(function (id) {
+      const el = fieldEl(id);
+      if (!el || el.closest('[hidden]')) return;
+      const value = String(el.value || '').trim();
+      if (value) jobs.push({ el: el, value: value });
+    });
+
+    linesBody?.querySelectorAll('.js-cat-name').forEach(function (el) {
+      const value = String(el.value || '').trim();
+      if (value) jobs.push({ el: el, value: value });
+    });
+
+    linesBody?.querySelectorAll('.js-item-desc').forEach(function (el) {
+      const value = String(el.value || '').trim();
+      if (value) jobs.push({ el: el, value: value });
+    });
+
+    return jobs;
+  }
+
+  async function translateFormContent(targetLang) {
+    const jobs = collectTranslatableFields();
+    if (!jobs.length) return;
+
+    const translations = await translateManyViaApi(jobs.map(function (job) { return job.value; }), targetLang);
+    jobs.forEach(function (job, index) {
+      job.el.value = translations[index] ?? job.value;
+    });
+  }
+
+  function setLanguageSwitchLoading(loading) {
+    const pills = modalEl.querySelector('.invoice-language-pills');
+    if (pills) pills.classList.toggle('is-translating', loading);
+    modalEl.querySelectorAll('input[name="invoiceFormLanguage"]').forEach(function (r) {
+      r.disabled = loading;
+    });
+  }
+
+  async function switchFormLanguage(targetLang, sourceLang) {
+    if (languageSwitchBusy) return;
+    const from = sourceLang || lastSavedFormLanguage;
+    if (from === targetLang) return;
+
+    languageSwitchBusy = true;
+    setLanguageSwitchLoading(true);
+
+    const previousLang = from;
+    setFormLanguageRadio(targetLang);
+    lastSavedFormLanguage = targetLang;
+    applyFormLanguage();
+    applyRecordTypeUI();
+
+    try {
+      await translateFormContent(targetLang);
+      markFormDirty();
+    } catch (err) {
+      notifyError(err.message || 'Translation failed', { title: 'Language switch' });
+      lastSavedFormLanguage = previousLang;
+      setFormLanguageRadio(previousLang);
+      applyFormLanguage();
+      applyRecordTypeUI();
+    } finally {
+      setLanguageSwitchLoading(false);
+      languageSwitchBusy = false;
+    }
+  }
 
   function fieldEl(id) {
     return modalEl.querySelector('#' + id) || document.getElementById(id);
@@ -227,20 +637,24 @@
   ];
 
   function staticInvoiceFields() {
+    const lang = getFormLanguage();
+    const defaults = lang === 'ar' ? PROPOSAL_DEFAULTS_AR : PROPOSAL_DEFAULTS;
+    const paymentTerms = lang === 'ar' ? DEFAULT_PAYMENT_TERMS_AR : DEFAULT_PAYMENT_TERMS;
     return {
-      paymentTerms: DEFAULT_PAYMENT_TERMS,
-      intro1: PROPOSAL_DEFAULTS.intro1,
-      intro2: PROPOSAL_DEFAULTS.intro2,
-      intro3: PROPOSAL_DEFAULTS.intro3,
-      cancellationPolicy: PROPOSAL_DEFAULTS.cancellationPolicy,
-      closing1: PROPOSAL_DEFAULTS.closing1,
-      closing2: PROPOSAL_DEFAULTS.closing2,
-      closing3: PROPOSAL_DEFAULTS.closing3,
-      closingRegards: PROPOSAL_DEFAULTS.closingRegards,
-      socialIntro: PROPOSAL_DEFAULTS.socialIntro,
+      paymentTerms: paymentTerms,
+      intro1: defaults.intro1,
+      intro2: defaults.intro2,
+      intro3: defaults.intro3,
+      cancellationPolicy: defaults.cancellationPolicy,
+      closing1: defaults.closing1,
+      closing2: defaults.closing2,
+      closing3: defaults.closing3,
+      closingRegards: defaults.closingRegards,
+      socialIntro: defaults.socialIntro,
       socialSnapchat: '',
       socialInstagram: '',
       socialFacebook: '',
+      language: lang,
     };
   }
 
@@ -342,9 +756,10 @@
       fields.printLabel.textContent = proposal ? 'Print proposal' : 'Print invoice';
     }
     if (fields.saveBtn && !fields.saveBtn.disabled) {
-      fields.saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> <span id="btnInvoiceSaveLabel">' + (proposal ? 'Save proposal' : 'Save invoice') + '</span>';
+      fields.saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> <span id="btnInvoiceSaveLabel">' + (proposal ? formTr('saveProposal') : formTr('saveInvoice')) + '</span>';
       fields.saveLabel = document.getElementById('btnInvoiceSaveLabel');
     }
+    applyFormLanguage();
   }
 
   function currency() {
@@ -476,10 +891,11 @@
     const qty = Math.max(0, Number(item.quantity) || 0);
     const unit = Math.max(0, Number(item.price) || 0);
     const amount = lineAmount(qty, unit);
+    const descPh = formTr('descPlaceholder');
     return (
       '<tr>' +
       '<td class="col-num"><span class="js-row-num text-muted">—</span></td>' +
-      '<td class="col-desc"><input type="text" class="form-control form-control-sm js-item-desc" value="' + escapeHtml(item.description || '') + '" placeholder="Description" aria-label="Description"></td>' +
+      '<td class="col-desc"><input type="text" class="form-control form-control-sm js-item-desc" value="' + escapeHtml(item.description || '') + '" placeholder="' + escapeHtml(descPh) + '" aria-label="' + escapeHtml(descPh) + '"></td>' +
       '<td class="col-qty"><input type="number" class="form-control form-control-sm js-item-qty text-end" min="0" step="1" value="' + qty + '" aria-label="Quantity"></td>' +
       '<td class="col-unit"><input type="number" class="form-control form-control-sm js-item-price text-end" min="0" step="1" value="' + unit + '" aria-label="Unit price"></td>' +
       '<td class="col-amount text-end"><span class="js-item-amount" data-amount="' + amount + '">' + amount.toLocaleString() + '</span></td>' +
@@ -493,24 +909,25 @@
     const block = document.createElement('div');
     block.className = 'invoice-cat-block';
     const itemsHtml = (cat.items || [blankItem()]).map(buildItemRowHtml).join('');
+    const catPh = escapeHtml(formTr('catPlaceholder'));
     block.innerHTML =
       '<div class="invoice-cat-header">' +
-      '<input type="text" class="form-control form-control-sm js-cat-name" value="' + escapeHtml(cat.name || '') + '" placeholder="Category name (e.g. Entertainment)" aria-label="Category name">' +
-      '<button type="button" class="btn btn-sm btn-outline-danger js-remove-cat" title="Delete category"><i class="bi bi-trash" aria-hidden="true"></i><span class="invoice-cat-remove-label">Delete</span></button>' +
+      '<input type="text" class="form-control form-control-sm js-cat-name" value="' + escapeHtml(cat.name || '') + '" placeholder="' + catPh + '" aria-label="' + catPh + '">' +
+      '<button type="button" class="btn btn-sm btn-outline-danger js-remove-cat" title="Delete category"><i class="bi bi-trash" aria-hidden="true"></i><span class="invoice-cat-remove-label">' + escapeHtml(formTr('deleteCategory')) + '</span></button>' +
       '</div>' +
       '<div class="table-responsive">' +
       '<table class="table table-sm invoice-lines-table invoice-cat-items-table mb-0">' +
       '<thead><tr>' +
-      '<th class="col-num">#</th>' +
-      '<th>Description</th>' +
-      '<th class="text-end col-qty">Qty</th>' +
-      '<th class="text-end col-unit">Unit price</th>' +
-      '<th class="text-end col-amount">Amount</th>' +
+      '<th class="col-num">' + escapeHtml(formTr('colNum')) + '</th>' +
+      '<th>' + escapeHtml(formTr('colDesc')) + '</th>' +
+      '<th class="text-end col-qty">' + escapeHtml(formTr('colQty')) + '</th>' +
+      '<th class="text-end col-unit">' + escapeHtml(formTr('colUnit')) + '</th>' +
+      '<th class="text-end col-amount">' + escapeHtml(formTr('colAmount')) + '</th>' +
       '<th class="col-actions"></th>' +
       '</tr></thead>' +
       '<tbody class="invoice-cat-items">' + itemsHtml +
       '<tr class="invoice-cat-total-row">' +
-      '<td colspan="2" class="text-end invoice-cat-total-label">Total</td>' +
+      '<td colspan="2" class="text-end invoice-cat-total-label">' + escapeHtml(formTr('colTotal')) + '</td>' +
       '<td class="text-end"><span class="js-cat-qty-total">0</span></td>' +
       '<td></td>' +
       '<td class="text-end"><span class="js-cat-total fw-semibold" data-amount="0">0</span></td>' +
@@ -518,7 +935,7 @@
       '</tr></tbody>' +
       '</table></div>' +
       '<div class="invoice-cat-footer">' +
-      '<button type="button" class="btn btn-outline-secondary btn-sm js-add-item"><i class="bi bi-plus-lg"></i> Add item</button>' +
+      '<button type="button" class="btn btn-outline-secondary btn-sm js-add-item"><i class="bi bi-plus-lg"></i> ' + escapeHtml(formTr('addItem')) + '</button>' +
       '</div>';
     return block;
   }
@@ -718,7 +1135,7 @@
     const stateFields = Object.assign(
       {
         currency: currency(),
-        language: 'en',
+        language: getFormLanguage(),
       },
       staticInvoiceFields()
     );
@@ -770,6 +1187,9 @@
     const radio = modalEl.querySelector('input[name="invoiceFormCurrency"][value="' + cur + '"]');
     if (radio) radio.checked = true;
 
+    setFormLanguageRadio(f.language === 'ar' ? 'ar' : 'en');
+    lastSavedFormLanguage = f.language === 'ar' ? 'ar' : 'en';
+
     const cats = Array.isArray(state.categories) && state.categories.length
       ? state.categories
       : defaultState().categories;
@@ -782,11 +1202,11 @@
     const proposal = recordType === 'proposal';
     if (fields.title) {
       if (isNew) {
-        fields.title.textContent = 'New proposal';
+        fields.title.textContent = formTr('newProposal');
       } else if (proposal) {
-        fields.title.textContent = (f.subject || 'Proposal') + ' — Technical & Financial Proposal';
+        fields.title.textContent = (f.subject || formTr('sectionProposal')) + formTr('docProposalSuffix');
       } else {
-        fields.title.textContent = (f.subject || 'Invoice') + (data.invoice_number ? ' — ' + data.invoice_number : '');
+        fields.title.textContent = (f.subject || formTr('sectionInvoice')) + (data.invoice_number ? ' — ' + data.invoice_number : '');
       }
     }
     if (fields.printBtn) {
@@ -1120,8 +1540,31 @@
     if (filterStatCard) filterStatCard.classList.toggle('is-filtered', q !== '');
   }
 
-  function openPrint(id) {
-    window.open('invoice.php?id=' + encodeURIComponent(id), '_blank', 'noopener');
+  function openPrint(id, options) {
+    options = options || {};
+    if (!id) return;
+    let url = 'invoice.php?id=' + encodeURIComponent(id);
+    if (options.installment === 'full') {
+      url += '&installment=full';
+    } else {
+      const installment = parseInt(options.installment, 10);
+      if (installment >= 1 && installment <= 3) {
+        url += '&installment=' + installment;
+      }
+    }
+    window.open(url, '_blank', 'noopener');
+  }
+
+  function openInvoicePrintPicker(id) {
+    if (!id) return;
+    pendingInvoicePrintId = id;
+    updateInstallmentPickerAmounts();
+    const pickerEl = document.getElementById('modalPrintInstallment');
+    if (!pickerEl) {
+      openPrint(id, { installment: 'full' });
+      return;
+    }
+    bootstrap.Modal.getOrCreateInstance(pickerEl).show();
   }
 
   function saveThenPrint() {
@@ -1158,7 +1601,11 @@
           throw new Error((result.data && result.data.error) || 'Save failed');
         }
         if (fields.printBtn) fields.printBtn.hidden = false;
-        openPrint(id);
+        if (isProposalMode()) {
+          openPrint(id);
+        } else {
+          openInvoicePrintPicker(id);
+        }
       })
       .catch(function (err) {
         notifyError(err.message || 'Could not save before printing', { title: 'Print failed' });
@@ -1177,7 +1624,7 @@
   fields.viewLinkedBtn?.addEventListener('click', function () {
     const linkedId = parseInt(fieldValue('invoiceFormLinkedInvoiceId') || '0', 10);
     if (linkedId > 0) {
-      openPrint(linkedId);
+      openInvoicePrintPicker(linkedId);
     }
   });
 
@@ -1199,7 +1646,7 @@
 
   document.querySelectorAll('.btn-print-linked-invoice').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      openPrint(Number(btn.dataset.id));
+      openInvoicePrintPicker(Number(btn.dataset.id));
     });
   });
 
@@ -1237,7 +1684,38 @@
   modalEl.querySelectorAll('input[name="invoiceFormCurrency"]').forEach(function (radio) {
     radio.addEventListener('change', setCurrencyLabels);
   });
+  modalEl.querySelectorAll('input[name="invoiceFormLanguage"]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      if (languageSwitchBusy) return;
+      const target = radio.value === 'ar' ? 'ar' : 'en';
+      if (target === lastSavedFormLanguage) return;
+      switchFormLanguage(target, lastSavedFormLanguage);
+    });
+  });
   fields.discount?.addEventListener('input', updateTotals);
+
+  document.querySelectorAll('.btn-installment-print').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const raw = btn.dataset.installment || '';
+      const id = pendingInvoicePrintId;
+      const pickerEl = document.getElementById('modalPrintInstallment');
+      if (pickerEl) {
+        const instance = bootstrap.Modal.getInstance(pickerEl);
+        if (instance) instance.hide();
+      }
+      if (id > 0) {
+        if (raw === 'full') {
+          openPrint(id, { installment: 'full' });
+        } else {
+          const installment = parseInt(raw, 10);
+          if (installment >= 1 && installment <= 3) {
+            openPrint(id, { installment: installment });
+          }
+        }
+      }
+      pendingInvoicePrintId = 0;
+    });
+  });
 
   fields.printBtn?.addEventListener('click', function () {
     saveThenPrint();

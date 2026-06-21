@@ -577,7 +577,7 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                                 <button type="button" class="btn btn-sm btn-outline-info btn-print-linked-invoice"
                                     data-id="<?= (int) $linkedInvoice['id'] ?>"
                                     data-number="<?= htmlspecialchars($linkedNumber, ENT_QUOTES) ?>"
-                                    title="Print invoice <?= htmlspecialchars($linkedNumber, ENT_QUOTES) ?>">
+                                    title="Print invoice (choose installment)">
                                     <i class="bi bi-receipt"></i>
                                 </button>
                                 <?php else: ?>

@@ -140,8 +140,25 @@ function cmsInvoiceDefaultCategories(): array
     ];
 }
 
-function cmsInvoiceDefaultProposalFields(): array
+function cmsInvoiceDefaultProposalFields(string $lang = 'en'): array
 {
+    if ($lang === 'ar') {
+        return [
+            'intro1' => 'يسعدنا أن تتاح لنا الفرصة لتقديم عرضنا لإدارة فعاليتكم القادمة.',
+            'intro2' => 'نقدم لكم ملخصًا كاملاً للعرض الفني والمالي الذي توفره نيش سوسايتي.',
+            'intro3' => 'شكرًا لاختياركم نيش سوسايتي كأحد المرشحين للشراكة في فعاليتكم القادمة.',
+            'cancellationPolicy' => "الدفعة الأولى غير مستردة.\nلا يتم رد أي دفعة إذا تم الإلغاء قبل أقل من 60 يومًا من الفعالية.\nعروض التصوير والفيديو لها أسعار خاصة مع خدمات تنظيم حفلات الزفاف.",
+            'closing1' => 'نأمل أن يكون ما ورد أعلاه مناسبًا لكم ونتطلع إلى تأكيدكم قريبًا،',
+            'closing2' => 'يرجى إرسال بريد إلكتروني يفيد بالموافقة وتأكيد هذه الترتيبات.',
+            'closing3' => 'لأي استفسار إضافي يرجى التواصل مباشرة على +966 54 694 7915، ويسعدنا تقديم المساعدة.',
+            'closingRegards' => 'مع أطيب التحيات،',
+            'socialIntro' => 'يمكن للعميل الموافقة أو عدم الموافقة على نشر محتوى الفعالية (صور، فيديو، وتغطية) على المنصات أدناه. ضع علامة على غير موافق إذا لم تكن نيش سوسايتي تنشر محتوى الفعالية على تلك المنصة دون موافقة خطية منفصلة.',
+            'socialSnapchat' => '',
+            'socialInstagram' => '',
+            'socialFacebook' => '',
+        ];
+    }
+
     return [
         'intro1' => "It's our pleasure for giving us the opportunity to present our proposal regarding the management of your upcoming event.",
         'intro2' => 'We are writing you to summarize the complete technical and financial proposal that Niche Society has to offer.',
@@ -156,6 +173,19 @@ function cmsInvoiceDefaultProposalFields(): array
         'socialInstagram' => '',
         'socialFacebook' => '',
     ];
+}
+
+function cmsInvoiceDefaultPaymentTerms(string $lang = 'en'): string
+{
+    if ($lang === 'ar') {
+        return "الدفعة الأولى: 30% من إجمالي المبلغ عند توقيع العقد\n"
+            . "الدفعة الثانية: 40% من إجمالي المبلغ قبل الفعالية\n"
+            . "الدفعة الثالثة: 30% من إجمالي المبلغ في يوم الفعالية";
+    }
+
+    return "First payment: 30% of total amount is required upon signing the contract\n"
+        . "Second payment: 40% of the total amount is required before the event\n"
+        . "Third payment: 30% of the total amount is required on the day of the event";
 }
 
 function cmsInvoiceDefaultState(): array
@@ -176,7 +206,7 @@ function cmsInvoiceDefaultState(): array
             'clientPhone' => '',
             'signatureDate' => '',
             'dueDate' => '',
-            'paymentTerms' => "First payment: 30% of total amount is required upon signing the contract\nSecond payment: 40% of the total amount is required before the event\nThird payment: 30% of the total amount is required on the day of the event",
+            'paymentTerms' => cmsInvoiceDefaultPaymentTerms('en'),
             'notes' => '',
             'language' => 'en',
         ], cmsInvoiceDefaultProposalFields()),
@@ -312,12 +342,12 @@ function cmsInvoiceNormalizeState(array $state): array
         'clientPhone' => trim((string) ($fields['clientPhone'] ?? $fields['client_phone'] ?? '')),
         'signatureDate' => trim((string) ($fields['signatureDate'] ?? '')),
         'dueDate' => trim((string) ($fields['dueDate'] ?? $fields['due_date'] ?? '')),
-        'paymentTerms' => trim((string) ($fields['paymentTerms'] ?? cmsInvoiceDefaultState()['fields']['paymentTerms'])),
+        'paymentTerms' => trim((string) ($fields['paymentTerms'] ?? cmsInvoiceDefaultPaymentTerms($language))),
         'notes' => trim((string) ($fields['notes'] ?? '')),
         'language' => $language,
     ];
 
-    $proposalDefaults = cmsInvoiceDefaultProposalFields();
+    $proposalDefaults = cmsInvoiceDefaultProposalFields($language);
     foreach ($proposalDefaults as $key => $defaultVal) {
         if (!array_key_exists($key, $fields)) {
             $normalizedFields[$key] = $defaultVal;

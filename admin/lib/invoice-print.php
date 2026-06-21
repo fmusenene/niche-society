@@ -31,12 +31,134 @@ function adminInvoiceWatermarkUrl(): string
     return str_replace(' ', '%20', url($relative));
 }
 
-function adminInvoiceSocialDisclaimer(): string
+function adminInvoiceSocialDisclaimer(string $lang = 'en'): string
 {
+    if ($lang === 'ar') {
+        return 'يمكن للعميل الموافقة أو عدم الموافقة على نشر محتوى الفعالية (صور، فيديو، وتغطية) على المنصات أدناه. ضع علامة على غير موافق إذا لم تكن نيش سوسايتي تنشر محتوى الفعالية على تلك المنصة دون موافقة خطية منفصلة.';
+    }
+
     return 'The client may authorize or decline publication of event-related content (photos, videos, and coverage) on the platforms below. Tick Not Approved if Niche Society should not publish event-related content on that platform without separate written consent.';
 }
 
-function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = false): string
+/** @return array<string, string> */
+function adminInvoicePrintLabels(string $lang = 'en'): array
+{
+    $en = [
+        'docProposal' => 'Technical & Financial Proposal',
+        'docInvoice' => 'Invoice',
+        'offerDate' => 'Offer Date',
+        'invoiceDate' => 'Invoice date',
+        'eventDate' => 'Event Date',
+        'eventLocation' => 'Event Location',
+        'subject' => 'Subject',
+        'preparedBy' => 'Prepared by',
+        'tel' => 'Tel',
+        'billFrom' => 'Bill from',
+        'billTo' => 'Bill to',
+        'email' => 'Email:',
+        'phone' => 'Phone:',
+        'invoiceNumber' => 'Invoice number',
+        'dueDate' => 'Due date',
+        'description' => 'Description',
+        'qty' => 'Qty',
+        'unitPrice' => 'Unit price',
+        'amount' => 'Amount',
+        'total' => 'Total',
+        'noLineItems' => 'No line items',
+        'subtotal' => 'Subtotal',
+        'fees' => 'Event management fees (15%)',
+        'discount' => 'Discount',
+        'amountDue' => 'Amount due',
+        'pay1' => 'First payment (30%)',
+        'pay2' => 'Second payment (40%)',
+        'pay3' => 'Third payment (30%)',
+        'paymentsTitle' => 'Method of payments',
+        'cancellationTitle' => 'Cancelation Policy',
+        'socialTitle' => 'Social Media Coverage Authorization',
+        'approved' => 'Approved',
+        'notApproved' => 'Not approved',
+        'authorization' => 'Authorization',
+        'clientSignature' => 'Client signature',
+        'date' => 'Date:',
+        'notes' => 'Notes',
+        'footerThanks' => 'Thank you for your business.',
+        'print' => 'Print / Save PDF',
+        'close' => 'Close',
+        'platformSnapchat' => 'Snapchat',
+        'platformInstagram' => 'Instagram',
+        'platformFacebook' => 'Facebook',
+        'installment1Due' => 'Amount due — 1st payment (30%)',
+        'installment2Due' => 'Amount due — 2nd payment (40%)',
+        'installment3Due' => 'Amount due — 3rd payment (30%)',
+        'contractTotal' => 'Contract total',
+        'installmentOf' => 'Installment',
+        'installment1Of' => '1 of 3 — First payment (30%)',
+        'installment2Of' => '2 of 3 — Second payment (40%)',
+        'installment3Of' => '3 of 3 — Third payment (30%)',
+        'installmentFullDue' => 'Amount due — Full payment',
+        'installmentFullOf' => 'Full payment (100%)',
+    ];
+
+    $ar = [
+        'docProposal' => 'العرض الفني والمالي',
+        'docInvoice' => 'فاتورة',
+        'offerDate' => 'تاريخ العرض',
+        'invoiceDate' => 'تاريخ الفاتورة',
+        'eventDate' => 'تاريخ الفعالية',
+        'eventLocation' => 'موقع الفعالية',
+        'subject' => 'الموضوع',
+        'preparedBy' => 'إعداد',
+        'tel' => 'هاتف',
+        'billFrom' => 'من',
+        'billTo' => 'إلى',
+        'email' => 'البريد:',
+        'phone' => 'الهاتف:',
+        'invoiceNumber' => 'رقم الفاتورة',
+        'dueDate' => 'تاريخ الاستحقاق',
+        'description' => 'التفاصيل',
+        'qty' => 'الكمية',
+        'unitPrice' => 'سعر الوحدة',
+        'amount' => 'المبلغ',
+        'total' => 'الإجمالي',
+        'noLineItems' => 'لا توجد بنود',
+        'subtotal' => 'إجمالي الخدمات',
+        'fees' => 'رسوم إدارة الفعالية (15%)',
+        'discount' => 'الخصم',
+        'amountDue' => 'المبلغ المستحق',
+        'pay1' => 'الدفعة الأولى (30%)',
+        'pay2' => 'الدفعة الثانية (40%)',
+        'pay3' => 'الدفعة الثالثة (30%)',
+        'paymentsTitle' => 'طريقة الدفع',
+        'cancellationTitle' => 'سياسة الإلغاء',
+        'socialTitle' => 'تفويض النشر عبر وسائل التواصل الاجتماعي',
+        'approved' => 'موافق',
+        'notApproved' => 'غير موافق',
+        'authorization' => 'التفويض',
+        'clientSignature' => 'توقيع العميل',
+        'date' => 'التاريخ:',
+        'notes' => 'ملاحظات',
+        'footerThanks' => 'شكرًا لتعاملكم معنا.',
+        'print' => 'طباعة / حفظ PDF',
+        'close' => 'إغلاق',
+        'platformSnapchat' => 'سناب شات',
+        'platformInstagram' => 'إنستغرام',
+        'platformFacebook' => 'فيسبوك',
+        'installment1Due' => 'المبلغ المستحق — الدفعة الأولى (30%)',
+        'installment2Due' => 'المبلغ المستحق — الدفعة الثانية (40%)',
+        'installment3Due' => 'المبلغ المستحق — الدفعة الثالثة (30%)',
+        'contractTotal' => 'إجمالي العقد',
+        'installmentOf' => 'الدفعة',
+        'installment1Of' => '1 من 3 — الدفعة الأولى (30%)',
+        'installment2Of' => '2 من 3 — الدفعة الثانية (40%)',
+        'installment3Of' => '3 من 3 — الدفعة الثالثة (30%)',
+        'installmentFullDue' => 'المبلغ المستحق — الدفع الكامل',
+        'installmentFullOf' => 'دفع كامل (100%)',
+    ];
+
+    return $lang === 'ar' ? $ar : $en;
+}
+
+function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = false, int $installment = 0, bool $fullPayment = false): string
 {
     $invoice = cmsGetInvoice($pdo, $invoiceId);
     if (!$invoice) {
@@ -47,9 +169,13 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     $watermarkUrl = adminInvoiceWatermarkUrl();
     $state = $invoice['state'];
     $fields = $state['fields'];
+    $lang = ($fields['language'] ?? 'en') === 'ar' ? 'ar' : 'en';
+    $L = adminInvoicePrintLabels($lang);
+    $dir = $lang === 'ar' ? 'rtl' : 'ltr';
     $currency = $fields['currency'] ?? 'SAR';
     $discountPct = (float) ($fields['discount'] ?? 0);
     $totals = cmsInvoiceComputeBreakdown($state['categories'], $discountPct);
+    $installment = max(0, min(3, $installment));
 
     $h = static fn (?string $v): string => htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8');
     $money = static fn (int $n): string => htmlspecialchars(cmsInvoiceFormatMoney($n, $currency), ENT_QUOTES, 'UTF-8');
@@ -101,7 +227,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
         }
         if ($catName !== '' || $catHasRows) {
             $lineRows .= '<tr class="cat-total-row">'
-                . '<td colspan="2" class="cat-total-label">Total</td>'
+                . '<td colspan="2" class="cat-total-label">' . $h($L['total']) . '</td>'
                 . '<td class="qty">' . $catQty . '</td>'
                 . '<td></td>'
                 . '<td class="amount">' . $money($catSubtotal) . '</td>'
@@ -109,7 +235,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
         }
     }
     if ($lineRows === '') {
-        $lineRows = '<tr><td colspan="5" class="empty">No line items</td></tr>';
+        $lineRows = '<tr><td colspan="5" class="empty">' . $h($L['noLineItems']) . '</td></tr>';
     }
 
     $paymentTerms = $fields['paymentTerms'] ?? '';
@@ -135,7 +261,24 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     $notes = trim($fields['notes'] ?? '');
 
     $isProposal = cmsInvoiceIsProposal($invoice);
-    $docTitle = $isProposal ? 'Technical & Financial Proposal' : 'Invoice';
+    if ($isProposal) {
+        $installment = 0;
+        $fullPayment = false;
+    }
+    $installmentDue = ($installment >= 1 && $installment <= 3) ? (int) $totals['pay' . $installment] : 0;
+    $amountDueLabel = $L['amountDue'];
+    $amountDueValue = $totals['grand'];
+    $installmentMeta = '';
+    if ($fullPayment) {
+        $amountDueLabel = $L['installmentFullDue'];
+        $amountDueValue = $totals['grand'];
+        $installmentMeta = $L['installmentFullOf'];
+    } elseif ($installmentDue > 0) {
+        $amountDueLabel = $L['installment' . $installment . 'Due'];
+        $amountDueValue = $installmentDue;
+        $installmentMeta = $L['installment' . $installment . 'Of'];
+    }
+    $docTitle = $isProposal ? $L['docProposal'] : $L['docInvoice'];
     $invoiceNumber = trim((string) ($invoice['invoice_number'] ?? ''));
     $offerDate = cmsInvoiceFormatDisplayDate($fields['offerDate'] ?: ($invoice['offer_date'] ?? ''), true);
     $dueDate = cmsInvoiceFormatDisplayDate($fields['dueDate'] ?: ($invoice['due_date'] ?? ''), true);
@@ -147,7 +290,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     $proposalTelDisplay = $proposalTel !== '' ? $proposalTel : '—';
     $autoPrintJs = $autoPrint ? 'window.addEventListener("load",function(){window.print();});' : '';
 
-    $proposalDefaults = cmsInvoiceDefaultProposalFields();
+    $proposalDefaults = cmsInvoiceDefaultProposalFields($lang);
     $intro1 = trim($fields['intro1'] ?? $proposalDefaults['intro1']);
     $intro2 = trim($fields['intro2'] ?? $proposalDefaults['intro2']);
     $intro3 = trim($fields['intro3'] ?? $proposalDefaults['intro3']);
@@ -157,7 +300,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     $closingRegards = trim($fields['closingRegards'] ?? $proposalDefaults['closingRegards']);
     $socialIntro = trim($fields['socialIntro'] ?? '');
     if ($socialIntro === '') {
-        $socialIntro = adminInvoiceSocialDisclaimer();
+        $socialIntro = adminInvoiceSocialDisclaimer($lang);
     }
     $cancellationText = trim($fields['cancellationPolicy'] ?? $proposalDefaults['cancellationPolicy']);
 
@@ -171,18 +314,22 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
         }
     }
 
-    $socialPlatforms = ['Snapchat', 'Instagram', 'Facebook'];
+    $socialPlatforms = [
+        $L['platformSnapchat'],
+        $L['platformInstagram'],
+        $L['platformFacebook'],
+    ];
     $socialRowsHtml = '';
     foreach ($socialPlatforms as $platformName) {
         $socialRowsHtml .= '<div class="social-row">'
             . '<span class="social-platform">' . $h($platformName) . '</span>'
             . '<span class="social-choice">'
             . '<span class="social-checkbox" aria-hidden="true"></span>'
-            . '<span>Approved</span>'
+            . '<span>' . $h($L['approved']) . '</span>'
             . '</span>'
             . '<span class="social-choice">'
             . '<span class="social-checkbox" aria-hidden="true"></span>'
-            . '<span>Not approved</span>'
+            . '<span>' . $h($L['notApproved']) . '</span>'
             . '</span>'
             . '</div>';
     }
@@ -190,11 +337,11 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     ob_start();
     ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $h($lang) ?>" dir="<?= $h($dir) ?>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Invoice <?= $h($invoiceNumber) ?> — <?= $h($company['name']) ?></title>
+  <title><?= $h($isProposal ? 'Proposal' : 'Invoice') ?><?= $installmentDue > 0 ? ' — ' . $h($installmentMeta) : '' ?> <?= $h($invoiceNumber) ?> — <?= $h($company['name']) ?></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Domine:wght@500;600;700&family=Arimo:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -215,6 +362,30 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       background: #ece8e4;
       line-height: 1.45;
     }
+    html[dir="rtl"] body { text-align: right; }
+    html[dir="rtl"] .invoice-top { flex-direction: row-reverse; }
+    html[dir="rtl"] .invoice-top--proposal .header-url { direction: ltr; }
+    html[dir="rtl"] .proposal-meta-grid,
+    html[dir="rtl"] .meta-grid,
+    html[dir="rtl"] .invoice-facts,
+    html[dir="rtl"] .payments-box,
+    html[dir="rtl"] .footer-grid { direction: rtl; }
+    html[dir="rtl"] .proposal-field { flex-direction: row-reverse; }
+    html[dir="rtl"] table.items th,
+    html[dir="rtl"] table.items td.desc { text-align: right; }
+    html[dir="rtl"] table.items th.qty,
+    html[dir="rtl"] table.items th.unit,
+    html[dir="rtl"] table.items th.amount,
+    html[dir="rtl"] table.items td.qty,
+    html[dir="rtl"] table.items td.unit,
+    html[dir="rtl"] table.items td.amount { text-align: left; }
+    html[dir="rtl"] table.items tr.cat-total-row td.cat-total-label { text-align: left; }
+    html[dir="rtl"] .summary-wrap { justify-content: flex-start; }
+    html[dir="rtl"] .summary-row { flex-direction: row-reverse; }
+    html[dir="rtl"] .intro-block,
+    html[dir="rtl"] .terms ul { border-left: 0; border-right: 3px solid var(--burgundy); padding-right: 18px; padding-left: 0; }
+    html[dir="rtl"] .proposal-meta-grid { border-left: 0; border-right: 3px solid var(--burgundy); }
+    html[dir="rtl"] .social-row { flex-direction: row-reverse; }
     .invoice-page {
       max-width: 210mm;
       margin: 0 auto;
@@ -482,6 +653,21 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       font-size: 9pt;
     }
     .payments-box strong { display: block; font-size: 11pt; margin-top: 4px; }
+    .payments-box div.is-active {
+      border-color: var(--burgundy);
+      background: #f3ebe3;
+      box-shadow: inset 0 0 0 1px rgba(96, 34, 52, 0.15);
+      font-weight: 600;
+    }
+    .payments-box div.is-active strong { color: var(--burgundy); }
+    .payments-box.is-full-payment div {
+      border-color: var(--burgundy);
+      background: #f3ebe3;
+    }
+    .summary-row.contract-total {
+      font-size: 9.5pt;
+      color: var(--muted);
+    }
     .section-title {
       font-family: "Domine", Georgia, serif;
       font-size: 11pt;
@@ -603,8 +789,8 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
 </head>
 <body>
   <div class="toolbar no-print">
-    <button type="button" onclick="window.print()">Print / Save PDF</button>
-    <button type="button" class="primary" onclick="window.close()">Close</button>
+    <button type="button" onclick="window.print()"><?= $h($L['print']) ?></button>
+    <button type="button" class="primary" onclick="window.close()"><?= $h($L['close']) ?></button>
   </div>
 
   <div class="invoice-page">
@@ -628,27 +814,27 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
 
       <div class="proposal-meta-grid">
         <div class="proposal-field">
-          <span class="proposal-label">Offer Date</span>
+          <span class="proposal-label"><?= $h($L['offerDate']) ?></span>
           <span class="proposal-value"><?= $h($offerDate) ?></span>
         </div>
         <div class="proposal-field">
-          <span class="proposal-label">Event Date</span>
+          <span class="proposal-label"><?= $h($L['eventDate']) ?></span>
           <span class="proposal-value"><?= $h($eventDate) ?></span>
         </div>
         <div class="proposal-field">
-          <span class="proposal-label">Event Location</span>
+          <span class="proposal-label"><?= $h($L['eventLocation']) ?></span>
           <span class="proposal-value"><?= $h($location) ?></span>
         </div>
         <div class="proposal-field">
-          <span class="proposal-label">Subject</span>
+          <span class="proposal-label"><?= $h($L['subject']) ?></span>
           <span class="proposal-value"><?= $h($subject) ?></span>
         </div>
         <div class="proposal-field">
-          <span class="proposal-label">Prepared by</span>
+          <span class="proposal-label"><?= $h($L['preparedBy']) ?></span>
           <span class="proposal-value"><?= $h($prepared) ?></span>
         </div>
         <div class="proposal-field">
-          <span class="proposal-label">Tel</span>
+          <span class="proposal-label"><?= $h($L['tel']) ?></span>
           <span class="proposal-value"><?= $h($proposalTelDisplay) ?></span>
         </div>
       </div>
@@ -665,14 +851,14 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
 
       <div class="meta-grid">
         <div class="meta-box">
-          <h3>Bill from</h3>
+          <h3><?= $h($L['billFrom']) ?></h3>
           <p><strong><?= $h($company['name']) ?></strong></p>
           <p class="muted"><?= $h($company['address']) ?></p>
           <p class="muted"><?= $h($company['phone']) ?></p>
           <p class="muted"><?= $h($company['email']) ?></p>
         </div>
         <div class="meta-box bill-to-box">
-          <h3>Bill to</h3>
+          <h3><?= $h($L['billTo']) ?></h3>
           <?php if (!$hasBillTo): ?>
           <p class="muted">—</p>
           <?php else: ?>
@@ -683,22 +869,25 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
           <p class="muted bill-to-address"><?= nl2br($h($clientAddress)) ?></p>
           <?php endif; ?>
           <?php if ($clientEmail !== ''): ?>
-          <p class="muted"><span class="bill-to-label">Email:</span> <?= $h($clientEmail) ?></p>
+          <p class="muted"><span class="bill-to-label"><?= $h($L['email']) ?></span> <?= $h($clientEmail) ?></p>
           <?php endif; ?>
           <?php if ($clientPhone !== ''): ?>
-          <p class="muted"><span class="bill-to-label">Phone:</span> <?= $h($clientPhone) ?></p>
+          <p class="muted"><span class="bill-to-label"><?= $h($L['phone']) ?></span> <?= $h($clientPhone) ?></p>
           <?php endif; ?>
           <?php endif; ?>
         </div>
       </div>
 
       <div class="invoice-facts">
-        <div><span>Invoice number</span><strong><?= $h($invoiceNumber !== '' ? $invoiceNumber : '—') ?></strong></div>
-        <div><span>Invoice date</span><strong><?= $h($offerDate) ?></strong></div>
-        <div><span>Due date</span><strong><?= $h($dueDate) ?></strong></div>
-        <div><span>Event date</span><strong><?= $h($eventDate) ?></strong></div>
-        <div><span>Event location</span><strong><?= $h($location) ?></strong></div>
-        <div><span>Prepared by</span><strong><?= $h($prepared) ?></strong></div>
+        <div><span><?= $h($L['invoiceNumber']) ?></span><strong><?= $h($invoiceNumber !== '' ? $invoiceNumber : '—') ?></strong></div>
+        <?php if ($installmentMeta !== ''): ?>
+        <div><span><?= $h($L['installmentOf']) ?></span><strong><?= $h($installmentMeta) ?></strong></div>
+        <?php endif; ?>
+        <div><span><?= $h($L['invoiceDate']) ?></span><strong><?= $h($offerDate) ?></strong></div>
+        <div><span><?= $h($L['dueDate']) ?></span><strong><?= $h($dueDate) ?></strong></div>
+        <div><span><?= $h($L['eventDate']) ?></span><strong><?= $h($eventDate) ?></strong></div>
+        <div><span><?= $h($L['eventLocation']) ?></span><strong><?= $h($location) ?></strong></div>
+        <div><span><?= $h($L['preparedBy']) ?></span><strong><?= $h($prepared) ?></strong></div>
       </div>
 
       <?php endif; ?>
@@ -707,10 +896,10 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
         <thead>
           <tr>
             <th class="num">#</th>
-            <th>Description</th>
-            <th class="qty">Qty</th>
-            <th class="unit">Unit price</th>
-            <th class="amount">Amount</th>
+            <th><?= $h($L['description']) ?></th>
+            <th class="qty"><?= $h($L['qty']) ?></th>
+            <th class="unit"><?= $h($L['unitPrice']) ?></th>
+            <th class="amount"><?= $h($L['amount']) ?></th>
           </tr>
         </thead>
         <tbody><?= $lineRows ?></tbody>
@@ -718,31 +907,34 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
 
       <div class="summary-wrap">
         <div class="summary">
-          <div class="summary-row"><span>Subtotal</span><strong><?= $money($totals['subtotal']) ?></strong></div>
-          <div class="summary-row"><span>Event management fees (15%)</span><strong><?= $money($totals['fees']) ?></strong></div>
+          <div class="summary-row"><span><?= $h($L['subtotal']) ?></span><strong><?= $money($totals['subtotal']) ?></strong></div>
+          <div class="summary-row"><span><?= $h($L['fees']) ?></span><strong><?= $money($totals['fees']) ?></strong></div>
           <?php if ($totals['discount'] > 0): ?>
-          <div class="summary-row discount"><span>Discount (<?= (int) $discountPct ?>%)</span><strong>-<?= $money($totals['discount']) ?></strong></div>
+          <div class="summary-row discount"><span><?= $h($L['discount']) ?> (<?= (int) $discountPct ?>%)</span><strong>-<?= $money($totals['discount']) ?></strong></div>
           <?php endif; ?>
-          <div class="summary-row total"><span>Amount due</span><strong><?= $money($totals['grand']) ?></strong></div>
+          <?php if ($installmentDue > 0): ?>
+          <div class="summary-row contract-total"><span><?= $h($L['contractTotal']) ?></span><strong><?= $money($totals['grand']) ?></strong></div>
+          <?php endif; ?>
+          <div class="summary-row total"><span><?= $h($amountDueLabel) ?></span><strong><?= $money($amountDueValue) ?></strong></div>
         </div>
       </div>
 
-      <div class="payments-box">
-        <div>First payment (30%)<strong><?= $money($totals['pay1']) ?></strong></div>
-        <div>Second payment (40%)<strong><?= $money($totals['pay2']) ?></strong></div>
-        <div>Third payment (30%)<strong><?= $money($totals['pay3']) ?></strong></div>
+      <div class="payments-box<?= $fullPayment ? ' is-full-payment' : '' ?>">
+        <div class="<?= $installment === 1 ? 'is-active' : '' ?>"><?= $h($L['pay1']) ?><strong><?= $money($totals['pay1']) ?></strong></div>
+        <div class="<?= $installment === 2 ? 'is-active' : '' ?>"><?= $h($L['pay2']) ?><strong><?= $money($totals['pay2']) ?></strong></div>
+        <div class="<?= $installment === 3 ? 'is-active' : '' ?>"><?= $h($L['pay3']) ?><strong><?= $money($totals['pay3']) ?></strong></div>
       </div>
 
       <?php if ($isProposal && $paymentTermsHtml !== ''): ?>
       <div class="terms prose-block">
-        <h4 class="section-title">Method of payments</h4>
+        <h4 class="section-title"><?= $h($L['paymentsTitle']) ?></h4>
         <ul><?= $paymentTermsHtml ?></ul>
       </div>
       <?php endif; ?>
 
       <?php if ($isProposal && $cancellationHtml !== ''): ?>
       <div class="terms prose-block">
-        <h4 class="section-title">Cancelation Policy</h4>
+        <h4 class="section-title"><?= $h($L['cancellationTitle']) ?></h4>
         <ul><?= $cancellationHtml ?></ul>
       </div>
       <?php endif; ?>
@@ -761,7 +953,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
 
       <?php if ($isProposal): ?>
       <div class="social-block">
-        <h4 class="section-title">Social Media Coverage Authorization</h4>
+        <h4 class="section-title"><?= $h($L['socialTitle']) ?></h4>
         <p class="social-intro"><?= $h($socialIntro) ?></p>
         <?= $socialRowsHtml ?>
       </div>
@@ -770,12 +962,12 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       <div class="footer-grid">
         <div></div>
         <div>
-          <h4 class="section-title">Authorization</h4>
-          <p class="muted" style="margin:0 0 8px;">Client signature</p>
+          <h4 class="section-title"><?= $h($L['authorization']) ?></h4>
+          <p class="muted" style="margin:0 0 8px;"><?= $h($L['clientSignature']) ?></p>
           <div class="signature-line">
             &nbsp;
             <?php if (!empty($fields['signatureDate'])): ?>
-            <br><span>Date: <?= $h(cmsInvoiceFormatDisplayDate($fields['signatureDate'])) ?></span>
+            <br><span><?= $h($L['date']) ?> <?= $h(cmsInvoiceFormatDisplayDate($fields['signatureDate'])) ?></span>
             <?php endif; ?>
           </div>
         </div>
@@ -783,13 +975,13 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
 
       <?php if ($notes !== ''): ?>
       <div class="notes" style="margin-top:18px;">
-        <h4 class="section-title">Notes</h4>
+        <h4 class="section-title"><?= $h($L['notes']) ?></h4>
         <p><?= nl2br($h($notes)) ?></p>
       </div>
       <?php endif; ?>
 
       <p class="muted" style="margin-top:24px;font-size:8.5pt;text-align:center;">
-        Thank you for your business. <?= $h($company['name']) ?> · <?= $h($company['website']) ?>
+        <?= $h($L['footerThanks']) ?> <?= $h($company['name']) ?> · <?= $h($company['website']) ?>
       </p>
     </div>
   </div>

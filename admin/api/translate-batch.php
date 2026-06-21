@@ -1,6 +1,6 @@
 <?php
 /**
- * AJAX: translate text between English and Arabic
+ * AJAX: translate multiple texts between English and Arabic in one request.
  */
 header('Content-Type: application/json; charset=utf-8');
 
@@ -25,9 +25,16 @@ if (!is_array($payload)) {
     $payload = $_POST;
 }
 
-$text = trim((string) ($payload['text'] ?? ''));
-if ($text === '') {
-    echo json_encode(['ok' => true, 'translated' => '']);
+$texts = $payload['texts'] ?? [];
+if (!is_array($texts)) {
+    http_response_code(400);
+    echo json_encode(['ok' => false, 'error' => 'texts must be an array']);
+    exit;
+}
+
+if (count($texts) > 80) {
+    http_response_code(400);
+    echo json_encode(['ok' => false, 'error' => 'Too many texts (max 80).']);
     exit;
 }
 
@@ -40,15 +47,25 @@ if (!in_array($to, ['en', 'ar'], true)) {
     $to = $from === 'en' ? 'ar' : 'en';
 }
 
-if (mb_strlen($text) > 8000) {
-    http_response_code(400);
-    echo json_encode(['ok' => false, 'error' => 'Text too long (max 8000 characters).']);
+$normalized = [];
+foreach ($texts as $text) {
+    $text = trim((string) $text);
+    if (mb_strlen($text) > 8000) {
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'error' => 'One or more texts exceed 8000 characters.']);
+        exit;
+    }
+    $normalized[] = $text;
+}
+
+if ($normalized === []) {
+    echo json_encode(['ok' => true, 'translations' => []], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 try {
-    $translated = cmsTranslateBetween($text, $from, $to);
-    echo json_encode(['ok' => true, 'translated' => $translated], JSON_UNESCAPED_UNICODE);
+    $translations = cmsTranslateMany($normalized, $from, $to);
+    echo json_encode(['ok' => true, 'translations' => $translations], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     http_response_code(502);
     echo json_encode(['ok' => false, 'error' => $e->getMessage()]);
