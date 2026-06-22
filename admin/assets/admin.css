@@ -546,6 +546,15 @@ table td, table th { vertical-align: middle; }
     color: var(--gold);
 }
 
+.invoice-stat-card--currency .admin-stat-value {
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+}
+
+.invoice-stat-card--jod::before {
+    background: linear-gradient(90deg, #2d6a4f, #52b788);
+}
+
 .invoice-list-card {
     padding: 0;
     overflow: hidden;

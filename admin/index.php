@@ -144,7 +144,7 @@ if ($authenticated && $section === 'invoices') {
     $allInvoices = cmsGetAllInvoices($pdo);
     $proposalInvoiceMap = cmsGetProposalInvoiceMap($pdo);
 }
-$invoiceStats = ['proposals' => 0, 'invoices' => 0, 'this_month' => 0, 'total_sar' => 0];
+$invoiceStats = ['proposals' => 0, 'invoices' => 0, 'this_month' => 0, 'total_sar' => 0, 'total_jod' => 0];
 if ($authenticated) {
     $invoiceMonthPrefix = date('Y-m');
     foreach ($allInvoices as $inv) {
@@ -154,8 +154,12 @@ if ($authenticated) {
             if ($updatedAt !== '' && strncmp($updatedAt, $invoiceMonthPrefix, 7) === 0) {
                 $invoiceStats['this_month']++;
             }
-            if (($inv['currency'] ?? 'SAR') === 'SAR') {
-                $invoiceStats['total_sar'] += (int) ($inv['grand_total'] ?? 0);
+            $currency = ($inv['currency'] ?? 'SAR') === 'JOD' ? 'JOD' : 'SAR';
+            $amount = (int) ($inv['grand_total'] ?? 0);
+            if ($currency === 'JOD') {
+                $invoiceStats['total_jod'] += $amount;
+            } else {
+                $invoiceStats['total_sar'] += $amount;
             }
         } else {
             $invoiceStats['invoices']++;
@@ -502,10 +506,17 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                 <div class="admin-stat-label">Updated this month</div>
             </div>
             <?php if ($invoiceStats['total_sar'] > 0): ?>
-            <div class="admin-stat-card invoice-stat-card">
+            <div class="admin-stat-card invoice-stat-card invoice-stat-card--currency">
                 <i class="bi bi-cash-stack"></i>
                 <div class="admin-stat-value"><?= number_format((int) $invoiceStats['total_sar']) ?></div>
                 <div class="admin-stat-label">Total value (SAR)</div>
+            </div>
+            <?php endif; ?>
+            <?php if ($invoiceStats['total_jod'] > 0): ?>
+            <div class="admin-stat-card invoice-stat-card invoice-stat-card--currency invoice-stat-card--jod">
+                <i class="bi bi-cash-stack"></i>
+                <div class="admin-stat-value"><?= number_format((int) $invoiceStats['total_jod']) ?></div>
+                <div class="admin-stat-label">Total value (JOD)</div>
             </div>
             <?php endif; ?>
         </div>
