@@ -139,21 +139,26 @@ $serviceCategories = $authenticated ? cmsGetServiceCategories($pdo) : [];
 $activeServiceCount = count(array_filter($allServices, fn($s) => ($s['status'] ?? '') === 'active'));
 $allInvoices = $authenticated ? cmsGetAllInvoices($pdo) : [];
 $proposalInvoiceMap = $authenticated ? cmsGetProposalInvoiceMap($pdo) : [];
+if ($authenticated && $section === 'invoices') {
+    cmsCleanupOrphanLinkedInvoices($pdo);
+    $allInvoices = cmsGetAllInvoices($pdo);
+    $proposalInvoiceMap = cmsGetProposalInvoiceMap($pdo);
+}
 $invoiceStats = ['proposals' => 0, 'invoices' => 0, 'this_month' => 0, 'total_sar' => 0];
 if ($authenticated) {
     $invoiceMonthPrefix = date('Y-m');
     foreach ($allInvoices as $inv) {
         if (cmsInvoiceIsProposal($inv)) {
             $invoiceStats['proposals']++;
+            $updatedAt = (string) ($inv['updated_at'] ?? '');
+            if ($updatedAt !== '' && strncmp($updatedAt, $invoiceMonthPrefix, 7) === 0) {
+                $invoiceStats['this_month']++;
+            }
+            if (($inv['currency'] ?? 'SAR') === 'SAR') {
+                $invoiceStats['total_sar'] += (int) ($inv['grand_total'] ?? 0);
+            }
         } else {
             $invoiceStats['invoices']++;
-        }
-        $updatedAt = (string) ($inv['updated_at'] ?? '');
-        if ($updatedAt !== '' && strncmp($updatedAt, $invoiceMonthPrefix, 7) === 0) {
-            $invoiceStats['this_month']++;
-        }
-        if (($inv['currency'] ?? 'SAR') === 'SAR') {
-            $invoiceStats['total_sar'] += (int) ($inv['grand_total'] ?? 0);
         }
     }
 }

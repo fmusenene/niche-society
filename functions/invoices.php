@@ -647,3 +647,23 @@ function cmsDeleteInvoice(PDO $pdo, int $id): void
     $pdo->prepare("DELETE FROM invoices WHERE source_proposal_id = ? AND record_type = 'invoice'")->execute([$id]);
     $pdo->prepare('DELETE FROM invoices WHERE id = ?')->execute([$id]);
 }
+
+/** Remove invoice rows whose parent proposal no longer exists. */
+function cmsCleanupOrphanLinkedInvoices(PDO $pdo): int
+{
+    $stmt = $pdo->query(
+        "SELECT i.id FROM invoices i
+         LEFT JOIN invoices p ON p.id = i.source_proposal_id AND p.record_type = 'proposal'
+         WHERE i.record_type = 'invoice'
+           AND i.source_proposal_id IS NOT NULL
+           AND p.id IS NULL"
+    );
+    $ids = $stmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+    if ($ids === []) {
+        return 0;
+    }
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $pdo->prepare("DELETE FROM invoices WHERE id IN ($placeholders)")->execute(array_map('intval', $ids));
+
+    return count($ids);
+}
