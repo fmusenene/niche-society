@@ -13,9 +13,25 @@
   const filterStatCard = document.querySelector('.invoice-stat-card--filter');
   const tableBody = document.getElementById('invoiceTableBody');
   const emptyRow = document.getElementById('invoiceSearchEmpty');
+  const paginationEl = document.getElementById('invoicePagination');
+  const paginationInfoEl = document.getElementById('invoicePaginationInfo');
+  const paginationListEl = document.getElementById('invoicePaginationList');
+  const pageSizeSelectEl = document.getElementById('invoicePageSize');
+  const tableWrapEl = document.getElementById('invoiceTableWrap');
+  const listCardEl = document.querySelector('.invoice-list-card');
   const modal = new bootstrap.Modal(modalEl);
   const MANAGEMENT_FEE = 0.15;
   const AUTO_SAVE_DELAY_MS = 2000;
+  const PAGE_SIZE_STORAGE_KEY = 'invoice_list_page_size';
+  const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
+  let invoicePageSize = parseInt(localStorage.getItem(PAGE_SIZE_STORAGE_KEY) || '10', 10);
+  if (PAGE_SIZE_OPTIONS.indexOf(invoicePageSize) === -1) {
+    invoicePageSize = 10;
+  }
+  let invoiceCurrentPage = 1;
+  let scrollHighlightFrame = null;
+  let scrollIdleTimer = null;
+  let isListScrolling = false;
   let refreshListOnModalClose = false;
   let suppressListRefreshOnClose = false;
   let formDirty = false;
@@ -1524,6 +1540,190 @@
     searchInput.focus();
   }
 
+  function getFilteredInvoiceRows() {
+    if (!tableBody) return [];
+    return Array.from(tableBody.querySelectorAll('tr[data-invoice-row]')).filter(function (row) {
+      return !row.hidden;
+    });
+  }
+
+  function getDisplayedInvoiceRows() {
+    if (!tableBody) return [];
+    return Array.from(tableBody.querySelectorAll('tr[data-invoice-row]')).filter(function (row) {
+      return !row.hidden && !row.classList.contains('invoice-page-hidden');
+    });
+  }
+
+  function updateScrollActiveRow() {
+    if (!tableBody) return;
+    const rows = getDisplayedInvoiceRows();
+    rows.forEach(function (row) {
+      row.classList.remove('is-scroll-active', 'is-in-viewport');
+    });
+    if (!rows.length) return;
+
+    const viewTop = 0;
+    const viewBottom = window.innerHeight;
+    const centerY = window.innerHeight / 2;
+    let bestRow = null;
+    let bestDist = Infinity;
+
+    rows.forEach(function (row) {
+      const rect = row.getBoundingClientRect();
+      if (rect.bottom < viewTop || rect.top > viewBottom) return;
+      if (isListScrolling) {
+        row.classList.add('is-in-viewport');
+      }
+      const rowCenter = rect.top + rect.height / 2;
+      const dist = Math.abs(rowCenter - centerY);
+      if (dist < bestDist) {
+        bestDist = dist;
+        bestRow = row;
+      }
+    });
+
+    if (bestRow && isListScrolling) {
+      bestRow.classList.add('is-scroll-active');
+    }
+  }
+
+  function scheduleScrollActiveRow() {
+    if (scrollHighlightFrame) return;
+    scrollHighlightFrame = window.requestAnimationFrame(function () {
+      scrollHighlightFrame = null;
+      updateScrollActiveRow();
+    });
+  }
+
+  function onInvoiceListScroll() {
+    if (!tableBody) return;
+    isListScrolling = true;
+    listCardEl?.classList.add('is-scrolling');
+    scheduleScrollActiveRow();
+    if (scrollIdleTimer) {
+      clearTimeout(scrollIdleTimer);
+    }
+    scrollIdleTimer = setTimeout(function () {
+      isListScrolling = false;
+      listCardEl?.classList.remove('is-scrolling');
+      scheduleScrollActiveRow();
+    }, 140);
+  }
+
+  function scrollInvoiceListToTop() {
+    if (tableWrapEl) {
+      tableWrapEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function revealVisibleInvoiceRows() {
+    const rows = getDisplayedInvoiceRows();
+    rows.forEach(function (row, index) {
+      row.classList.remove('invoice-row-enter');
+      row.style.setProperty('--row-enter-delay', String(index * 40) + 'ms');
+      void row.offsetWidth;
+      row.classList.add('invoice-row-enter');
+    });
+  }
+
+  function renderInvoicePagination(totalItems, totalPages) {
+    if (!paginationEl || !paginationListEl) return;
+
+    if (totalItems === 0) {
+      paginationEl.hidden = true;
+      paginationListEl.innerHTML = '';
+      if (paginationInfoEl) paginationInfoEl.textContent = '';
+      return;
+    }
+
+    paginationEl.hidden = false;
+    const start = (invoiceCurrentPage - 1) * invoicePageSize + 1;
+    const end = Math.min(invoiceCurrentPage * invoicePageSize, totalItems);
+    if (paginationInfoEl) {
+      paginationInfoEl.textContent = 'Showing ' + start + '–' + end + ' of ' + totalItems;
+    }
+
+    if (totalPages <= 1) {
+      paginationListEl.innerHTML = '';
+      paginationListEl.hidden = true;
+      return;
+    }
+
+    paginationListEl.hidden = false;
+    const items = [];
+    items.push(
+      '<li class="page-item' + (invoiceCurrentPage <= 1 ? ' disabled' : '') + '">' +
+      '<button type="button" class="page-link" data-page="prev" aria-label="Previous page">&lsaquo;</button></li>'
+    );
+
+    const maxButtons = 5;
+    let pageStart = Math.max(1, invoiceCurrentPage - Math.floor(maxButtons / 2));
+    let pageEnd = Math.min(totalPages, pageStart + maxButtons - 1);
+    pageStart = Math.max(1, pageEnd - maxButtons + 1);
+
+    for (let page = pageStart; page <= pageEnd; page += 1) {
+      items.push(
+        '<li class="page-item' + (page === invoiceCurrentPage ? ' active' : '') + '">' +
+        '<button type="button" class="page-link" data-page="' + page + '"' +
+        (page === invoiceCurrentPage ? ' aria-current="page"' : '') + '>' + page + '</button></li>'
+      );
+    }
+
+    items.push(
+      '<li class="page-item' + (invoiceCurrentPage >= totalPages ? ' disabled' : '') + '">' +
+      '<button type="button" class="page-link" data-page="next" aria-label="Next page">&rsaquo;</button></li>'
+    );
+
+    paginationListEl.innerHTML = items.join('');
+  }
+
+  function applyInvoicePagination() {
+    if (!tableBody) return;
+
+    const filteredRows = getFilteredInvoiceRows();
+    const totalItems = filteredRows.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / invoicePageSize));
+
+    if (invoiceCurrentPage > totalPages) {
+      invoiceCurrentPage = totalPages;
+    }
+    if (invoiceCurrentPage < 1) {
+      invoiceCurrentPage = 1;
+    }
+
+    const start = (invoiceCurrentPage - 1) * invoicePageSize;
+    const end = start + invoicePageSize;
+
+    tableBody.querySelectorAll('tr[data-invoice-row]').forEach(function (row) {
+      row.classList.remove('invoice-page-hidden', 'is-scroll-active', 'is-in-viewport', 'invoice-row-enter');
+      if (row.hidden) return;
+      const index = filteredRows.indexOf(row);
+      if (index < 0 || index < start || index >= end) {
+        row.classList.add('invoice-page-hidden');
+      }
+    });
+
+    renderInvoicePagination(totalItems, totalPages);
+    revealVisibleInvoiceRows();
+    scheduleScrollActiveRow();
+  }
+
+  function goToInvoicePage(page) {
+    if (!tableBody) return;
+    const totalPages = Math.max(1, Math.ceil(getFilteredInvoiceRows().length / invoicePageSize));
+    if (page === 'prev') {
+      invoiceCurrentPage = Math.max(1, invoiceCurrentPage - 1);
+    } else if (page === 'next') {
+      invoiceCurrentPage = Math.min(totalPages, invoiceCurrentPage + 1);
+    } else {
+      const num = parseInt(page, 10);
+      if (!num || num < 1 || num > totalPages) return;
+      invoiceCurrentPage = num;
+    }
+    applyInvoicePagination();
+    scrollInvoiceListToTop();
+  }
+
   function filterRows() {
     if (!tableBody || !searchInput) return;
     const q = searchInput.value.trim().toLowerCase();
@@ -1532,12 +1732,15 @@
       const hay = row.getAttribute('data-search') || '';
       const show = q === '' || hay.indexOf(q) !== -1;
       row.hidden = !show;
+      row.classList.remove('invoice-page-hidden');
       if (show) visible++;
     });
     if (emptyRow) emptyRow.hidden = visible > 0 || q === '';
     if (visibleCountEl) visibleCountEl.textContent = String(visible);
     if (searchClearBtn) searchClearBtn.hidden = q === '';
     if (filterStatCard) filterStatCard.classList.toggle('is-filtered', q !== '');
+    invoiceCurrentPage = 1;
+    applyInvoicePagination();
   }
 
   function openPrint(id, options) {
@@ -1680,6 +1883,33 @@
   form?.addEventListener('change', markFormDirty);
   form?.addEventListener('submit', saveInvoice);
   searchInput?.addEventListener('input', filterRows);
+
+  paginationListEl?.addEventListener('click', function (event) {
+    const btn = event.target.closest('[data-page]');
+    if (!btn || btn.closest('.page-item')?.classList.contains('disabled')) return;
+    goToInvoicePage(btn.getAttribute('data-page'));
+  });
+
+  pageSizeSelectEl?.addEventListener('change', function () {
+    const nextSize = parseInt(pageSizeSelectEl.value, 10);
+    if (PAGE_SIZE_OPTIONS.indexOf(nextSize) === -1) return;
+    invoicePageSize = nextSize;
+    localStorage.setItem(PAGE_SIZE_STORAGE_KEY, String(invoicePageSize));
+    invoiceCurrentPage = 1;
+    applyInvoicePagination();
+    scrollInvoiceListToTop();
+  });
+
+  window.addEventListener('scroll', onInvoiceListScroll, { passive: true });
+  window.addEventListener('resize', scheduleScrollActiveRow);
+
+  if (pageSizeSelectEl) {
+    pageSizeSelectEl.value = String(invoicePageSize);
+  }
+
+  if (tableBody) {
+    filterRows();
+  }
 
   modalEl.querySelectorAll('input[name="invoiceFormCurrency"]').forEach(function (radio) {
     radio.addEventListener('change', setCurrencyLabels);

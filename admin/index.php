@@ -547,7 +547,7 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                 </button>
             </div>
             <?php else: ?>
-            <div class="invoice-table-wrap table-responsive">
+            <div class="invoice-table-wrap" id="invoiceTableWrap">
                 <table class="table invoice-data-table mb-0" id="invoiceTable">
                     <thead>
                         <tr>
@@ -587,7 +587,7 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                             <span class="invoice-cell-currency"><?= htmlspecialchars($inv['currency'] ?? 'SAR') ?></span>
                         </td>
                         <td class="text-nowrap text-muted invoice-col-secondary"><?= htmlspecialchars(date('Y-m-d', strtotime($inv['updated_at'] ?? 'now'))) ?></td>
-                        <td class="text-end text-nowrap">
+                        <td class="text-end">
                             <div class="invoice-row-actions">
                                 <?php if ($linkedInvoice): ?>
                                 <button type="button" class="btn btn-sm btn-outline-info btn-print-linked-invoice"
@@ -638,6 +638,22 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                     </tbody>
                 </table>
             </div>
+            <nav class="invoice-pagination" id="invoicePagination" aria-label="Proposals pagination" hidden>
+                <div class="invoice-pagination__controls">
+                    <p class="invoice-pagination__info" id="invoicePaginationInfo"></p>
+                    <label class="invoice-pagination__per-page" for="invoicePageSize">
+                        <span class="invoice-pagination__per-page-label">Show</span>
+                        <select id="invoicePageSize" class="form-select form-select-sm" aria-label="Rows per page">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span class="invoice-pagination__per-page-label">per page</span>
+                    </label>
+                </div>
+                <ul class="pagination pagination-sm mb-0 invoice-pagination__pages" id="invoicePaginationList"></ul>
+            </nav>
             <?php endif; ?>
         </div>
     </div>
