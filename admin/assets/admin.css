@@ -533,7 +533,7 @@ table td, table th { vertical-align: middle; }
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--burgundy), var(--gold));
+    background: #602234;
     opacity: 0.85;
 }
 
@@ -549,10 +549,6 @@ table td, table th { vertical-align: middle; }
 .invoice-stat-card--currency .admin-stat-value {
     font-size: 1.35rem;
     letter-spacing: -0.02em;
-}
-
-.invoice-stat-card--jod::before {
-    background: linear-gradient(90deg, #2d6a4f, #52b788);
 }
 
 .invoice-list-card {
