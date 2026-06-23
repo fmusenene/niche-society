@@ -570,24 +570,24 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
                         $searchBlob = strtolower(trim($invSubject . ' ' . ($inv['client_name'] ?? '') . ' ' . $linkedNumber));
                     ?>
                     <tr data-invoice-row data-search="<?= htmlspecialchars($searchBlob, ENT_QUOTES) ?>" data-record-type="proposal"<?= $linkedInvoice ? ' data-linked-invoice-id="' . (int) $linkedInvoice['id'] . '"' : '' ?>>
-                        <td>
+                        <td data-label="Status">
                             <?php if ($linkedInvoice): ?>
                             <span class="invoice-type-badge invoice-type-badge--proposal invoice-type-badge--linked">Invoiced</span>
                             <?php else: ?>
                             <span class="invoice-type-badge invoice-type-badge--proposal">Draft</span>
                             <?php endif; ?>
                         </td>
-                        <td><?php if ($linkedInvoice): ?><span class="invoice-num-badge"><?= htmlspecialchars($linkedNumber ?: '—') ?></span><?php else: ?><span class="text-muted">—</span><?php endif; ?></td>
-                        <td class="invoice-cell-subject"><?= htmlspecialchars($invSubject) ?></td>
-                        <td class="text-nowrap"><?= htmlspecialchars(cmsInvoiceFormatDisplayDate($inv['offer_date'] ?? '', true)) ?></td>
-                        <td class="text-nowrap invoice-col-secondary"><?= htmlspecialchars(cmsInvoiceFormatDisplayDate($inv['event_date'] ?? '', true)) ?></td>
-                        <td class="invoice-col-secondary"><?= htmlspecialchars($inv['client_name'] ?: '—') ?></td>
-                        <td class="text-end text-nowrap invoice-cell-total">
+                        <td data-label="Invoice #"><?php if ($linkedInvoice): ?><span class="invoice-num-badge"><?= htmlspecialchars($linkedNumber ?: '—') ?></span><?php else: ?><span class="text-muted">—</span><?php endif; ?></td>
+                        <td class="invoice-cell-subject" data-label="Subject"><?= htmlspecialchars($invSubject) ?></td>
+                        <td class="text-nowrap" data-label="Offer date"><?= htmlspecialchars(cmsInvoiceFormatDisplayDate($inv['offer_date'] ?? '', true)) ?></td>
+                        <td class="text-nowrap invoice-col-secondary" data-label="Event date"><?= htmlspecialchars(cmsInvoiceFormatDisplayDate($inv['event_date'] ?? '', true)) ?></td>
+                        <td class="invoice-col-secondary" data-label="Client"><?= htmlspecialchars($inv['client_name'] ?: '—') ?></td>
+                        <td class="text-end text-nowrap invoice-cell-total" data-label="Total">
                             <strong><?= number_format((int) $inv['grand_total']) ?></strong>
                             <span class="invoice-cell-currency"><?= htmlspecialchars($inv['currency'] ?? 'SAR') ?></span>
                         </td>
-                        <td class="text-nowrap text-muted invoice-col-secondary"><?= htmlspecialchars(date('Y-m-d', strtotime($inv['updated_at'] ?? 'now'))) ?></td>
-                        <td class="text-end">
+                        <td class="text-nowrap text-muted invoice-col-secondary" data-label="Updated"><?= htmlspecialchars(date('Y-m-d', strtotime($inv['updated_at'] ?? 'now'))) ?></td>
+                        <td class="text-end" data-label="Actions">
                             <div class="invoice-row-actions">
                                 <?php if ($linkedInvoice): ?>
                                 <button type="button" class="btn btn-sm btn-outline-info btn-print-linked-invoice"

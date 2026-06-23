@@ -1,6 +1,6 @@
 <!-- Proposal / invoice create / edit form -->
 <div class="modal fade" id="modalInvoiceForm" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-md-down invoice-modal-dialog">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-lg-down invoice-modal-dialog">
         <div class="modal-content invoice-modal">
 
             <form id="formInvoice" novalidate>
@@ -26,6 +26,15 @@
                             <i class="bi bi-file-earmark-text" aria-hidden="true"></i> Proposal
                         </h6>
                         <div class="row g-3">
+                            <div class="col-12 proposal-only-field" id="wrapProposalKind">
+                                <label class="form-label" id="labelProposalKind">Proposal type</label>
+                                <div class="invoice-currency-pills" role="group" aria-label="Proposal type">
+                                    <input class="btn-check" type="radio" name="invoiceFormProposalKind" id="invoiceProposalKindEvent" value="event" checked>
+                                    <label class="btn btn-sm btn-outline-primary" for="invoiceProposalKindEvent" id="labelProposalKindEvent">Event</label>
+                                    <input class="btn-check" type="radio" name="invoiceFormProposalKind" id="invoiceProposalKindService" value="service">
+                                    <label class="btn btn-sm btn-outline-primary" for="invoiceProposalKindService" id="labelProposalKindService">Service</label>
+                                </div>
+                            </div>
                             <div class="col-12 col-sm-6 col-md-3 invoice-only-field" id="wrapInvoiceNumber">
                                 <label class="form-label" for="invoiceFormNumber">Invoice number</label>
                                 <input type="text" class="form-control invoice-field-readonly" id="invoiceFormNumber" readonly>
@@ -56,11 +65,11 @@
                                     <label class="btn btn-sm btn-outline-primary" for="invoiceLangAr">العربية</label>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-4 proposal-event-field">
                                 <label class="form-label" for="invoiceFormEventDate" id="labelEventDate">Event date</label>
                                 <input type="date" class="form-control invoice-date-input" id="invoiceFormEventDate" name="eventDate">
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-4 proposal-event-field">
                                 <label class="form-label" for="invoiceFormLocation" id="labelEventLocation">Event location</label>
                                 <input type="text" class="form-control" id="invoiceFormLocation" name="location" placeholder="e.g. Fairmont Hotel">
                             </div>
@@ -128,18 +137,36 @@
                         </h6>
                         <div class="row g-3">
                             <div class="col-12 col-lg-5">
-                                <label class="form-label" for="invoiceFormDiscount" id="labelDiscount">Discount (%)</label>
-                                <input type="number" class="form-control" id="invoiceFormDiscount" name="discount" min="0" max="100" step="1" value="0">
+                                <div id="invoiceEventTotalsFields">
+                                    <label class="form-label" for="invoiceFormDiscount" id="labelDiscount">Discount (%)</label>
+                                    <input type="number" class="form-control" id="invoiceFormDiscount" name="discount" min="0" max="100" step="1" value="0">
+                                </div>
+                                <div id="invoiceServiceTotalsFields" class="d-none">
+                                    <label class="form-label" for="invoiceFormServicePriceExcl" id="labelServicePriceExcl">Package price (excl. tax)</label>
+                                    <input type="number" class="form-control" id="invoiceFormServicePriceExcl" name="servicePriceExclTax" min="0" step="1" value="0">
+                                    <label class="form-label mt-3" for="invoiceFormServicePriceIncl" id="labelServicePriceIncl">Package price (incl. tax)</label>
+                                    <input type="number" class="form-control" id="invoiceFormServicePriceIncl" name="servicePriceInclTax" min="0" step="1" value="0">
+                                    <label class="form-label mt-3" for="invoiceFormTaxRate" id="labelTaxRate">Tax (%)</label>
+                                    <input type="number" class="form-control" id="invoiceFormTaxRate" name="taxRate" min="0" max="100" step="1" value="15">
+                                    <p class="small text-muted mt-2 mb-0" id="invoiceServiceTaxHint">Enter excl. or incl. price — the other is calculated using this tax rate.</p>
+                                    <label class="form-label mt-3" for="invoiceFormBankDetails" id="labelBankDetails">Bank details</label>
+                                    <textarea class="form-control" id="invoiceFormBankDetails" name="bankDetails" rows="4" placeholder="Bank name, account name, IBAN…"></textarea>
+                                </div>
                                 <label class="form-label mt-3" for="invoiceFormNotes" id="labelNotes">Notes</label>
                                 <textarea class="form-control" id="invoiceFormNotes" name="notes" rows="4" placeholder="Additional notes for the client (optional)"></textarea>
                             </div>
                             <div class="col-12 col-lg-7">
                                 <div class="invoice-summary-panel">
-                                    <div class="invoice-totals-grid">
+                                    <div class="invoice-totals-grid" id="invoiceEventTotalsPanel">
                                         <div><span id="labelSubtotal">Subtotal (line amounts)</span><strong><span id="invoiceSubtotal">0</span> <span class="invoice-currency-label">SAR</span></strong></div>
                                         <div><span id="labelFees">Event management fees (15%)</span><strong><span id="invoiceFees">0</span> <span class="invoice-currency-label">SAR</span></strong></div>
                                         <div id="invoiceDiscountRow" hidden><span id="labelDiscountAmt">Discount</span><strong>-<span id="invoiceDiscountAmt">0</span> <span class="invoice-currency-label">SAR</span></strong></div>
                                         <div class="invoice-total-grand"><span id="labelAmountDue">Amount due</span><strong><span id="invoiceGrandTotal">0</span> <span class="invoice-currency-label">SAR</span></strong></div>
+                                    </div>
+                                    <div class="invoice-totals-grid d-none" id="invoiceServiceTotalsPanel">
+                                        <div><span id="labelServiceSummaryExcl">Price (excl. tax)</span><strong><span id="invoiceServiceSummaryExclAmt">0</span> <span class="invoice-currency-label">SAR</span></strong></div>
+                                        <div><span id="labelServiceSummaryTax">Tax (15%)</span><strong><span id="invoiceServiceSummaryTaxAmt">0</span> <span class="invoice-currency-label">SAR</span></strong></div>
+                                        <div class="invoice-total-grand"><span id="labelServiceSummaryIncl">Price (incl. tax)</span><strong><span id="invoiceServiceSummaryInclAmt">0</span> <span class="invoice-currency-label">SAR</span></strong></div>
                                     </div>
                                     <p class="invoice-summary-panel__schedule">
                                         <span id="labelPaymentSchedule">Payment schedule:</span>
@@ -182,7 +209,7 @@
 
 <!-- Choose installment before printing an invoice -->
 <div class="modal fade" id="modalPrintInstallment" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-dialog modal-dialog-centered modal-sm modal-fullscreen-sm-down">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalPrintInstallmentTitle">Print invoice</h5>

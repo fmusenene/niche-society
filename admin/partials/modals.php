@@ -11,7 +11,7 @@ $categoriesText = implode("\n", $serviceCategories);
 
 <!-- Maintenance -->
 <div class="modal fade" id="modalMaintenance" tabindex="-1" aria-labelledby="modalMaintenanceLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
         <div class="modal-content">
             <form method="post" action="actions.php">
                 <input type="hidden" name="admin_csrf" value="<?= htmlspecialchars(adminCsrfToken()) ?>">
@@ -42,7 +42,7 @@ $categoriesText = implode("\n", $serviceCategories);
 
 <!-- Contact -->
 <div class="modal fade" id="modalContact" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-lg-down">
         <div class="modal-content">
             <form method="post" action="actions.php">
                 <input type="hidden" name="admin_csrf" value="<?= htmlspecialchars(adminCsrfToken()) ?>">
@@ -74,7 +74,7 @@ $categoriesText = implode("\n", $serviceCategories);
 
 <!-- Social -->
 <div class="modal fade" id="modalSocial" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-lg-down">
         <div class="modal-content">
             <form method="post" action="actions.php">
                 <input type="hidden" name="admin_csrf" value="<?= htmlspecialchars(adminCsrfToken()) ?>">
@@ -103,7 +103,7 @@ $categoriesText = implode("\n", $serviceCategories);
 
 <!-- About -->
 <div class="modal fade" id="modalAbout" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-lg-down">
         <div class="modal-content">
             <form method="post" action="actions.php">
                 <input type="hidden" name="admin_csrf" value="<?= htmlspecialchars(adminCsrfToken()) ?>">
@@ -159,7 +159,7 @@ $categoriesText = implode("\n", $serviceCategories);
 
 <!-- Services page -->
 <div class="modal fade" id="modalServicesPage" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-lg-down">
         <div class="modal-content">
             <form method="post" action="actions.php">
                 <input type="hidden" name="admin_csrf" value="<?= htmlspecialchars(adminCsrfToken()) ?>">
@@ -199,7 +199,7 @@ $categoriesText = implode("\n", $serviceCategories);
 
 <!-- Service add/edit -->
 <div class="modal fade" id="modalService" tabindex="-1" aria-hidden="true" data-auto-open="<?= (!empty($_GET['edit']) || !empty($_GET['add'])) ? '1' : '0' ?>">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-lg-down">
         <div class="modal-content">
             <form method="post" action="actions.php" id="formService">
                 <input type="hidden" name="admin_csrf" value="<?= htmlspecialchars(adminCsrfToken()) ?>">
@@ -289,7 +289,7 @@ $categoriesText = implode("\n", $serviceCategories);
 
 <!-- Service categories -->
 <div class="modal fade" id="modalCategories" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-scrollable modal-fullscreen-md-down">
         <div class="modal-content">
             <form method="post" action="actions.php">
                 <input type="hidden" name="admin_csrf" value="<?= htmlspecialchars(adminCsrfToken()) ?>">

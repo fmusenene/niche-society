@@ -134,14 +134,59 @@ function cmsInvoiceDefaultCategories(): array
         [
             'name' => '',
             'items' => [
-                ['description' => '', 'price' => 0, 'quantity' => 1, 'details' => []],
+                ['description' => '', 'price' => 0, 'quantity' => 1, 'details' => [], 'explanation' => ''],
             ],
         ],
     ];
 }
 
-function cmsInvoiceDefaultProposalFields(string $lang = 'en'): array
+function cmsInvoiceProposalKind(array $fields): string
 {
+    return (($fields['proposalKind'] ?? 'event') === 'service') ? 'service' : 'event';
+}
+
+function cmsInvoiceDefaultProposalFields(string $lang = 'en', string $kind = 'event'): array
+{
+    $kind = $kind === 'service' ? 'service' : 'event';
+
+    if ($kind === 'service') {
+        if ($lang === 'ar') {
+            return [
+                'intro1' => 'يسعدنا أن تتاح لنا الفرصة لتقديم عرضنا المتعلق بالخدمات المهنية التي تحتاجونها.',
+                'intro2' => 'نكتب إليكم لتلخيص العرض الفني والمالي الكامل الذي تقدمه نيش سوسايتي لهذه الخدمات.',
+                'intro3' => 'شكرًا لدعمكم لنيش سوسايتي ولاختياركم لنا كشريك لاحتياجاتكم الخدمية.',
+                'cancellationPolicy' => "يجب إبلاغ أي إلغاء للخدمات أو الطلبات كتابيًا.\n"
+                    . "قد تخضع طلبات الإلغاء المقدمة بعد تأكيد الخدمات لرسوم عن الأعمال المنجزة والمواد المشتراة والتكاليف الإدارية وأي التزامات تمت نيابةً عن العميل.\n"
+                    . "يُحدَّد استرداد المبالغ، إن وُجد، بناءً على مرحلة الإنجاز والمصروفات المتكبدة وقت الإلغاء.",
+                'closing1' => 'نأمل أن يكون ما ورد أعلاه مناسبًا لكم ونتطلع إلى تأكيدكم قريبًا،',
+                'closing2' => 'يرجى إرسال بريد إلكتروني يفيد بالموافقة وتأكيد هذه الترتيبات.',
+                'closing3' => 'لأي استفسار إضافي يرجى التواصل مباشرة على +966 54 694 7915، ويسعدنا تقديم المساعدة.',
+                'closingRegards' => 'مع أطيب التحيات،',
+                'socialIntro' => '',
+                'socialSnapchat' => '',
+                'socialInstagram' => '',
+                'socialFacebook' => '',
+            ];
+        }
+
+        return [
+            'intro1' => "It's our pleasure to have the opportunity to present our proposal regarding the professional services you require.",
+            'intro2' => 'We are writing to summarize the complete technical and financial proposal that Niche Society has to offer for these services.',
+            'intro3' => 'Thank you for supporting Niche Society and for considering us as a partner for your service needs.',
+            'cancellationPolicy' => "Any cancellation of services or orders must be communicated in writing.\n"
+                . "Cancellation requests submitted after confirmation of services may be subject to charges for work completed, materials procured, administrative costs incurred, and any commitments made on behalf of the client.\n"
+                . "Refunds, if applicable, shall be determined based on the stage of completion and expenses incurred at the time of cancellation.",
+            'closing1' => 'We hope that the above meets your approval and we look forward to receive your confirmation soon,',
+            'closing2' => 'Kindly send us an email indicating your approval and confirmation of these arrangements.',
+            'closing3' => 'However, should you require any further assistance, please feel free to contact us directly at +966 54 694 7915, we will be more than happy to provide you with any assistance you require.',
+            'closingRegards' => 'Best Regards,',
+            'socialIntro' => '',
+            'socialSnapchat' => '',
+            'socialInstagram' => '',
+            'socialFacebook' => '',
+        ];
+    }
+
     if ($lang === 'ar') {
         return [
             'intro1' => 'يسعدنا أن تتاح لنا الفرصة لتقديم عرضنا لإدارة فعاليتكم القادمة.',
@@ -175,8 +220,22 @@ function cmsInvoiceDefaultProposalFields(string $lang = 'en'): array
     ];
 }
 
-function cmsInvoiceDefaultPaymentTerms(string $lang = 'en'): string
+function cmsInvoiceDefaultPaymentTerms(string $lang = 'en', string $kind = 'event'): string
 {
+    $kind = $kind === 'service' ? 'service' : 'event';
+
+    if ($kind === 'service') {
+        if ($lang === 'ar') {
+            return "يتم السداد عبر التحويل البنكي أو الشيك أو أي طريقة دفع أخرى يتفق عليها الطرفان.\n"
+                . "جميع الفواتير مستحقة السداد خلال المدة المتفق عليها من تاريخ الفاتورة.\n"
+                . "قد يؤدي أي رصيد متأخر عن تاريخ الاستحقاق إلى تعليق الخدمة حتى استلام الدفع.";
+        }
+
+        return "Payments shall be made through bank transfer, cheque, or any other mutually agreed payment method.\n"
+            . "All invoices are payable within the agreed payment period from the invoice date.\n"
+            . "Any outstanding balances beyond the due date may be subject to service suspension until payment is received.";
+    }
+
     if ($lang === 'ar') {
         return "الدفعة الأولى: 30% من إجمالي المبلغ عند توقيع العقد\n"
             . "الدفعة الثانية: 40% من إجمالي المبلغ قبل الفعالية\n"
@@ -186,6 +245,15 @@ function cmsInvoiceDefaultPaymentTerms(string $lang = 'en'): string
     return "First payment: 30% of total amount is required upon signing the contract\n"
         . "Second payment: 40% of the total amount is required before the event\n"
         . "Third payment: 30% of the total amount is required on the day of the event";
+}
+
+function cmsInvoiceDefaultBankDetails(string $lang = 'en'): string
+{
+    if ($lang === 'ar') {
+        return "البنك: مصرف الراجحي\nاسم الحساب: نيش سوسايتي\nرقم الآيبان: SA0000000000000000000000\nرقم الحساب: 0000000000000";
+    }
+
+    return "Bank: Al Rajhi Bank\nAccount name: Niche Society\nIBAN: SA0000000000000000000000\nAccount number: 0000000000000";
 }
 
 function cmsInvoiceDefaultState(): array
@@ -206,9 +274,10 @@ function cmsInvoiceDefaultState(): array
             'clientPhone' => '',
             'signatureDate' => '',
             'dueDate' => '',
-            'paymentTerms' => cmsInvoiceDefaultPaymentTerms('en'),
+            'paymentTerms' => cmsInvoiceDefaultPaymentTerms('en', 'event'),
             'notes' => '',
             'language' => 'en',
+            'proposalKind' => 'event',
         ], cmsInvoiceDefaultProposalFields()),
     ];
 }
@@ -232,9 +301,36 @@ function cmsInvoiceFormatDisplayDate(?string $value, bool $emptyAsDash = false):
     return $value;
 }
 
-/** @return array{subtotal:int,fees:int,discount:int,grand:int,pay1:int,pay2:int,pay3:int,qty_total:int} */
-function cmsInvoiceComputeBreakdown(array $categories, float $discountPercent = 0): array
+/** @return array{subtotal:int,fees:int,discount:int,grand:int,pay1:int,pay2:int,pay3:int,qty_total:int,service_excl?:int,service_incl?:int,tax_amount?:int} */
+function cmsInvoiceComputeBreakdown(array $categories, float $discountPercent = 0, array $fields = []): array
 {
+    if (cmsInvoiceProposalKind($fields) === 'service') {
+        $excl = max(0, (int) ($fields['servicePriceExclTax'] ?? 0));
+        $incl = max(0, (int) ($fields['servicePriceInclTax'] ?? 0));
+        $taxRatePct = max(0, min(100, (int) ($fields['taxRate'] ?? 15)));
+        $taxRate = $taxRatePct / 100;
+        if ($incl <= 0 && $excl > 0) {
+            $incl = (int) round($excl * (1 + $taxRate));
+        } elseif ($excl <= 0 && $incl > 0 && $taxRate > 0) {
+            $excl = (int) round($incl / (1 + $taxRate));
+        }
+        $taxAmount = max(0, $incl - $excl);
+
+        return [
+            'subtotal' => $excl,
+            'fees' => $taxAmount,
+            'tax_amount' => $taxAmount,
+            'service_excl' => $excl,
+            'service_incl' => $incl,
+            'discount' => 0,
+            'grand' => $incl,
+            'pay1' => (int) round($incl * 0.3),
+            'pay2' => (int) round($incl * 0.4),
+            'pay3' => (int) round($incl * 0.3),
+            'qty_total' => 0,
+        ];
+    }
+
     $subtotal = 0;
     $qtyTotal = 0;
     foreach ($categories as $cat) {
@@ -269,9 +365,9 @@ function cmsInvoiceComputeBreakdown(array $categories, float $discountPercent = 
     ];
 }
 
-function cmsInvoiceComputeGrandTotal(array $categories, float $discountPercent = 0): int
+function cmsInvoiceComputeGrandTotal(array $categories, float $discountPercent = 0, array $fields = []): int
 {
-    return cmsInvoiceComputeBreakdown($categories, $discountPercent)['grand'];
+    return cmsInvoiceComputeBreakdown($categories, $discountPercent, $fields)['grand'];
 }
 
 function cmsInvoiceNormalizeState(array $state): array
@@ -307,6 +403,7 @@ function cmsInvoiceNormalizeState(array $state): array
             $items[] = [
                 'description' => trim((string) ($item['description'] ?? '')),
                 'details' => $details,
+                'explanation' => trim((string) ($item['explanation'] ?? '')),
                 'price' => max(0, (int) ($item['price'] ?? 0)),
                 'quantity' => max(0, (int) ($item['quantity'] ?? 0)),
             ];
@@ -326,6 +423,7 @@ function cmsInvoiceNormalizeState(array $state): array
 
     $currency = ($fields['currency'] ?? 'SAR') === 'JOD' ? 'JOD' : 'SAR';
     $language = ($fields['language'] ?? 'en') === 'ar' ? 'ar' : 'en';
+    $proposalKind = cmsInvoiceProposalKind($fields);
 
     $normalizedFields = [
         'offerDate' => trim((string) ($fields['offerDate'] ?? $fields['date'] ?? '')),
@@ -342,12 +440,17 @@ function cmsInvoiceNormalizeState(array $state): array
         'clientPhone' => trim((string) ($fields['clientPhone'] ?? $fields['client_phone'] ?? '')),
         'signatureDate' => trim((string) ($fields['signatureDate'] ?? '')),
         'dueDate' => trim((string) ($fields['dueDate'] ?? $fields['due_date'] ?? '')),
-        'paymentTerms' => trim((string) ($fields['paymentTerms'] ?? cmsInvoiceDefaultPaymentTerms($language))),
+        'paymentTerms' => trim((string) ($fields['paymentTerms'] ?? cmsInvoiceDefaultPaymentTerms($language, $proposalKind))),
         'notes' => trim((string) ($fields['notes'] ?? '')),
         'language' => $language,
+        'proposalKind' => $proposalKind,
+        'servicePriceExclTax' => (string) max(0, (int) ($fields['servicePriceExclTax'] ?? 0)),
+        'servicePriceInclTax' => (string) max(0, (int) ($fields['servicePriceInclTax'] ?? 0)),
+        'taxRate' => (string) max(0, min(100, (int) ($fields['taxRate'] ?? 15))),
+        'bankDetails' => trim((string) ($fields['bankDetails'] ?? '')),
     ];
 
-    $proposalDefaults = cmsInvoiceDefaultProposalFields($language);
+    $proposalDefaults = cmsInvoiceDefaultProposalFields($language, $proposalKind);
     foreach ($proposalDefaults as $key => $defaultVal) {
         if (!array_key_exists($key, $fields)) {
             $normalizedFields[$key] = $defaultVal;
@@ -383,7 +486,7 @@ function cmsInvoiceMetaFromState(array $state): array
         'client_address' => $fields['clientAddress'],
         'prepared_by' => $fields['prepared'],
         'currency' => $fields['currency'],
-        'grand_total' => cmsInvoiceComputeGrandTotal($state['categories'], $discount),
+        'grand_total' => cmsInvoiceComputeGrandTotal($state['categories'], $discount, $fields),
     ];
 }
 

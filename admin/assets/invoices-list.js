@@ -22,6 +22,14 @@
   const modal = new bootstrap.Modal(modalEl);
   const MANAGEMENT_FEE = 0.15;
   const AUTO_SAVE_DELAY_MS = 2000;
+
+  const DEFAULT_BANK_DETAILS = 'Bank: Al Rajhi Bank\nAccount name: Niche Society\nIBAN: SA0000000000000000000000\nAccount number: 0000000000000';
+  const DEFAULT_BANK_DETAILS_AR = 'البنك: مصرف الراجحي\nاسم الحساب: نيش سوسايتي\nرقم الآيبان: SA0000000000000000000000\nرقم الحساب: 0000000000000';
+
+  function bankDetailsForLang(lang) {
+    return lang === 'ar' ? DEFAULT_BANK_DETAILS_AR : DEFAULT_BANK_DETAILS;
+  }
+
   const PAGE_SIZE_STORAGE_KEY = 'invoice_list_page_size';
   const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
   let invoicePageSize = parseInt(localStorage.getItem(PAGE_SIZE_STORAGE_KEY) || '10', 10);
@@ -195,6 +203,18 @@
     'الدفعة الثالثة: 30% من إجمالي المبلغ في يوم الفعالية',
   ].join('\n');
 
+  const DEFAULT_PAYMENT_TERMS_SERVICE = [
+    'Payments shall be made through bank transfer, cheque, or any other mutually agreed payment method.',
+    'All invoices are payable within the agreed payment period from the invoice date.',
+    'Any outstanding balances beyond the due date may be subject to service suspension until payment is received.',
+  ].join('\n');
+
+  const DEFAULT_PAYMENT_TERMS_SERVICE_AR = [
+    'يتم السداد عبر التحويل البنكي أو الشيك أو أي طريقة دفع أخرى يتفق عليها الطرفان.',
+    'جميع الفواتير مستحقة السداد خلال المدة المتفق عليها من تاريخ الفاتورة.',
+    'قد يؤدي أي رصيد متأخر عن تاريخ الاستحقاق إلى تعليق الخدمة حتى استلام الدفع.',
+  ].join('\n');
+
   const PROPOSAL_DEFAULTS = {
     intro1: "It's our pleasure for giving us the opportunity to present our proposal regarding the management of your upcoming event.",
     intro2: 'We are writing you to summarize the complete technical and financial proposal that Niche Society has to offer.',
@@ -233,6 +253,44 @@
     socialFacebook: '',
   };
 
+  const SERVICE_PROPOSAL_DEFAULTS = {
+    intro1: "It's our pleasure to have the opportunity to present our proposal regarding the professional services you require.",
+    intro2: 'We are writing to summarize the complete technical and financial proposal that Niche Society has to offer for these services.',
+    intro3: 'Thank you for supporting Niche Society and for considering us as a partner for your service needs.',
+    cancellationPolicy: [
+      'Any cancellation of services or orders must be communicated in writing.',
+      'Cancellation requests submitted after confirmation of services may be subject to charges for work completed, materials procured, administrative costs incurred, and any commitments made on behalf of the client.',
+      'Refunds, if applicable, shall be determined based on the stage of completion and expenses incurred at the time of cancellation.',
+    ].join('\n'),
+    closing1: 'We hope that the above meets your approval and we look forward to receive your confirmation soon,',
+    closing2: 'Kindly send us an email indicating your approval and confirmation of these arrangements.',
+    closing3: 'However, should you require any further assistance, please feel free to contact us directly at +966 54 694 7915, we will be more than happy to provide you with any assistance you require.',
+    closingRegards: 'Best Regards,',
+    socialIntro: '',
+    socialSnapchat: '',
+    socialInstagram: '',
+    socialFacebook: '',
+  };
+
+  const SERVICE_PROPOSAL_DEFAULTS_AR = {
+    intro1: 'يسعدنا أن تتاح لنا الفرصة لتقديم عرضنا المتعلق بالخدمات المهنية التي تحتاجونها.',
+    intro2: 'نكتب إليكم لتلخيص العرض الفني والمالي الكامل الذي تقدمه نيش سوسايتي لهذه الخدمات.',
+    intro3: 'شكرًا لدعمكم لنيش سوسايتي ولاختياركم لنا كشريك لاحتياجاتكم الخدمية.',
+    cancellationPolicy: [
+      'يجب إبلاغ أي إلغاء للخدمات أو الطلبات كتابيًا.',
+      'قد تخضع طلبات الإلغاء المقدمة بعد تأكيد الخدمات لرسوم عن الأعمال المنجزة والمواد المشتراة والتكاليف الإدارية وأي التزامات تمت نيابةً عن العميل.',
+      'يُحدَّد استرداد المبالغ، إن وُجد، بناءً على مرحلة الإنجاز والمصروفات المتكبدة وقت الإلغاء.',
+    ].join('\n'),
+    closing1: 'نأمل أن يكون ما ورد أعلاه مناسبًا لكم ونتطلع إلى تأكيدكم قريبًا،',
+    closing2: 'يرجى إرسال بريد إلكتروني يفيد بالموافقة وتأكيد هذه الترتيبات.',
+    closing3: 'لأي استفسار إضافي يرجى التواصل مباشرة على +966 54 694 7915، ويسعدنا تقديم المساعدة.',
+    closingRegards: 'مع أطيب التحيات،',
+    socialIntro: '',
+    socialSnapchat: '',
+    socialInstagram: '',
+    socialFacebook: '',
+  };
+
   const FORM_I18N = {
     en: {
       sectionProposal: 'Proposal',
@@ -245,6 +303,9 @@
       dueDate: 'Due date',
       currency: 'Currency',
       language: 'Language',
+      proposalKind: 'Proposal type',
+      proposalKindEvent: 'Event',
+      proposalKindService: 'Service',
       eventDate: 'Event date',
       eventLocation: 'Event location',
       preparedBy: 'Prepared by',
@@ -257,10 +318,23 @@
       clientAddress: 'Address',
       addCategory: 'Add category',
       linesHint: 'Group services by category. Use <strong>Add item</strong> inside each category for more rows.',
+      linesHintService: 'List each service — pricing is set once for the full package in Totals, not per line.',
       discount: 'Discount (%)',
       notes: 'Notes',
       subtotal: 'Subtotal (line amounts)',
       fees: 'Event management fees (15%)',
+      feesService: 'Service management fees (15%)',
+      serviceExplanation: 'Service explanation (printed below the proposal)',
+      serviceExplanationPlaceholder: 'Describe this service in detail for the client…',
+      servicePriceExcl: 'Package price (excl. tax)',
+      servicePriceIncl: 'Package price (incl. tax)',
+      taxRate: 'Tax (%)',
+      serviceTaxHint: 'Enter excl. or incl. price — the other is calculated using this tax rate.',
+      serviceSummaryExcl: 'Price (excl. tax)',
+      serviceSummaryTax: 'Tax',
+      serviceSummaryIncl: 'Price (incl. tax)',
+      bankDetails: 'Bank details',
+      bankDetailsPlaceholder: 'Bank name, account name, IBAN…',
       discountAmt: 'Discount',
       amountDue: 'Amount due',
       paymentSchedule: 'Payment schedule:',
@@ -273,6 +347,7 @@
       addItem: 'Add item',
       deleteCategory: 'Delete',
       catPlaceholder: 'Category name (e.g. Entertainment)',
+      categoryHeading: 'Category',
       descPlaceholder: 'Description',
       saveProposal: 'Save proposal',
       saveInvoice: 'Save invoice',
@@ -301,6 +376,9 @@
       dueDate: 'تاريخ الاستحقاق',
       currency: 'العملة',
       language: 'اللغة',
+      proposalKind: 'نوع العرض',
+      proposalKindEvent: 'فعالية',
+      proposalKindService: 'خدمات',
       eventDate: 'تاريخ الفعالية',
       eventLocation: 'موقع الفعالية',
       preparedBy: 'إعداد',
@@ -313,10 +391,23 @@
       clientAddress: 'العنوان',
       addCategory: 'إضافة قسم',
       linesHint: 'جمّع الخدمات حسب القسم. استخدم <strong>إضافة بند</strong> داخل كل قسم لصفوف إضافية.',
+      linesHintService: 'أدرج كل خدمة — التسعير يُحدد مرة واحدة للباقة كاملة في الإجمالي، وليس لكل بند.',
       discount: 'الخصم (%)',
       notes: 'ملاحظات',
       subtotal: 'إجمالي البنود',
       fees: 'رسوم إدارة الفعالية (15%)',
+      feesService: 'رسوم إدارة الخدمات (15%)',
+      serviceExplanation: 'شرح الخدمة (يُطبع أسفل العرض)',
+      serviceExplanationPlaceholder: 'اشرح هذه الخدمة بالتفصيل للعميل…',
+      servicePriceExcl: 'سعر الباقة (بدون ضريبة)',
+      servicePriceIncl: 'سعر الباقة (شامل الضريبة)',
+      taxRate: 'الضريبة (%)',
+      serviceTaxHint: 'أدخل السعر بدون أو شامل الضريبة — يُحسب الآخر باستخدام نسبة الضريبة هذه.',
+      serviceSummaryExcl: 'السعر (بدون ضريبة)',
+      serviceSummaryTax: 'الضريبة',
+      serviceSummaryIncl: 'السعر (شامل الضريبة)',
+      bankDetails: 'تفاصيل الحساب البنكي',
+      bankDetailsPlaceholder: 'اسم البنك، اسم الحساب، رقم الآيبان…',
       discountAmt: 'الخصم',
       amountDue: 'المبلغ المستحق',
       paymentSchedule: 'جدول الدفع:',
@@ -329,6 +420,7 @@
       addItem: 'إضافة بند',
       deleteCategory: 'حذف',
       catPlaceholder: 'اسم القسم (مثال: ترفيه)',
+      categoryHeading: 'القسم',
       descPlaceholder: 'الوصف',
       saveProposal: 'حفظ العرض',
       saveInvoice: 'حفظ الفاتورة',
@@ -351,6 +443,33 @@
   let languageSwitchBusy = false;
   let lastSavedFormLanguage = 'en';
   const translationCache = new Map();
+
+  function getProposalKind() {
+    if (!isProposalMode()) return 'event';
+    const checked = modalEl.querySelector('input[name="invoiceFormProposalKind"]:checked');
+    return checked && checked.value === 'service' ? 'service' : 'event';
+  }
+
+  function isServiceProposal() {
+    return isProposalMode() && getProposalKind() === 'service';
+  }
+
+  function proposalDefaultsForKind(lang, kind) {
+    const useLang = lang === 'ar' ? 'ar' : 'en';
+    const useKind = kind === 'service' ? 'service' : 'event';
+    if (useKind === 'service') {
+      return useLang === 'ar' ? SERVICE_PROPOSAL_DEFAULTS_AR : SERVICE_PROPOSAL_DEFAULTS;
+    }
+    return useLang === 'ar' ? PROPOSAL_DEFAULTS_AR : PROPOSAL_DEFAULTS;
+  }
+
+  function paymentTermsForKind(lang, kind) {
+    const useLang = lang === 'ar' ? 'ar' : 'en';
+    if (kind === 'service') {
+      return useLang === 'ar' ? DEFAULT_PAYMENT_TERMS_SERVICE_AR : DEFAULT_PAYMENT_TERMS_SERVICE;
+    }
+    return useLang === 'ar' ? DEFAULT_PAYMENT_TERMS_AR : DEFAULT_PAYMENT_TERMS;
+  }
 
   function getFormLanguage() {
     const checked = modalEl.querySelector('input[name="invoiceFormLanguage"]:checked');
@@ -408,6 +527,9 @@
     setText('labelOfferDate', proposal ? 'offerDate' : 'invoiceDate');
     setText('labelInvoiceCurrency', 'currency');
     setText('labelInvoiceLanguage', 'language');
+    setText('labelProposalKind', 'proposalKind');
+    setText('labelProposalKindEvent', 'proposalKindEvent');
+    setText('labelProposalKindService', 'proposalKindService');
     setText('labelEventDate', 'eventDate');
     setText('labelEventLocation', 'eventLocation');
     setText('labelPreparedBy', 'preparedBy');
@@ -419,11 +541,22 @@
     setText('labelDateSigned', 'dateSigned');
     setText('labelClientAddress', 'clientAddress');
     setText('labelAddCategory', 'addCategory');
-    setHtml('invoiceLinesHint', 'linesHint');
+    setHtml('invoiceLinesHint', isServiceProposal() ? 'linesHintService' : 'linesHint');
     setText('labelDiscount', 'discount');
+    setText('labelServicePriceExcl', 'servicePriceExcl');
+    setText('labelServicePriceIncl', 'servicePriceIncl');
+    setText('labelTaxRate', 'taxRate');
+    setText('labelBankDetails', 'bankDetails');
+    const bankEl = document.getElementById('invoiceFormBankDetails');
+    if (bankEl) bankEl.placeholder = formTr('bankDetailsPlaceholder');
+    const taxHint = document.getElementById('invoiceServiceTaxHint');
+    if (taxHint) taxHint.textContent = formTr('serviceTaxHint');
+    updateServiceTaxSummaryLabel();
+    setText('labelServiceSummaryExcl', 'serviceSummaryExcl');
+    setText('labelServiceSummaryIncl', 'serviceSummaryIncl');
     setText('labelNotes', 'notes');
     setText('labelSubtotal', 'subtotal');
-    setText('labelFees', 'fees');
+    setText('labelFees', isServiceProposal() ? 'feesService' : 'fees');
     setText('labelDiscountAmt', 'discountAmt');
     setText('labelAmountDue', 'amountDue');
     setText('labelPaymentSchedule', 'paymentSchedule');
@@ -473,7 +606,7 @@
   function updateInstallmentPickerAmounts() {
     const cur = currency();
     const fullEl = document.getElementById('labelInstallmentFull');
-    const grandEl = document.getElementById('invoiceGrandTotal');
+    const grandEl = document.getElementById(isServiceProposal() ? 'invoiceServiceSummaryInclAmt' : 'invoiceGrandTotal');
     if (fullEl) {
       const grand = grandEl ? grandEl.textContent.trim() : '';
       const base = formTr('installmentFull');
@@ -549,6 +682,7 @@
       'invoiceFormClientEmail',
       'invoiceFormClientPhone',
       'invoiceFormNotes',
+      'invoiceFormBankDetails',
     ];
 
     fieldIds.forEach(function (id) {
@@ -564,6 +698,11 @@
     });
 
     linesBody?.querySelectorAll('.js-item-desc').forEach(function (el) {
+      const value = String(el.value || '').trim();
+      if (value) jobs.push({ el: el, value: value });
+    });
+
+    linesBody?.querySelectorAll('.js-item-explanation').forEach(function (el) {
       const value = String(el.value || '').trim();
       if (value) jobs.push({ el: el, value: value });
     });
@@ -650,14 +789,89 @@
     { key: 'clientPhone', id: 'invoiceFormClientPhone' },
     { key: 'signatureDate', id: 'invoiceFormSignatureDate' },
     { key: 'notes', id: 'invoiceFormNotes' },
+    { key: 'servicePriceExclTax', id: 'invoiceFormServicePriceExcl' },
+    { key: 'servicePriceInclTax', id: 'invoiceFormServicePriceIncl' },
+    { key: 'taxRate', id: 'invoiceFormTaxRate' },
+    { key: 'bankDetails', id: 'invoiceFormBankDetails' },
   ];
+
+  function setProposalKindRadio(kind) {
+    const value = kind === 'service' ? 'service' : 'event';
+    const radio = modalEl.querySelector('input[name="invoiceFormProposalKind"][value="' + value + '"]');
+    if (radio) radio.checked = true;
+  }
+
+  function applyProposalKindUI() {
+    const proposal = isProposalMode();
+    const service = isServiceProposal();
+    const wrapKind = document.getElementById('wrapProposalKind');
+    if (wrapKind) wrapKind.hidden = !proposal;
+
+    modalEl.querySelectorAll('.proposal-event-field').forEach(function (el) {
+      el.hidden = proposal && service;
+    });
+
+    const feesLabel = document.getElementById('labelFees');
+    if (feesLabel) {
+      feesLabel.textContent = formTr(service ? 'feesService' : 'fees');
+    }
+
+    linesBody?.querySelectorAll('.invoice-item-explanation-row').forEach(function (row) {
+      row.hidden = !service;
+    });
+
+    const eventTotalsFields = document.getElementById('invoiceEventTotalsFields');
+    const serviceTotalsFields = document.getElementById('invoiceServiceTotalsFields');
+    const eventTotalsPanel = document.getElementById('invoiceEventTotalsPanel');
+    const serviceTotalsPanel = document.getElementById('invoiceServiceTotalsPanel');
+    if (eventTotalsFields) eventTotalsFields.classList.toggle('d-none', proposal && service);
+    if (serviceTotalsFields) serviceTotalsFields.classList.toggle('d-none', !proposal || !service);
+    if (eventTotalsPanel) eventTotalsPanel.classList.toggle('d-none', proposal && service);
+    if (serviceTotalsPanel) serviceTotalsPanel.classList.toggle('d-none', !proposal || !service);
+
+    linesBody?.querySelectorAll('.invoice-cat-items-table').forEach(function (table) {
+      table.classList.toggle('invoice-cat-items-table--service', service);
+    });
+
+    const linesHintEl = document.getElementById('invoiceLinesHint');
+    if (linesHintEl) {
+      linesHintEl.innerHTML = formTr(service ? 'linesHintService' : 'linesHint');
+    }
+  }
+
+  function serviceTaxRatePercent() {
+    let rate = parseInt(fieldValue('invoiceFormTaxRate') || '15', 10);
+    if (!Number.isFinite(rate)) rate = 15;
+    return Math.max(0, Math.min(100, rate));
+  }
+
+  function updateServiceTaxSummaryLabel() {
+    const label = document.getElementById('labelServiceSummaryTax');
+    if (!label) return;
+    const rate = serviceTaxRatePercent();
+    label.textContent = formTr('serviceSummaryTax') + ' (' + rate + '%)';
+  }
+
+  function computeServicePrices() {
+    let excl = Math.max(0, parseInt(fieldValue('invoiceFormServicePriceExcl') || '0', 10) || 0);
+    let incl = Math.max(0, parseInt(fieldValue('invoiceFormServicePriceIncl') || '0', 10) || 0);
+    const taxRate = serviceTaxRatePercent() / 100;
+    if (incl <= 0 && excl > 0) {
+      incl = Math.round(excl * (1 + taxRate));
+    } else if (excl <= 0 && incl > 0 && taxRate > 0) {
+      excl = Math.round(incl / (1 + taxRate));
+    }
+    const tax = Math.max(0, incl - excl);
+    return { excl: excl, incl: incl, tax: tax, grand: incl };
+  }
 
   function staticInvoiceFields() {
     const lang = getFormLanguage();
-    const defaults = lang === 'ar' ? PROPOSAL_DEFAULTS_AR : PROPOSAL_DEFAULTS;
-    const paymentTerms = lang === 'ar' ? DEFAULT_PAYMENT_TERMS_AR : DEFAULT_PAYMENT_TERMS;
+    const kind = getProposalKind();
+    const defaults = proposalDefaultsForKind(lang, kind);
     return {
-      paymentTerms: paymentTerms,
+      paymentTerms: paymentTermsForKind(lang, kind),
+      proposalKind: kind,
       intro1: defaults.intro1,
       intro2: defaults.intro2,
       intro3: defaults.intro3,
@@ -776,6 +990,20 @@
       fields.saveLabel = document.getElementById('btnInvoiceSaveLabel');
     }
     applyFormLanguage();
+    applyProposalKindUI();
+  }
+
+  function switchProposalKind(nextKind) {
+    const kind = nextKind === 'service' ? 'service' : 'event';
+    setProposalKindRadio(kind);
+    if (kind === 'service' && !fieldValue('invoiceFormBankDetails')) {
+      setFieldValue('invoiceFormBankDetails', bankDetailsForLang(getFormLanguage()));
+    }
+    const cats = readCategories();
+    renderCategories(cats);
+    applyProposalKindUI();
+    updateTotals();
+    markFormDirty();
   }
 
   function currency() {
@@ -799,7 +1027,7 @@
   }
 
   function blankItem() {
-    return { description: '', quantity: 1, price: 0 };
+    return { description: '', quantity: 1, price: 0, explanation: '' };
   }
 
   function blankCategory(name) {
@@ -828,6 +1056,7 @@
         signatureDate: '',
         paymentTerms: DEFAULT_PAYMENT_TERMS,
         notes: '',
+        proposalKind: 'event',
         ...PROPOSAL_DEFAULTS,
         language: 'en',
       },
@@ -890,6 +1119,7 @@
           description: description,
           quantity: Math.max(0, Number(item.quantity) || 0),
           price: Math.max(0, Number(item.price) || 0),
+          explanation: String(item.explanation || '').trim(),
         };
       });
       if (!items.length) {
@@ -908,31 +1138,60 @@
     const unit = Math.max(0, Number(item.price) || 0);
     const amount = lineAmount(qty, unit);
     const descPh = formTr('descPlaceholder');
-    return (
-      '<tr>' +
-      '<td class="col-num"><span class="js-row-num text-muted">—</span></td>' +
-      '<td class="col-desc"><input type="text" class="form-control form-control-sm js-item-desc" value="' + escapeHtml(item.description || '') + '" placeholder="' + escapeHtml(descPh) + '" aria-label="' + escapeHtml(descPh) + '"></td>' +
-      '<td class="col-qty"><input type="number" class="form-control form-control-sm js-item-qty text-end" min="0" step="1" value="' + qty + '" aria-label="Quantity"></td>' +
-      '<td class="col-unit"><input type="number" class="form-control form-control-sm js-item-price text-end" min="0" step="1" value="' + unit + '" aria-label="Unit price"></td>' +
-      '<td class="col-amount text-end"><span class="js-item-amount" data-amount="' + amount + '">' + amount.toLocaleString() + '</span></td>' +
-      '<td class="text-end col-actions">' +
-      '<button type="button" class="btn btn-sm btn-outline-danger js-delete-item" title="Remove item"><i class="bi bi-trash"></i></button>' +
-      '</td></tr>'
-    );
+    const service = isServiceProposal();
+    const lblNum = escapeHtml(formTr('colNum'));
+    const lblDesc = escapeHtml(formTr('colDesc'));
+    const lblQty = escapeHtml(formTr('colQty'));
+    const lblUnit = escapeHtml(formTr('colUnit'));
+    const lblAmount = escapeHtml(formTr('colAmount'));
+    let html = '<tr class="invoice-item-row">';
+    if (service) {
+      html +=
+        '<td class="col-num" data-label="' + lblNum + '"><span class="js-row-num text-muted">—</span></td>' +
+        '<td class="col-desc" data-label="' + lblDesc + '"><input type="text" class="form-control form-control-sm js-item-desc" value="' + escapeHtml(item.description || '') + '" placeholder="' + escapeHtml(descPh) + '" aria-label="' + escapeHtml(descPh) + '"></td>' +
+        '<td class="text-end col-actions">' +
+        '<button type="button" class="btn btn-sm btn-outline-danger js-delete-item" title="Remove item"><i class="bi bi-trash"></i></button>' +
+        '</td></tr>';
+    } else {
+      html +=
+        '<td class="col-num" data-label="' + lblNum + '"><span class="js-row-num text-muted">—</span></td>' +
+        '<td class="col-desc" data-label="' + lblDesc + '"><input type="text" class="form-control form-control-sm js-item-desc" value="' + escapeHtml(item.description || '') + '" placeholder="' + escapeHtml(descPh) + '" aria-label="' + escapeHtml(descPh) + '"></td>' +
+        '<td class="col-qty" data-label="' + lblQty + '"><input type="number" class="form-control form-control-sm js-item-qty text-end" min="0" step="1" value="' + qty + '" aria-label="Quantity"></td>' +
+        '<td class="col-unit" data-label="' + lblUnit + '"><input type="number" class="form-control form-control-sm js-item-price text-end" min="0" step="1" value="' + unit + '" aria-label="Unit price"></td>' +
+        '<td class="col-amount text-end" data-label="' + lblAmount + '"><span class="js-item-amount" data-amount="' + amount + '">' + amount.toLocaleString() + '</span></td>' +
+        '<td class="text-end col-actions">' +
+        '<button type="button" class="btn btn-sm btn-outline-danger js-delete-item" title="Remove item"><i class="bi bi-trash"></i></button>' +
+        '</td></tr>';
+    }
+    if (service) {
+      const explLabel = escapeHtml(formTr('serviceExplanation'));
+      const explPh = escapeHtml(formTr('serviceExplanationPlaceholder'));
+      html +=
+        '<tr class="invoice-item-explanation-row">' +
+        '<td colspan="3" class="invoice-item-explanation-cell">' +
+        '<label class="form-label small mb-1">' + explLabel + '</label>' +
+        '<textarea class="form-control form-control-sm js-item-explanation" rows="3" placeholder="' + explPh + '" aria-label="' + explLabel + '">' + escapeHtml(item.explanation || '') + '</textarea>' +
+        '</td></tr>';
+    }
+    return html;
   }
 
-  function buildCategoryBlock(cat) {
-    const block = document.createElement('div');
-    block.className = 'invoice-cat-block';
-    const itemsHtml = (cat.items || [blankItem()]).map(buildItemRowHtml).join('');
-    const catPh = escapeHtml(formTr('catPlaceholder'));
-    block.innerHTML =
-      '<div class="invoice-cat-header">' +
-      '<input type="text" class="form-control form-control-sm js-cat-name" value="' + escapeHtml(cat.name || '') + '" placeholder="' + catPh + '" aria-label="' + catPh + '">' +
-      '<button type="button" class="btn btn-sm btn-outline-danger js-remove-cat" title="Delete category"><i class="bi bi-trash" aria-hidden="true"></i><span class="invoice-cat-remove-label">' + escapeHtml(formTr('deleteCategory')) + '</span></button>' +
-      '</div>' +
-      '<div class="table-responsive">' +
-      '<table class="table table-sm invoice-lines-table invoice-cat-items-table mb-0">' +
+  function buildCategoryTableHeadHtml(service, cat) {
+    if (service) {
+      const catPh = escapeHtml(formTr('catPlaceholder'));
+      return (
+        '<thead><tr>' +
+        '<th class="col-num">' + escapeHtml(formTr('colNum')) + '</th>' +
+        '<th class="col-desc-head">' +
+        '<input type="text" class="form-control form-control-sm js-cat-name" value="' + escapeHtml(cat.name || '') + '" placeholder="' + catPh + '" aria-label="' + catPh + '">' +
+        '</th>' +
+        '<th class="col-actions">' +
+        '<button type="button" class="btn btn-sm btn-outline-danger js-remove-cat" title="Delete category"><i class="bi bi-trash" aria-hidden="true"></i><span class="invoice-cat-remove-label">' + escapeHtml(formTr('deleteCategory')) + '</span></button>' +
+        '</th>' +
+        '</tr></thead>'
+      );
+    }
+    return (
       '<thead><tr>' +
       '<th class="col-num">' + escapeHtml(formTr('colNum')) + '</th>' +
       '<th>' + escapeHtml(formTr('colDesc')) + '</th>' +
@@ -940,15 +1199,50 @@
       '<th class="text-end col-unit">' + escapeHtml(formTr('colUnit')) + '</th>' +
       '<th class="text-end col-amount">' + escapeHtml(formTr('colAmount')) + '</th>' +
       '<th class="col-actions"></th>' +
-      '</tr></thead>' +
-      '<tbody class="invoice-cat-items">' + itemsHtml +
+      '</tr></thead>'
+    );
+  }
+
+  function buildCategoryTotalRowHtml(service) {
+    if (service) {
+      return '';
+    }
+    return (
       '<tr class="invoice-cat-total-row">' +
       '<td colspan="2" class="text-end invoice-cat-total-label">' + escapeHtml(formTr('colTotal')) + '</td>' +
       '<td class="text-end"><span class="js-cat-qty-total">0</span></td>' +
       '<td></td>' +
       '<td class="text-end"><span class="js-cat-total fw-semibold" data-amount="0">0</span></td>' +
       '<td></td>' +
-      '</tr></tbody>' +
+      '</tr>'
+    );
+  }
+
+  function buildCategoryBlock(cat) {
+    const block = document.createElement('div');
+    block.className = 'invoice-cat-block';
+    const service = isServiceProposal();
+    const itemsHtml = (cat.items || [blankItem()]).map(buildItemRowHtml).join('');
+    const catPh = escapeHtml(formTr('catPlaceholder'));
+    const catHeaderHtml = service
+      ? ''
+      : (
+        '<div class="invoice-cat-header">' +
+        '<div class="invoice-cat-name-wrap flex-grow-1">' +
+        '<label class="form-label small mb-1 invoice-cat-name-label">' + escapeHtml(formTr('categoryHeading')) + '</label>' +
+        '<input type="text" class="form-control form-control-sm js-cat-name" value="' + escapeHtml(cat.name || '') + '" placeholder="' + catPh + '" aria-label="' + catPh + '">' +
+        '</div>' +
+        '<button type="button" class="btn btn-sm btn-outline-danger js-remove-cat" title="Delete category"><i class="bi bi-trash" aria-hidden="true"></i><span class="invoice-cat-remove-label">' + escapeHtml(formTr('deleteCategory')) + '</span></button>' +
+        '</div>'
+      );
+    block.innerHTML =
+      catHeaderHtml +
+      '<div class="table-responsive">' +
+      '<table class="table table-sm invoice-lines-table invoice-cat-items-table' + (service ? ' invoice-cat-items-table--service' : '') + ' mb-0">' +
+      buildCategoryTableHeadHtml(service, cat) +
+      '<tbody class="invoice-cat-items">' + itemsHtml +
+      buildCategoryTotalRowHtml(service) +
+      '</tbody>' +
       '</table></div>' +
       '<div class="invoice-cat-footer">' +
       '<button type="button" class="btn btn-outline-secondary btn-sm js-add-item"><i class="bi bi-plus-lg"></i> ' + escapeHtml(formTr('addItem')) + '</button>' +
@@ -964,11 +1258,16 @@
     linesBody.querySelectorAll('.invoice-cat-block').forEach(function (block) {
       const name = String(block.querySelector('.js-cat-name')?.value ?? '').trim();
       const items = [];
-      block.querySelectorAll('.invoice-cat-items tr:not(.invoice-cat-total-row)').forEach(function (row) {
+      block.querySelectorAll('.invoice-cat-items tr.invoice-item-row').forEach(function (row) {
+        const explanationRow = row.nextElementSibling;
+        const explanationEl = explanationRow?.classList.contains('invoice-item-explanation-row')
+          ? explanationRow.querySelector('.js-item-explanation')
+          : null;
         items.push({
           description: String(row.querySelector('.js-item-desc')?.value ?? '').trim(),
           quantity: Math.max(0, parseInt(row.querySelector('.js-item-qty')?.value || '0', 10) || 0),
           price: Math.max(0, parseInt(row.querySelector('.js-item-price')?.value || '0', 10) || 0),
+          explanation: String(explanationEl?.value ?? '').trim(),
         });
       });
       categories.push({
@@ -996,7 +1295,7 @@
     if (!linesBody) return;
     linesBody.querySelectorAll('.invoice-cat-items').forEach(function (tbody) {
       let num = 0;
-      tbody.querySelectorAll('tr:not(.invoice-cat-total-row)').forEach(function (row) {
+      tbody.querySelectorAll('tr.invoice-item-row').forEach(function (row) {
         num += 1;
         const el = row.querySelector('.js-row-num');
         if (el) el.textContent = String(num);
@@ -1005,7 +1304,7 @@
   }
 
   function updateRowAmounts() {
-    linesBody?.querySelectorAll('.invoice-cat-items tr:not(.invoice-cat-total-row)').forEach(function (row) {
+    linesBody?.querySelectorAll('.invoice-cat-items tr.invoice-item-row').forEach(function (row) {
       const qty = Math.max(0, parseInt(row.querySelector('.js-item-qty')?.value || '0', 10) || 0);
       const unit = Math.max(0, parseInt(row.querySelector('.js-item-price')?.value || '0', 10) || 0);
       const amount = lineAmount(qty, unit);
@@ -1054,7 +1353,7 @@
         }
         bindCategoryEvents();
         updateRowNumbers();
-        const itemRows = tbody.querySelectorAll('tr:not(.invoice-cat-total-row)');
+        const itemRows = tbody.querySelectorAll('tr.invoice-item-row');
         itemRows[itemRows.length - 1]?.querySelector('.js-item-desc')?.focus();
         markFormDirty();
       };
@@ -1065,14 +1364,27 @@
         const tbody = btn.closest('.invoice-cat-items');
         const block = btn.closest('.invoice-cat-block');
         if (!tbody || !block) return;
-        const itemRows = tbody.querySelectorAll('tr:not(.invoice-cat-total-row)');
+        const itemRows = tbody.querySelectorAll('tr.invoice-item-row');
         if (itemRows.length <= 1) {
           const row = itemRows[0];
-          row.querySelector('.js-item-desc').value = '';
-          row.querySelector('.js-item-qty').value = '1';
-          row.querySelector('.js-item-price').value = '0';
+          const descEl = row.querySelector('.js-item-desc');
+          if (descEl) descEl.value = '';
+          const qtyEl = row.querySelector('.js-item-qty');
+          const priceEl = row.querySelector('.js-item-price');
+          if (qtyEl) qtyEl.value = '1';
+          if (priceEl) priceEl.value = '0';
+          const explanationRow = row.nextElementSibling;
+          if (explanationRow?.classList.contains('invoice-item-explanation-row')) {
+            const explanationEl = explanationRow.querySelector('.js-item-explanation');
+            if (explanationEl) explanationEl.value = '';
+          }
         } else {
-          btn.closest('tr')?.remove();
+          const row = btn.closest('tr.invoice-item-row');
+          const explanationRow = row?.nextElementSibling;
+          if (explanationRow?.classList.contains('invoice-item-explanation-row')) {
+            explanationRow.remove();
+          }
+          row?.remove();
         }
         updateRowNumbers();
         updateRowAmounts();
@@ -1081,7 +1393,7 @@
       };
     });
 
-    linesBody.querySelectorAll('input').forEach(function (input) {
+    linesBody.querySelectorAll('input, textarea').forEach(function (input) {
       input.oninput = function () {
         markFormDirty();
         updateRowAmounts();
@@ -1095,7 +1407,7 @@
     linesBody.querySelectorAll('.invoice-cat-block').forEach(function (block) {
       let subtotal = 0;
       let qtyTotal = 0;
-      block.querySelectorAll('.invoice-cat-items tr:not(.invoice-cat-total-row)').forEach(function (row) {
+      block.querySelectorAll('.invoice-cat-items tr.invoice-item-row').forEach(function (row) {
         const qty = Math.max(0, parseInt(row.querySelector('.js-item-qty')?.value || '0', 10) || 0);
         const unit = Math.max(0, parseInt(row.querySelector('.js-item-price')?.value || '0', 10) || 0);
         subtotal += lineAmount(qty, unit);
@@ -1112,6 +1424,25 @@
   }
 
   function updateTotals() {
+    if (isProposalMode() && isServiceProposal()) {
+      const prices = computeServicePrices();
+      updateServiceTaxSummaryLabel();
+      const set = function (id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = Number(val).toLocaleString();
+      };
+      set('invoiceServiceSummaryExclAmt', prices.excl);
+      set('invoiceServiceSummaryTaxAmt', prices.tax);
+      set('invoiceServiceSummaryInclAmt', prices.incl);
+      set('invoiceGrandTotal', prices.grand);
+      set('invoicePay1', Math.round(prices.grand * 0.3));
+      set('invoicePay2', Math.round(prices.grand * 0.4));
+      set('invoicePay3', Math.round(prices.grand * 0.3));
+      setCurrencyLabels();
+      updateInstallmentPickerAmounts();
+      return;
+    }
+
     updateRowAmounts();
     updateCategoryTotals();
     let subtotal = 0;
@@ -1145,6 +1476,7 @@
     const discountRow = document.getElementById('invoiceDiscountRow');
     if (discountRow) discountRow.hidden = discountPct <= 0;
     setCurrencyLabels();
+    updateInstallmentPickerAmounts();
   }
 
   function buildState() {
@@ -1198,6 +1530,11 @@
     setFieldValue('invoiceFormClientPhone', f.clientPhone || '');
     setDateFieldValue('invoiceFormSignatureDate', f.signatureDate || '');
     setFieldValue('invoiceFormNotes', f.notes || '');
+    setFieldValue('invoiceFormServicePriceExcl', f.servicePriceExclTax || '0');
+    setFieldValue('invoiceFormServicePriceIncl', f.servicePriceInclTax || '0');
+    setFieldValue('invoiceFormTaxRate', f.taxRate || '15');
+    const bankDefault = bankDetailsForLang(f.language === 'ar' ? 'ar' : 'en');
+    setFieldValue('invoiceFormBankDetails', f.bankDetails || (f.proposalKind === 'service' ? bankDefault : ''));
 
     const cur = f.currency === 'JOD' ? 'JOD' : 'SAR';
     const radio = modalEl.querySelector('input[name="invoiceFormCurrency"][value="' + cur + '"]');
@@ -1205,12 +1542,14 @@
 
     setFormLanguageRadio(f.language === 'ar' ? 'ar' : 'en');
     lastSavedFormLanguage = f.language === 'ar' ? 'ar' : 'en';
+    setProposalKindRadio(f.proposalKind === 'service' ? 'service' : 'event');
 
     const cats = Array.isArray(state.categories) && state.categories.length
       ? state.categories
       : defaultState().categories;
     renderCategories(cats);
     setCurrencyLabels();
+    updateTotals();
     showError('');
     applyRecordTypeUI();
 
@@ -1913,6 +2252,12 @@
 
   modalEl.querySelectorAll('input[name="invoiceFormCurrency"]').forEach(function (radio) {
     radio.addEventListener('change', setCurrencyLabels);
+  });
+  modalEl.querySelectorAll('input[name="invoiceFormProposalKind"]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      if (!isProposalMode()) return;
+      switchProposalKind(radio.value === 'service' ? 'service' : 'event');
+    });
   });
   modalEl.querySelectorAll('input[name="invoiceFormLanguage"]').forEach(function (radio) {
     radio.addEventListener('change', function () {

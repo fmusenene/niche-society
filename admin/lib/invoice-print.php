@@ -97,6 +97,13 @@ function adminInvoicePrintLabels(string $lang = 'en'): array
         'installment3Of' => '3 of 3 — Third payment (30%)',
         'installmentFullDue' => 'Amount due — Full payment',
         'installmentFullOf' => 'Full payment (100%)',
+        'feesService' => 'Service management fees (15%)',
+        'serviceDetailHeading' => 'Service details',
+        'serviceCategory' => 'Category',
+        'bankDetailsTitle' => 'Bank details',
+        'priceExclTax' => 'Price (excl. tax)',
+        'priceInclTax' => 'Price (incl. tax)',
+        'taxAmount' => 'Tax (15%)',
     ];
 
     $ar = [
@@ -153,6 +160,13 @@ function adminInvoicePrintLabels(string $lang = 'en'): array
         'installment3Of' => '3 من 3 — الدفعة الثالثة (30%)',
         'installmentFullDue' => 'المبلغ المستحق — الدفع الكامل',
         'installmentFullOf' => 'دفع كامل (100%)',
+        'feesService' => 'رسوم إدارة الخدمات (15%)',
+        'serviceDetailHeading' => 'تفاصيل الخدمة',
+        'serviceCategory' => 'القسم',
+        'bankDetailsTitle' => 'تفاصيل الحساب البنكي',
+        'priceExclTax' => 'السعر (بدون ضريبة)',
+        'priceInclTax' => 'السعر (شامل الضريبة)',
+        'taxAmount' => 'الضريبة (15%)',
     ];
 
     return $lang === 'ar' ? $ar : $en;
@@ -170,75 +184,140 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     $state = $invoice['state'];
     $fields = $state['fields'];
     $lang = ($fields['language'] ?? 'en') === 'ar' ? 'ar' : 'en';
+    $proposalKind = cmsInvoiceProposalKind($fields);
+    $isServiceProposal = $proposalKind === 'service';
     $L = adminInvoicePrintLabels($lang);
+    if ($isServiceProposal) {
+        $L['fees'] = $L['feesService'];
+        $L['paymentsTitle'] = $lang === 'ar' ? 'شروط الدفع' : 'Payment Terms';
+        $taxRatePct = max(0, min(100, (int) ($fields['taxRate'] ?? 15)));
+        $L['taxAmount'] = ($lang === 'ar' ? 'الضريبة' : 'Tax') . ' (' . $taxRatePct . '%)';
+        $L['pay2'] = $lang === 'ar'
+            ? 'الدفعة الثانية (40%)'
+            : 'Second payment (40%) — upon service commencement';
+        $L['pay3'] = $lang === 'ar'
+            ? 'الدفعة الثالثة (30%)'
+            : 'Third payment (30%) — upon service completion';
+    }
     $dir = $lang === 'ar' ? 'rtl' : 'ltr';
     $currency = $fields['currency'] ?? 'SAR';
     $discountPct = (float) ($fields['discount'] ?? 0);
-    $totals = cmsInvoiceComputeBreakdown($state['categories'], $discountPct);
+    $totals = cmsInvoiceComputeBreakdown($state['categories'], $discountPct, $fields);
     $installment = max(0, min(3, $installment));
 
     $h = static fn (?string $v): string => htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8');
     $money = static fn (int $n): string => htmlspecialchars(cmsInvoiceFormatMoney($n, $currency), ENT_QUOTES, 'UTF-8');
 
     $lineRows = '';
-    foreach ($state['categories'] as $cat) {
-        $rowNum = 0;
-        $catSubtotal = 0;
-        $catQty = 0;
-        $catHasRows = false;
-        $catName = trim($cat['name'] ?? '');
-        if ($catName !== '') {
-            $lineRows .= '<tr class="cat-row"><td colspan="5">' . $h($catName) . '</td></tr>';
-        }
-        foreach ($cat['items'] ?? [] as $item) {
-            $rowNum++;
-            $qty = max(0, (int) ($item['quantity'] ?? 0));
-            $unit = max(0, (int) ($item['price'] ?? 0));
-            $amount = $qty * $unit;
-            $desc = trim($item['description'] ?? '');
-            $details = $item['details'] ?? [];
-            if (!is_array($details)) {
-                $details = [];
-            }
-            $descHtml = '';
-            if ($desc !== '') {
-                $descHtml .= $h($desc);
-            }
-            foreach ($details as $detailLine) {
-                $detailLine = trim((string) $detailLine);
-                if ($detailLine === '') {
+    $serviceItemsTablesHtml = '';
+    $serviceColspan = 2;
+    if ($isServiceProposal) {
+        foreach ($state['categories'] as $cat) {
+            $rowNum = 0;
+            $catRows = '';
+            $catName = trim($cat['name'] ?? '');
+            foreach ($cat['items'] ?? [] as $item) {
+                $desc = trim($item['description'] ?? '');
+                $details = $item['details'] ?? [];
+                if (!is_array($details)) {
+                    $details = [];
+                }
+                $descHtml = '';
+                if ($desc !== '') {
+                    $descHtml .= $h($desc);
+                }
+                foreach ($details as $detailLine) {
+                    $detailLine = trim((string) $detailLine);
+                    if ($detailLine === '') {
+                        continue;
+                    }
+                    $descHtml .= ($descHtml !== '' ? '<br>' : '') . '<span class="desc-detail">' . $h($detailLine) . '</span>';
+                }
+                if ($desc === '' && $descHtml === '') {
                     continue;
                 }
-                $descHtml .= ($descHtml !== '' ? '<br>' : '') . '<span class="desc-detail">' . $h($detailLine) . '</span>';
+                $rowNum++;
+                $catRows .= '<tr>'
+                    . '<td class="num">' . $rowNum . '</td>'
+                    . '<td class="desc">' . ($descHtml !== '' ? $descHtml : '—') . '</td>'
+                    . '</tr>';
             }
-            if ($desc === '' && $descHtml === '' && $qty === 0 && $unit === 0) {
+            if ($catRows === '') {
                 continue;
             }
-            $catHasRows = true;
-            $catSubtotal += $amount;
-            $catQty += $qty;
-            $lineRows .= '<tr>'
-                . '<td class="num">' . $rowNum . '</td>'
-                . '<td class="desc">' . ($descHtml !== '' ? $descHtml : '—') . '</td>'
-                . '<td class="qty">' . $qty . '</td>'
-                . '<td class="unit">' . $money($unit) . '</td>'
-                . '<td class="amount">' . $money($amount) . '</td>'
-                . '</tr>';
+            $headerLabel = $catName !== '' ? $catName : $L['description'];
+            $serviceItemsTablesHtml .= '<table class="items items--service">'
+                . '<thead><tr><th class="num">#</th><th>' . $h($headerLabel) . '</th></tr></thead>'
+                . '<tbody>' . $catRows . '</tbody></table>';
         }
-        if ($catName !== '' || $catHasRows) {
-            $lineRows .= '<tr class="cat-total-row">'
-                . '<td colspan="2" class="cat-total-label">' . $h($L['total']) . '</td>'
-                . '<td class="qty">' . $catQty . '</td>'
-                . '<td></td>'
-                . '<td class="amount">' . $money($catSubtotal) . '</td>'
-                . '</tr>';
+        if ($serviceItemsTablesHtml === '') {
+            $serviceItemsTablesHtml = '<table class="items items--service">'
+                . '<thead><tr><th class="num">#</th><th>' . $h($L['description']) . '</th></tr></thead>'
+                . '<tbody><tr><td colspan="2" class="empty">' . $h($L['noLineItems']) . '</td></tr></tbody></table>';
         }
-    }
-    if ($lineRows === '') {
-        $lineRows = '<tr><td colspan="5" class="empty">' . $h($L['noLineItems']) . '</td></tr>';
+    } else {
+        $serviceColspan = 5;
+        foreach ($state['categories'] as $cat) {
+            $rowNum = 0;
+            $catSubtotal = 0;
+            $catQty = 0;
+            $catHasRows = false;
+            $catName = trim($cat['name'] ?? '');
+            if ($catName !== '') {
+                $lineRows .= '<tr class="cat-row"><td colspan="' . $serviceColspan . '">' . $h($catName) . '</td></tr>';
+            }
+            foreach ($cat['items'] ?? [] as $item) {
+                $rowNum++;
+                $qty = max(0, (int) ($item['quantity'] ?? 0));
+                $unit = max(0, (int) ($item['price'] ?? 0));
+                $amount = $qty * $unit;
+                $desc = trim($item['description'] ?? '');
+                $details = $item['details'] ?? [];
+                if (!is_array($details)) {
+                    $details = [];
+                }
+                $descHtml = '';
+                if ($desc !== '') {
+                    $descHtml .= $h($desc);
+                }
+                foreach ($details as $detailLine) {
+                    $detailLine = trim((string) $detailLine);
+                    if ($detailLine === '') {
+                        continue;
+                    }
+                    $descHtml .= ($descHtml !== '' ? '<br>' : '') . '<span class="desc-detail">' . $h($detailLine) . '</span>';
+                }
+                if ($desc === '' && $descHtml === '' && $qty === 0 && $unit === 0) {
+                    continue;
+                }
+                $catHasRows = true;
+                $catSubtotal += $amount;
+                $catQty += $qty;
+                $lineRows .= '<tr>'
+                    . '<td class="num">' . $rowNum . '</td>'
+                    . '<td class="desc">' . ($descHtml !== '' ? $descHtml : '—') . '</td>'
+                    . '<td class="qty">' . $qty . '</td>'
+                    . '<td class="unit">' . $money($unit) . '</td>'
+                    . '<td class="amount">' . $money($amount) . '</td>'
+                    . '</tr>';
+            }
+            if ($catName !== '' || $catHasRows) {
+                $lineRows .= '<tr class="cat-total-row">'
+                    . '<td colspan="2" class="cat-total-label">' . $h($L['total']) . '</td>'
+                    . '<td class="qty">' . $catQty . '</td>'
+                    . '<td></td>'
+                    . '<td class="amount">' . $money($catSubtotal) . '</td>'
+                    . '</tr>';
+            }
+        }
+        if ($lineRows === '') {
+            $lineRows = '<tr><td colspan="' . $serviceColspan . '" class="empty">' . $h($L['noLineItems']) . '</td></tr>';
+        }
     }
 
-    $paymentTerms = $fields['paymentTerms'] ?? '';
+    $paymentTerms = $isServiceProposal
+        ? cmsInvoiceDefaultPaymentTerms($lang, 'service')
+        : trim($fields['paymentTerms'] ?? '');
     $paymentTermsHtml = '';
     if ($paymentTerms !== '') {
         foreach (preg_split('/\r\n|\r|\n/', $paymentTerms) as $line) {
@@ -259,6 +338,10 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     $hasBillTo = $clientName !== '' || $clientAddress !== '' || $clientEmail !== '' || $clientPhone !== '';
 
     $notes = trim($fields['notes'] ?? '');
+    $bankDetails = trim($fields['bankDetails'] ?? '');
+    if ($bankDetails === '' && $isServiceProposal) {
+        $bankDetails = cmsInvoiceDefaultBankDetails($lang);
+    }
 
     $isProposal = cmsInvoiceIsProposal($invoice);
     if ($isProposal) {
@@ -290,7 +373,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     $proposalTelDisplay = $proposalTel !== '' ? $proposalTel : '—';
     $autoPrintJs = $autoPrint ? 'window.addEventListener("load",function(){window.print();});' : '';
 
-    $proposalDefaults = cmsInvoiceDefaultProposalFields($lang);
+    $proposalDefaults = cmsInvoiceDefaultProposalFields($lang, $proposalKind);
     $intro1 = trim($fields['intro1'] ?? $proposalDefaults['intro1']);
     $intro2 = trim($fields['intro2'] ?? $proposalDefaults['intro2']);
     $intro3 = trim($fields['intro3'] ?? $proposalDefaults['intro3']);
@@ -302,7 +385,9 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     if ($socialIntro === '') {
         $socialIntro = adminInvoiceSocialDisclaimer($lang);
     }
-    $cancellationText = trim($fields['cancellationPolicy'] ?? $proposalDefaults['cancellationPolicy']);
+    $cancellationText = $isServiceProposal
+        ? trim($proposalDefaults['cancellationPolicy'])
+        : trim($fields['cancellationPolicy'] ?? $proposalDefaults['cancellationPolicy']);
 
     $cancellationHtml = '';
     if ($cancellationText !== '') {
@@ -333,6 +418,29 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
             . '</span>'
             . '</div>';
     }
+
+    $serviceDetailPages = [];
+    if ($isProposal && $isServiceProposal) {
+        foreach ($state['categories'] as $cat) {
+            $catName = trim($cat['name'] ?? '');
+            foreach ($cat['items'] ?? [] as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+                $explanation = trim((string) ($item['explanation'] ?? ''));
+                if ($explanation === '') {
+                    continue;
+                }
+                $serviceDetailPages[] = [
+                    'category' => $catName,
+                    'title' => trim((string) ($item['description'] ?? '')),
+                    'explanation' => $explanation,
+                ];
+            }
+        }
+    }
+
+    $deferClosingFooter = $isServiceProposal;
 
     ob_start();
     ?>
@@ -370,6 +478,8 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     html[dir="rtl"] .invoice-facts,
     html[dir="rtl"] .payments-box,
     html[dir="rtl"] .footer-grid { direction: rtl; }
+    html[dir="ltr"] .footer-signature { text-align: left; }
+    html[dir="rtl"] .footer-signature { text-align: right; }
     html[dir="rtl"] .proposal-field { flex-direction: row-reverse; }
     html[dir="rtl"] table.items th,
     html[dir="rtl"] table.items td.desc { text-align: right; }
@@ -569,6 +679,9 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       border-collapse: collapse;
       margin-bottom: 18px;
     }
+    table.items.items--service + table.items.items--service {
+      margin-top: 10px;
+    }
     table.items th {
       background: var(--burgundy);
       color: var(--cream);
@@ -740,6 +853,49 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     .closing-block { margin-bottom: 20px; }
     .closing-block .regards { margin-top: 12px; font-weight: 600; }
     .closing-block .prepared-name { margin-top: 4px; font-style: italic; }
+    .service-details-block {
+      margin-top: 24px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .service-detail-item + .service-detail-item {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px dashed #e8ddd2;
+    }
+    .service-detail-name {
+      font-size: 11.5pt;
+      margin: 0 0 8px;
+      color: var(--burgundy);
+      font-weight: 600;
+    }
+    .service-detail-category {
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+    .service-detail-body {
+      font-size: 10.5pt;
+      line-height: 1.65;
+      color: #2c1a23;
+      white-space: pre-wrap;
+    }
+    .bank-details-block {
+      margin: 18px 0 22px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fffdf8;
+    }
+    .bank-details-body {
+      margin: 0;
+      font-size: 10pt;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
     .toolbar {
       max-width: 210mm;
       margin: 0 auto 12px;
@@ -817,6 +973,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
           <span class="proposal-label"><?= $h($L['offerDate']) ?></span>
           <span class="proposal-value"><?= $h($offerDate) ?></span>
         </div>
+        <?php if (!$isServiceProposal): ?>
         <div class="proposal-field">
           <span class="proposal-label"><?= $h($L['eventDate']) ?></span>
           <span class="proposal-value"><?= $h($eventDate) ?></span>
@@ -825,6 +982,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
           <span class="proposal-label"><?= $h($L['eventLocation']) ?></span>
           <span class="proposal-value"><?= $h($location) ?></span>
         </div>
+        <?php endif; ?>
         <div class="proposal-field">
           <span class="proposal-label"><?= $h($L['subject']) ?></span>
           <span class="proposal-value"><?= $h($subject) ?></span>
@@ -892,6 +1050,9 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
 
       <?php endif; ?>
 
+      <?php if ($isServiceProposal): ?>
+      <?= $serviceItemsTablesHtml ?>
+      <?php else: ?>
       <table class="items">
         <thead>
           <tr>
@@ -904,9 +1065,15 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
         </thead>
         <tbody><?= $lineRows ?></tbody>
       </table>
+      <?php endif; ?>
 
       <div class="summary-wrap">
         <div class="summary">
+          <?php if ($isServiceProposal): ?>
+          <div class="summary-row"><span><?= $h($L['priceExclTax']) ?></span><strong><?= $money((int) ($totals['service_excl'] ?? $totals['subtotal'])) ?></strong></div>
+          <div class="summary-row"><span><?= $h($L['taxAmount']) ?></span><strong><?= $money((int) ($totals['tax_amount'] ?? $totals['fees'])) ?></strong></div>
+          <div class="summary-row total"><span><?= $h($L['priceInclTax']) ?></span><strong><?= $money((int) ($totals['service_incl'] ?? $totals['grand'])) ?></strong></div>
+          <?php else: ?>
           <div class="summary-row"><span><?= $h($L['subtotal']) ?></span><strong><?= $money($totals['subtotal']) ?></strong></div>
           <div class="summary-row"><span><?= $h($L['fees']) ?></span><strong><?= $money($totals['fees']) ?></strong></div>
           <?php if ($totals['discount'] > 0): ?>
@@ -916,14 +1083,24 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
           <div class="summary-row contract-total"><span><?= $h($L['contractTotal']) ?></span><strong><?= $money($totals['grand']) ?></strong></div>
           <?php endif; ?>
           <div class="summary-row total"><span><?= $h($amountDueLabel) ?></span><strong><?= $money($amountDueValue) ?></strong></div>
+          <?php endif; ?>
         </div>
       </div>
 
+      <?php if (!$isServiceProposal): ?>
       <div class="payments-box<?= $fullPayment ? ' is-full-payment' : '' ?>">
         <div class="<?= $installment === 1 ? 'is-active' : '' ?>"><?= $h($L['pay1']) ?><strong><?= $money($totals['pay1']) ?></strong></div>
         <div class="<?= $installment === 2 ? 'is-active' : '' ?>"><?= $h($L['pay2']) ?><strong><?= $money($totals['pay2']) ?></strong></div>
         <div class="<?= $installment === 3 ? 'is-active' : '' ?>"><?= $h($L['pay3']) ?><strong><?= $money($totals['pay3']) ?></strong></div>
       </div>
+      <?php endif; ?>
+
+      <?php if ($isServiceProposal && $bankDetails !== ''): ?>
+      <div class="bank-details-block">
+        <h4 class="section-title"><?= $h($L['bankDetailsTitle']) ?></h4>
+        <p class="bank-details-body"><?= nl2br($h($bankDetails)) ?></p>
+      </div>
+      <?php endif; ?>
 
       <?php if ($isProposal && $paymentTermsHtml !== ''): ?>
       <div class="terms prose-block">
@@ -939,19 +1116,19 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       </div>
       <?php endif; ?>
 
-      <?php if ($isProposal && ($closing1 || $closing2 || $closing3)): ?>
+      <?php if ($isProposal && ($closing1 || $closing2 || $closing3 || (!$deferClosingFooter && ($closingRegards || trim($fields['prepared'] ?? '') !== '')))): ?>
       <div class="closing-block prose-block">
         <?php if ($closing1): ?><p><?= $h($closing1) ?></p><?php endif; ?>
         <?php if ($closing2): ?><p><?= $h($closing2) ?></p><?php endif; ?>
         <?php if ($closing3): ?><p><?= $h($closing3) ?></p><?php endif; ?>
-        <?php if ($closingRegards): ?><p class="regards"><?= $h($closingRegards) ?></p><?php endif; ?>
-        <?php if (trim($fields['prepared'] ?? '') !== ''): ?>
+        <?php if (!$deferClosingFooter && $closingRegards): ?><p class="regards"><?= $h($closingRegards) ?></p><?php endif; ?>
+        <?php if (!$deferClosingFooter && trim($fields['prepared'] ?? '') !== ''): ?>
         <p class="prepared-name"><?= $h(trim($fields['prepared'])) ?></p>
         <?php endif; ?>
       </div>
       <?php endif; ?>
 
-      <?php if ($isProposal): ?>
+      <?php if ($isProposal && !$isServiceProposal): ?>
       <div class="social-block">
         <h4 class="section-title"><?= $h($L['socialTitle']) ?></h4>
         <p class="social-intro"><?= $h($socialIntro) ?></p>
@@ -959,9 +1136,9 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       </div>
       <?php endif; ?>
 
+      <?php if (!$deferClosingFooter): ?>
       <div class="footer-grid">
-        <div></div>
-        <div>
+        <div class="footer-signature">
           <h4 class="section-title"><?= $h($L['authorization']) ?></h4>
           <p class="muted" style="margin:0 0 8px;"><?= $h($L['clientSignature']) ?></p>
           <div class="signature-line">
@@ -971,12 +1148,55 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
             <?php endif; ?>
           </div>
         </div>
+        <div class="footer-grid__spacer" aria-hidden="true"></div>
       </div>
+      <?php endif; ?>
 
       <?php if ($notes !== ''): ?>
       <div class="notes" style="margin-top:18px;">
         <h4 class="section-title"><?= $h($L['notes']) ?></h4>
         <p><?= nl2br($h($notes)) ?></p>
+      </div>
+      <?php endif; ?>
+
+      <?php if ($deferClosingFooter && $serviceDetailPages !== []): ?>
+      <div class="service-details-block">
+        <?php foreach ($serviceDetailPages as $servicePage): ?>
+        <div class="service-detail-item">
+          <?php if ($servicePage['category'] !== ''): ?>
+          <p class="service-detail-category"><?= $h($servicePage['category']) ?></p>
+          <?php endif; ?>
+          <?php if ($servicePage['title'] !== ''): ?>
+          <h3 class="service-detail-name"><?= $h($servicePage['title']) ?></h3>
+          <?php endif; ?>
+          <div class="service-detail-body"><?= nl2br($h($servicePage['explanation'])) ?></div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+      <?php endif; ?>
+
+      <?php if ($deferClosingFooter): ?>
+      <?php if ($closingRegards || trim($fields['prepared'] ?? '') !== ''): ?>
+      <div class="closing-block prose-block">
+        <?php if ($closingRegards): ?><p class="regards"><?= $h($closingRegards) ?></p><?php endif; ?>
+        <?php if (trim($fields['prepared'] ?? '') !== ''): ?>
+        <p class="prepared-name"><?= $h(trim($fields['prepared'])) ?></p>
+        <?php endif; ?>
+      </div>
+      <?php endif; ?>
+
+      <div class="footer-grid">
+        <div class="footer-signature">
+          <h4 class="section-title"><?= $h($L['authorization']) ?></h4>
+          <p class="muted" style="margin:0 0 8px;"><?= $h($L['clientSignature']) ?></p>
+          <div class="signature-line">
+            &nbsp;
+            <?php if (!empty($fields['signatureDate'])): ?>
+            <br><span><?= $h($L['date']) ?> <?= $h(cmsInvoiceFormatDisplayDate($fields['signatureDate'])) ?></span>
+            <?php endif; ?>
+          </div>
+        </div>
+        <div class="footer-grid__spacer" aria-hidden="true"></div>
       </div>
       <?php endif; ?>
 
