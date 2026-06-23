@@ -256,6 +256,15 @@ function cmsInvoiceDefaultBankDetails(string $lang = 'en'): string
     return "Bank: Al Rajhi Bank\nAccount name: Niche Society\nIBAN: SA0000000000000000000000\nAccount number: 0000000000000";
 }
 
+function cmsInvoiceDefaultBankDetails2(string $lang = 'en'): string
+{
+    if ($lang === 'ar') {
+        return "البنك: البنك الأهلي السعودي\nاسم الحساب: نيش سوسايتي\nرقم الآيبان: SA0000000000000000000001\nرقم الحساب: 0000000000001";
+    }
+
+    return "Bank: Saudi National Bank\nAccount name: Niche Society\nIBAN: SA0000000000000000000001\nAccount number: 0000000000001";
+}
+
 function cmsInvoiceDefaultState(): array
 {
     return [
@@ -448,6 +457,7 @@ function cmsInvoiceNormalizeState(array $state): array
         'servicePriceInclTax' => (string) max(0, (int) ($fields['servicePriceInclTax'] ?? 0)),
         'taxRate' => (string) max(0, min(100, (int) ($fields['taxRate'] ?? 15))),
         'bankDetails' => trim((string) ($fields['bankDetails'] ?? '')),
+        'bankDetails2' => trim((string) ($fields['bankDetails2'] ?? '')),
     ];
 
     $proposalDefaults = cmsInvoiceDefaultProposalFields($language, $proposalKind);

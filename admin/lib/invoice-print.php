@@ -342,6 +342,11 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     if ($bankDetails === '' && $isServiceProposal) {
         $bankDetails = cmsInvoiceDefaultBankDetails($lang);
     }
+    $bankDetails2 = trim($fields['bankDetails2'] ?? '');
+    if ($bankDetails2 === '' && $isServiceProposal) {
+        $bankDetails2 = cmsInvoiceDefaultBankDetails2($lang);
+    }
+    $hasBankDetails = $bankDetails !== '' || $bankDetails2 !== '';
 
     $isProposal = cmsInvoiceIsProposal($invoice);
     if ($isProposal) {
@@ -890,11 +895,27 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       border-radius: 8px;
       background: #fffdf8;
     }
+    .bank-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    html[dir="rtl"] .bank-details-grid {
+      direction: rtl;
+    }
+    .bank-details-col {
+      min-width: 0;
+    }
     .bank-details-body {
       margin: 0;
       font-size: 10pt;
       line-height: 1.65;
       white-space: pre-wrap;
+    }
+    .proposal-continued {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 2px dashed #dcc9bc;
     }
     .toolbar {
       max-width: 210mm;
@@ -939,6 +960,13 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
         border-color: #602234 !important;
+      }
+      .proposal-continued {
+        page-break-before: always;
+        break-before: page;
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
       }
     }
   </style>
@@ -1095,12 +1123,25 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       </div>
       <?php endif; ?>
 
-      <?php if ($isServiceProposal && $bankDetails !== ''): ?>
+      <?php if ($isServiceProposal && $hasBankDetails): ?>
       <div class="bank-details-block">
         <h4 class="section-title"><?= $h($L['bankDetailsTitle']) ?></h4>
-        <p class="bank-details-body"><?= nl2br($h($bankDetails)) ?></p>
+        <div class="bank-details-grid">
+          <?php if ($bankDetails !== ''): ?>
+          <div class="bank-details-col">
+            <p class="bank-details-body"><?= nl2br($h($bankDetails)) ?></p>
+          </div>
+          <?php endif; ?>
+          <?php if ($bankDetails2 !== ''): ?>
+          <div class="bank-details-col">
+            <p class="bank-details-body"><?= nl2br($h($bankDetails2)) ?></p>
+          </div>
+          <?php endif; ?>
+        </div>
       </div>
       <?php endif; ?>
+
+      <?php if ($isServiceProposal): ?><div class="proposal-continued"><?php endif; ?>
 
       <?php if ($isProposal && $paymentTermsHtml !== ''): ?>
       <div class="terms prose-block">
@@ -1199,6 +1240,8 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
         <div class="footer-grid__spacer" aria-hidden="true"></div>
       </div>
       <?php endif; ?>
+
+      <?php if ($isServiceProposal): ?></div><?php endif; ?>
 
       <p class="muted" style="margin-top:24px;font-size:8.5pt;text-align:center;">
         <?= $h($L['footerThanks']) ?> <?= $h($company['name']) ?> · <?= $h($company['website']) ?>

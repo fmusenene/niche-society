@@ -149,8 +149,17 @@
                                     <label class="form-label mt-3" for="invoiceFormTaxRate" id="labelTaxRate">Tax (%)</label>
                                     <input type="number" class="form-control" id="invoiceFormTaxRate" name="taxRate" min="0" max="100" step="1" value="15">
                                     <p class="small text-muted mt-2 mb-0" id="invoiceServiceTaxHint">Enter excl. or incl. price — the other is calculated using this tax rate.</p>
-                                    <label class="form-label mt-3" for="invoiceFormBankDetails" id="labelBankDetails">Bank details</label>
-                                    <textarea class="form-control" id="invoiceFormBankDetails" name="bankDetails" rows="4" placeholder="Bank name, account name, IBAN…"></textarea>
+                                    <p class="form-label mt-3 mb-2" id="labelBankDetails">Bank details</p>
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label small text-muted mb-1" for="invoiceFormBankDetails" id="labelBankDetails1">Account 1</label>
+                                            <textarea class="form-control" id="invoiceFormBankDetails" name="bankDetails" rows="4" placeholder="Bank name, account name, IBAN…"></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small text-muted mb-1" for="invoiceFormBankDetails2" id="labelBankDetails2">Account 2</label>
+                                            <textarea class="form-control" id="invoiceFormBankDetails2" name="bankDetails2" rows="4" placeholder="Second bank account…"></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                                 <label class="form-label mt-3" for="invoiceFormNotes" id="labelNotes">Notes</label>
                                 <textarea class="form-control" id="invoiceFormNotes" name="notes" rows="4" placeholder="Additional notes for the client (optional)"></textarea>

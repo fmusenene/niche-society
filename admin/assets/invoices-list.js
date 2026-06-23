@@ -25,9 +25,15 @@
 
   const DEFAULT_BANK_DETAILS = 'Bank: Al Rajhi Bank\nAccount name: Niche Society\nIBAN: SA0000000000000000000000\nAccount number: 0000000000000';
   const DEFAULT_BANK_DETAILS_AR = 'البنك: مصرف الراجحي\nاسم الحساب: نيش سوسايتي\nرقم الآيبان: SA0000000000000000000000\nرقم الحساب: 0000000000000';
+  const DEFAULT_BANK_DETAILS_2 = 'Bank: Saudi National Bank\nAccount name: Niche Society\nIBAN: SA0000000000000000000001\nAccount number: 0000000000001';
+  const DEFAULT_BANK_DETAILS_2_AR = 'البنك: البنك الأهلي السعودي\nاسم الحساب: نيش سوسايتي\nرقم الآيبان: SA0000000000000000000001\nرقم الحساب: 0000000000001';
 
   function bankDetailsForLang(lang) {
     return lang === 'ar' ? DEFAULT_BANK_DETAILS_AR : DEFAULT_BANK_DETAILS;
+  }
+
+  function bankDetails2ForLang(lang) {
+    return lang === 'ar' ? DEFAULT_BANK_DETAILS_2_AR : DEFAULT_BANK_DETAILS_2;
   }
 
   const PAGE_SIZE_STORAGE_KEY = 'invoice_list_page_size';
@@ -334,7 +340,10 @@
       serviceSummaryTax: 'Tax',
       serviceSummaryIncl: 'Price (incl. tax)',
       bankDetails: 'Bank details',
+      bankDetails1: 'Account 1',
+      bankDetails2: 'Account 2',
       bankDetailsPlaceholder: 'Bank name, account name, IBAN…',
+      bankDetails2Placeholder: 'Second bank account…',
       discountAmt: 'Discount',
       amountDue: 'Amount due',
       paymentSchedule: 'Payment schedule:',
@@ -407,7 +416,10 @@
       serviceSummaryTax: 'الضريبة',
       serviceSummaryIncl: 'السعر (شامل الضريبة)',
       bankDetails: 'تفاصيل الحساب البنكي',
+      bankDetails1: 'الحساب 1',
+      bankDetails2: 'الحساب 2',
       bankDetailsPlaceholder: 'اسم البنك، اسم الحساب، رقم الآيبان…',
+      bankDetails2Placeholder: 'الحساب البنكي الثاني…',
       discountAmt: 'الخصم',
       amountDue: 'المبلغ المستحق',
       paymentSchedule: 'جدول الدفع:',
@@ -547,8 +559,12 @@
     setText('labelServicePriceIncl', 'servicePriceIncl');
     setText('labelTaxRate', 'taxRate');
     setText('labelBankDetails', 'bankDetails');
+    setText('labelBankDetails1', 'bankDetails1');
+    setText('labelBankDetails2', 'bankDetails2');
     const bankEl = document.getElementById('invoiceFormBankDetails');
+    const bankEl2 = document.getElementById('invoiceFormBankDetails2');
     if (bankEl) bankEl.placeholder = formTr('bankDetailsPlaceholder');
+    if (bankEl2) bankEl2.placeholder = formTr('bankDetails2Placeholder');
     const taxHint = document.getElementById('invoiceServiceTaxHint');
     if (taxHint) taxHint.textContent = formTr('serviceTaxHint');
     updateServiceTaxSummaryLabel();
@@ -683,6 +699,7 @@
       'invoiceFormClientPhone',
       'invoiceFormNotes',
       'invoiceFormBankDetails',
+      'invoiceFormBankDetails2',
     ];
 
     fieldIds.forEach(function (id) {
@@ -793,6 +810,7 @@
     { key: 'servicePriceInclTax', id: 'invoiceFormServicePriceIncl' },
     { key: 'taxRate', id: 'invoiceFormTaxRate' },
     { key: 'bankDetails', id: 'invoiceFormBankDetails' },
+    { key: 'bankDetails2', id: 'invoiceFormBankDetails2' },
   ];
 
   function setProposalKindRadio(kind) {
@@ -996,8 +1014,13 @@
   function switchProposalKind(nextKind) {
     const kind = nextKind === 'service' ? 'service' : 'event';
     setProposalKindRadio(kind);
-    if (kind === 'service' && !fieldValue('invoiceFormBankDetails')) {
-      setFieldValue('invoiceFormBankDetails', bankDetailsForLang(getFormLanguage()));
+    if (kind === 'service') {
+      if (!fieldValue('invoiceFormBankDetails')) {
+        setFieldValue('invoiceFormBankDetails', bankDetailsForLang(getFormLanguage()));
+      }
+      if (!fieldValue('invoiceFormBankDetails2')) {
+        setFieldValue('invoiceFormBankDetails2', bankDetails2ForLang(getFormLanguage()));
+      }
     }
     const cats = readCategories();
     renderCategories(cats);
@@ -1534,7 +1557,9 @@
     setFieldValue('invoiceFormServicePriceIncl', f.servicePriceInclTax || '0');
     setFieldValue('invoiceFormTaxRate', f.taxRate || '15');
     const bankDefault = bankDetailsForLang(f.language === 'ar' ? 'ar' : 'en');
+    const bankDefault2 = bankDetails2ForLang(f.language === 'ar' ? 'ar' : 'en');
     setFieldValue('invoiceFormBankDetails', f.bankDetails || (f.proposalKind === 'service' ? bankDefault : ''));
+    setFieldValue('invoiceFormBankDetails2', f.bankDetails2 || (f.proposalKind === 'service' ? bankDefault2 : ''));
 
     const cur = f.currency === 'JOD' ? 'JOD' : 'SAR';
     const radio = modalEl.querySelector('input[name="invoiceFormCurrency"][value="' + cur + '"]');
