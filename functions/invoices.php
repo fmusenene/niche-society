@@ -220,20 +220,29 @@ function cmsInvoiceDefaultProposalFields(string $lang = 'en', string $kind = 'ev
     ];
 }
 
-function cmsInvoiceDefaultPaymentTerms(string $lang = 'en', string $kind = 'event'): string
+function cmsInvoiceServicePaymentTerms(string $lang, int $amountInclTax, string $currency = 'SAR'): string
+{
+    $amount = cmsInvoiceFormatMoney(max(0, $amountInclTax), $currency);
+
+    if ($lang === 'ar') {
+        return "تبلغ رسوم الخدمة {$amount} شهريًا (شامل ضريبة القيمة المضافة) لمدة سنة واحدة.\n"
+            . "يتم السداد عبر التحويل البنكي أو الشيك أو أي طريقة دفع أخرى يتفق عليها الطرفان.\n"
+            . "جميع الفواتير مستحقة السداد خلال المدة المتفق عليها من تاريخ الفاتورة.\n"
+            . "قد يؤدي أي رصيد متأخر عن تاريخ الاستحقاق إلى تعليق الخدمة حتى استلام الدفع.";
+    }
+
+    return "The service fee shall be {$amount} per month (inclusive of VAT) for the duration of the one-year.\n"
+        . "Payments shall be made through bank transfer, cheque, or any other mutually agreed payment method.\n"
+        . "All invoices are payable within the agreed payment period from the invoice date.\n"
+        . "Any outstanding balances beyond the due date may be subject to service suspension until payment is received.";
+}
+
+function cmsInvoiceDefaultPaymentTerms(string $lang = 'en', string $kind = 'event', int $serviceAmountInclTax = 0, string $currency = 'SAR'): string
 {
     $kind = $kind === 'service' ? 'service' : 'event';
 
     if ($kind === 'service') {
-        if ($lang === 'ar') {
-            return "يتم السداد عبر التحويل البنكي أو الشيك أو أي طريقة دفع أخرى يتفق عليها الطرفان.\n"
-                . "جميع الفواتير مستحقة السداد خلال المدة المتفق عليها من تاريخ الفاتورة.\n"
-                . "قد يؤدي أي رصيد متأخر عن تاريخ الاستحقاق إلى تعليق الخدمة حتى استلام الدفع.";
-        }
-
-        return "Payments shall be made through bank transfer, cheque, or any other mutually agreed payment method.\n"
-            . "All invoices are payable within the agreed payment period from the invoice date.\n"
-            . "Any outstanding balances beyond the due date may be subject to service suspension until payment is received.";
+        return cmsInvoiceServicePaymentTerms($lang, $serviceAmountInclTax, $currency);
     }
 
     if ($lang === 'ar') {
@@ -449,7 +458,6 @@ function cmsInvoiceNormalizeState(array $state): array
         'clientPhone' => trim((string) ($fields['clientPhone'] ?? $fields['client_phone'] ?? '')),
         'signatureDate' => trim((string) ($fields['signatureDate'] ?? '')),
         'dueDate' => trim((string) ($fields['dueDate'] ?? $fields['due_date'] ?? '')),
-        'paymentTerms' => trim((string) ($fields['paymentTerms'] ?? cmsInvoiceDefaultPaymentTerms($language, $proposalKind))),
         'notes' => trim((string) ($fields['notes'] ?? '')),
         'language' => $language,
         'proposalKind' => $proposalKind,
@@ -459,6 +467,22 @@ function cmsInvoiceNormalizeState(array $state): array
         'bankDetails' => trim((string) ($fields['bankDetails'] ?? '')),
         'bankDetails2' => trim((string) ($fields['bankDetails2'] ?? '')),
     ];
+
+    if ($proposalKind === 'service') {
+        $serviceBreakdown = cmsInvoiceComputeBreakdown($normalizedCategories, (float) ($fields['discount'] ?? 0), [
+            'proposalKind' => 'service',
+            'servicePriceExclTax' => $normalizedFields['servicePriceExclTax'],
+            'servicePriceInclTax' => $normalizedFields['servicePriceInclTax'],
+            'taxRate' => $normalizedFields['taxRate'],
+        ]);
+        $normalizedFields['paymentTerms'] = cmsInvoiceServicePaymentTerms(
+            $language,
+            (int) ($serviceBreakdown['service_incl'] ?? $serviceBreakdown['grand']),
+            $currency
+        );
+    } else {
+        $normalizedFields['paymentTerms'] = trim((string) ($fields['paymentTerms'] ?? cmsInvoiceDefaultPaymentTerms($language, $proposalKind)));
+    }
 
     $proposalDefaults = cmsInvoiceDefaultProposalFields($language, $proposalKind);
     foreach ($proposalDefaults as $key => $defaultVal) {

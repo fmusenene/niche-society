@@ -209,17 +209,31 @@
     'الدفعة الثالثة: 30% من إجمالي المبلغ في يوم الفعالية',
   ].join('\n');
 
-  const DEFAULT_PAYMENT_TERMS_SERVICE = [
+  const DEFAULT_PAYMENT_TERMS_SERVICE_LINES = [
     'Payments shall be made through bank transfer, cheque, or any other mutually agreed payment method.',
     'All invoices are payable within the agreed payment period from the invoice date.',
     'Any outstanding balances beyond the due date may be subject to service suspension until payment is received.',
-  ].join('\n');
+  ];
 
-  const DEFAULT_PAYMENT_TERMS_SERVICE_AR = [
+  const DEFAULT_PAYMENT_TERMS_SERVICE_LINES_AR = [
     'يتم السداد عبر التحويل البنكي أو الشيك أو أي طريقة دفع أخرى يتفق عليها الطرفان.',
     'جميع الفواتير مستحقة السداد خلال المدة المتفق عليها من تاريخ الفاتورة.',
     'قد يؤدي أي رصيد متأخر عن تاريخ الاستحقاق إلى تعليق الخدمة حتى استلام الدفع.',
-  ].join('\n');
+  ];
+
+  function servicePaymentTermsForLang(lang, amountIncl, currency) {
+    const amount = Number(amountIncl || 0).toLocaleString() + ' ' + (currency || 'SAR');
+    if (lang === 'ar') {
+      return [
+        'تبلغ رسوم الخدمة ' + amount + ' شهريًا (شامل ضريبة القيمة المضافة) لمدة سنة واحدة.',
+        ...DEFAULT_PAYMENT_TERMS_SERVICE_LINES_AR,
+      ].join('\n');
+    }
+    return [
+      'The service fee shall be ' + amount + ' per month (inclusive of VAT) for the duration of the one-year.',
+      ...DEFAULT_PAYMENT_TERMS_SERVICE_LINES,
+    ].join('\n');
+  }
 
   const PROPOSAL_DEFAULTS = {
     intro1: "It's our pleasure for giving us the opportunity to present our proposal regarding the management of your upcoming event.",
@@ -478,7 +492,8 @@
   function paymentTermsForKind(lang, kind) {
     const useLang = lang === 'ar' ? 'ar' : 'en';
     if (kind === 'service') {
-      return useLang === 'ar' ? DEFAULT_PAYMENT_TERMS_SERVICE_AR : DEFAULT_PAYMENT_TERMS_SERVICE;
+      const prices = computeServicePrices();
+      return servicePaymentTermsForLang(useLang, prices.incl, currency());
     }
     return useLang === 'ar' ? DEFAULT_PAYMENT_TERMS_AR : DEFAULT_PAYMENT_TERMS;
   }

@@ -316,7 +316,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     }
 
     $paymentTerms = $isServiceProposal
-        ? cmsInvoiceDefaultPaymentTerms($lang, 'service')
+        ? cmsInvoiceServicePaymentTerms($lang, (int) ($totals['service_incl'] ?? $totals['grand']), $currency)
         : trim($fields['paymentTerms'] ?? '');
     $paymentTermsHtml = '';
     if ($paymentTerms !== '') {
