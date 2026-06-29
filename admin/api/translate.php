@@ -33,8 +33,8 @@ if ($text === '') {
 
 $from = strtolower(trim((string) ($payload['from'] ?? 'en')));
 $to = strtolower(trim((string) ($payload['to'] ?? ($payload['target'] ?? 'ar'))));
-if (!in_array($from, ['en', 'ar'], true)) {
-    $from = 'en';
+if (!in_array($from, ['en', 'ar', 'auto'], true)) {
+    $from = 'auto';
 }
 if (!in_array($to, ['en', 'ar'], true)) {
     $to = $from === 'en' ? 'ar' : 'en';

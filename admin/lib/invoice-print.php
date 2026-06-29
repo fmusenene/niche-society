@@ -1253,9 +1253,6 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
 
       <?php if ($deferClosingFooter && $serviceDetailPages !== []): ?></div><?php endif; ?>
 
-      <p class="muted" style="margin-top:24px;font-size:8.5pt;text-align:center;">
-        <?= $h($L['footerThanks']) ?> <?= $h($company['name']) ?> · <?= $h($company['website']) ?>
-      </p>
     </div>
   </div>
   <?php if ($watermarkUrl !== ''): ?>

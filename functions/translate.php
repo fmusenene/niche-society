@@ -1,6 +1,7 @@
 <?php
 /**
- * English → Arabic translation for CMS admin (MyMemory free API, chunked).
+ * English ↔ Arabic translation for CMS admin (Google Translate).
+ * Uses Cloud Translation API when TRANSLATE_API_KEY is set; otherwise Google gtx.
  */
 
 function cmsTranslateEnToAr(string $text): string
@@ -19,7 +20,7 @@ function cmsTranslateBetween(string $text, string $fromLang, string $toLang): st
     if ($text === '' || $fromLang === $toLang) {
         return $text;
     }
-    if (!in_array($fromLang, ['en', 'ar'], true) || !in_array($toLang, ['en', 'ar'], true)) {
+    if (!in_array($fromLang, ['en', 'ar', 'auto'], true) || !in_array($toLang, ['en', 'ar'], true)) {
         throw new InvalidArgumentException('Unsupported language pair.');
     }
 
@@ -120,10 +121,82 @@ function cmsTranslateEnToArChunk(string $text): ?string
 
 function cmsTranslateChunk(string $text, string $fromLang, string $toLang): ?string
 {
-    $url = 'https://api.mymemory.translated.net/get?' . http_build_query([
+    if (cmsTranslateHasGoogleApiKey()) {
+        $official = cmsGoogleTranslateOfficial($text, $fromLang, $toLang);
+        if ($official !== null) {
+            return $official;
+        }
+    }
+
+    return cmsGoogleTranslateGtx($text, $fromLang, $toLang);
+}
+
+function cmsTranslateHasGoogleApiKey(): bool
+{
+    if (!defined('TRANSLATE_API_KEY')) {
+        return false;
+    }
+    $key = trim((string) TRANSLATE_API_KEY);
+    return $key !== '' && $key !== 'YOUR_GOOGLE_TRANSLATE_API_KEY_HERE';
+}
+
+function cmsGoogleTranslateOfficial(string $text, string $fromLang, string $toLang): ?string
+{
+    if (!cmsTranslateHasGoogleApiKey()) {
+        return null;
+    }
+
+    $endpoint = 'https://translation.googleapis.com/language/translate/v2';
+    $params = [
         'q' => $text,
-        'langpair' => $fromLang . '|' . $toLang,
+        'target' => $toLang,
+        'format' => 'text',
+        'key' => TRANSLATE_API_KEY,
+    ];
+    if ($fromLang !== 'auto') {
+        $params['source'] = $fromLang;
+    }
+    $payload = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+
+    $sslVerify = !(defined('IS_LOCAL') && IS_LOCAL);
+    $ch = curl_init($endpoint);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $payload,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 25,
+        CURLOPT_SSL_VERIFYPEER => $sslVerify,
+        CURLOPT_SSL_VERIFYHOST => $sslVerify ? 2 : 0,
+        CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded; charset=utf-8'],
     ]);
+    $body = curl_exec($ch);
+    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if (PHP_VERSION_ID < 80500) {
+        curl_close($ch);
+    }
+
+    if ($body === false || $code >= 400) {
+        return null;
+    }
+
+    $data = json_decode($body, true);
+    $translated = $data['data']['translations'][0]['translatedText'] ?? null;
+    if (!is_string($translated) || trim($translated) === '') {
+        return null;
+    }
+
+    return html_entity_decode($translated, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+}
+
+function cmsGoogleTranslateGtx(string $text, string $fromLang, string $toLang): ?string
+{
+    $url = 'https://translate.googleapis.com/translate_a/single?' . http_build_query([
+        'client' => 'gtx',
+        'sl' => $fromLang,
+        'tl' => $toLang,
+        'dt' => 't',
+        'q' => $text,
+    ], '', '&', PHP_QUERY_RFC3986);
 
     $json = cmsTranslateHttpGet($url);
     if ($json === null) {
@@ -131,26 +204,19 @@ function cmsTranslateChunk(string $text, string $fromLang, string $toLang): ?str
     }
 
     $data = json_decode($json, true);
-    if (!is_array($data)) {
+    if (!is_array($data) || !isset($data[0]) || !is_array($data[0])) {
         return null;
     }
 
-    if (!empty($data['responseStatus']) && (int) $data['responseStatus'] !== 200) {
-        $detail = $data['responseDetails'] ?? 'Translation failed';
-        throw new RuntimeException(is_string($detail) ? $detail : 'Translation failed');
+    $parts = [];
+    foreach ($data[0] as $segment) {
+        if (is_array($segment) && isset($segment[0]) && is_string($segment[0])) {
+            $parts[] = $segment[0];
+        }
     }
 
-    $translated = $data['responseData']['translatedText'] ?? null;
-    if (!is_string($translated) || $translated === '') {
-        return null;
-    }
-
-    // MyMemory sometimes returns the source when quota exceeded
-    if (stripos($translated, 'MYMEMORY WARNING') !== false) {
-        throw new RuntimeException('Daily translation limit reached. Wait or translate Arabic manually.');
-    }
-
-    return $translated;
+    $translated = trim(implode('', $parts));
+    return $translated !== '' ? $translated : null;
 }
 
 /**
@@ -206,79 +272,13 @@ function cmsTranslateParallelChunks(array $indexedTexts, string $fromLang, strin
     $keys = array_keys($indexedTexts);
 
     foreach (array_chunk($keys, $batchSize) as $batchKeys) {
-        if (!function_exists('curl_multi_init')) {
-            foreach ($batchKeys as $key) {
-                $chunk = cmsTranslateChunk($indexedTexts[$key], $fromLang, $toLang);
-                if ($chunk === null) {
-                    throw new RuntimeException('Translation service unavailable. Try again in a moment.');
-                }
-                $results[$key] = $chunk;
-            }
-            continue;
-        }
-
-        $mh = curl_multi_init();
-        $handles = [];
-
         foreach ($batchKeys as $key) {
-            $url = 'https://api.mymemory.translated.net/get?' . http_build_query([
-                'q' => $indexedTexts[$key],
-                'langpair' => $fromLang . '|' . $toLang,
-            ]);
-            $ch = cmsTranslateCreateCurlHandle($url);
-            $handles[$key] = $ch;
-            curl_multi_add_handle($mh, $ch);
-        }
-
-        $running = null;
-        do {
-            $status = curl_multi_exec($mh, $running);
-            if ($running > 0) {
-                curl_multi_select($mh, 1.0);
+            $chunk = cmsTranslateChunk($indexedTexts[$key], $fromLang, $toLang);
+            if ($chunk === null) {
+                throw new RuntimeException('Google Translate is unavailable. Try again in a moment.');
             }
-        } while ($running > 0 && $status === CURLM_OK);
-
-        foreach ($handles as $key => $ch) {
-            $body = curl_multi_getcontent($ch);
-            $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_multi_remove_handle($mh, $ch);
-            if (PHP_VERSION_ID < 80500) {
-                curl_close($ch);
-            }
-
-            if ($body === false || $code >= 400) {
-                curl_multi_close($mh);
-                throw new RuntimeException('Translation service unavailable. Try again in a moment.');
-            }
-
-            $data = json_decode($body, true);
-            if (!is_array($data)) {
-                curl_multi_close($mh);
-                throw new RuntimeException('Translation service unavailable. Try again in a moment.');
-            }
-
-            if (!empty($data['responseStatus']) && (int) $data['responseStatus'] !== 200) {
-                $detail = $data['responseDetails'] ?? 'Translation failed';
-                curl_multi_close($mh);
-                throw new RuntimeException(is_string($detail) ? $detail : 'Translation failed');
-            }
-
-            $translated = $data['responseData']['translatedText'] ?? null;
-            if (!is_string($translated) || $translated === '') {
-                curl_multi_close($mh);
-                throw new RuntimeException('Translation service unavailable. Try again in a moment.');
-            }
-
-            if (stripos($translated, 'MYMEMORY WARNING') !== false) {
-                curl_multi_close($mh);
-                throw new RuntimeException('Daily translation limit reached. Wait or translate Arabic manually.');
-            }
-
-            $results[$key] = $translated;
-        }
-
-        if (PHP_VERSION_ID < 80500) {
-            curl_multi_close($mh);
+            $results[$key] = $chunk;
+            usleep(120000);
         }
     }
 
@@ -291,9 +291,12 @@ function cmsTranslateCreateCurlHandle(string $url)
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 20,
+        CURLOPT_TIMEOUT => 25,
         CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTPHEADER => ['Accept: application/json'],
+        CURLOPT_HTTPHEADER => [
+            'Accept: application/json,text/plain,*/*',
+            'User-Agent: Mozilla/5.0 (compatible; NicheSocietyCMS/1.0)',
+        ],
         CURLOPT_SSL_VERIFYPEER => $sslVerify,
         CURLOPT_SSL_VERIFYHOST => $sslVerify ? 2 : 0,
     ]);
@@ -318,7 +321,10 @@ function cmsTranslateHttpGet(string $url): ?string
     }
 
     $ctx = stream_context_create([
-        'http' => ['timeout' => 25, 'header' => "Accept: application/json\r\n"],
+        'http' => [
+            'timeout' => 25,
+            'header' => "Accept: application/json,text/plain,*/*\r\nUser-Agent: Mozilla/5.0 (compatible; NicheSocietyCMS/1.0)\r\n",
+        ],
         'ssl' => [
             'verify_peer' => $sslVerify,
             'verify_peer_name' => $sslVerify,

@@ -2429,8 +2429,25 @@ table td, table th { vertical-align: middle; }
     flex-wrap: wrap;
 }
 
-.work-editor-toolbar__group--lang {
+.work-editor-toolbar__group--translate {
     margin-left: auto;
+}
+
+.work-editor-toolbar__group--lang {
+    margin-left: 0;
+}
+
+.work-translate-btn.is-loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.work-editor-wrap.is-translating {
+    opacity: 0.92;
+}
+
+.work-editor-wrap.is-translating .work-editor-body {
+    pointer-events: none;
 }
 
 .work-editor-toolbar .work-cmd-btn {
@@ -2493,6 +2510,7 @@ table td, table th { vertical-align: middle; }
         margin-bottom: 0.25rem;
     }
 
+    .work-editor-toolbar__group--translate,
     .work-editor-toolbar__group--lang {
         margin-left: 0;
         width: 100%;

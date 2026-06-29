@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const csrfEl = document.getElementById('adminCsrfToken');
   if (!csrfEl) return;
 
@@ -15,8 +15,10 @@
   const printBtn = document.getElementById('btnWorkPrint');
   const editorEl = document.getElementById('workFormBody');
   const headingSelect = document.getElementById('workHeadingSelect');
+  const translateBtns = modalEl.querySelectorAll('.work-translate-btn');
   let dirty = false;
   let saving = false;
+  let translating = false;
 
   function field(id) {
     return document.getElementById(id);
@@ -53,6 +55,154 @@
     const useAr = lang === 'ar';
     editorEl.dir = useAr ? 'rtl' : 'ltr';
     editorEl.style.textAlign = useAr ? 'right' : 'left';
+  }
+
+  function setTranslateLoading(loading) {
+    translating = loading;
+    translateBtns.forEach(function (btn) {
+      btn.disabled = loading;
+      btn.classList.toggle('is-loading', loading);
+    });
+    modalEl.querySelector('.work-editor-wrap')?.classList.toggle('is-translating', loading);
+  }
+
+  function collectTranslatableBlocks() {
+    if (!editorEl) return [];
+    const blocks = [];
+    editorEl.querySelectorAll('p,h1,h2,h3,h4,li,blockquote,div').forEach(function (el) {
+      if (el.tagName === 'DIV' && el.querySelector('p,h1,h2,h3,h4,li,blockquote,div')) {
+        return;
+      }
+      const text = String(el.textContent || '').trim();
+      if (text) {
+        blocks.push({
+          el: el,
+          text: text,
+          hasInline: !!el.querySelector('b,strong,i,em,u,s,strike'),
+        });
+      }
+    });
+    if (!blocks.length) {
+      const text = String(editorEl.textContent || '').trim();
+      if (text) blocks.push({ el: editorEl, text: text, isRoot: true });
+    }
+    return blocks;
+  }
+
+  function collectTextNodesInElement(root) {
+    const nodes = [];
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (node) {
+        if (!node.textContent || !String(node.textContent).trim()) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    let node;
+    while ((node = walker.nextNode())) {
+      nodes.push(node);
+    }
+    return nodes;
+  }
+
+  function preserveWhitespace(original, translated) {
+    const source = String(original || '');
+    const lead = source.match(/^\s*/)[0];
+    const trail = source.match(/\s*$/)[0];
+    return lead + String(translated || '').trim() + trail;
+  }
+
+  function chunkArray(items, size) {
+    const chunks = [];
+    for (let i = 0; i < items.length; i += size) {
+      chunks.push(items.slice(i, i + size));
+    }
+    return chunks;
+  }
+
+  async function translateManyTexts(texts, sourceLang, targetLang) {
+    const results = texts.slice();
+    const batches = chunkArray(texts, 40);
+    let offset = 0;
+
+    for (let b = 0; b < batches.length; b += 1) {
+      const batch = batches[b];
+      const res = await fetch('api/translate-batch.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          texts: batch,
+          from: sourceLang,
+          to: targetLang,
+        }),
+        credentials: 'same-origin',
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || 'Translation failed');
+      }
+      const translations = data.translations || [];
+      translations.forEach(function (value, index) {
+        results[offset + index] = value;
+      });
+      offset += batch.length;
+    }
+
+    return results;
+  }
+
+  async function translateEditorContent(targetLang) {
+    if (!editorEl || translating) return;
+
+    const lang = targetLang === 'ar' ? 'ar' : 'en';
+    const sourceLang = 'auto';
+    const blocks = collectTranslatableBlocks();
+
+    if (!blocks.length) {
+      showError('Nothing to translate. Type some content first.');
+      return;
+    }
+
+    showError('');
+    setTranslateLoading(true);
+
+    try {
+      const payloads = blocks.map(function (block) { return block.text; });
+      const translations = await translateManyTexts(payloads, sourceLang, lang);
+
+      blocks.forEach(function (block, index) {
+        const translated = translations[index] ?? block.text;
+        if (block.isRoot) {
+          setEditorHtml(plainTextToHtml(translated));
+          return;
+        }
+        if (block.hasInline) {
+          const nodes = collectTextNodesInElement(block.el);
+          if (nodes.length) {
+            nodes[0].textContent = translated;
+            for (let i = 1; i < nodes.length; i += 1) {
+              nodes[i].textContent = '';
+            }
+          }
+          return;
+        }
+        block.el.textContent = translated;
+      });
+
+      const radio = modalEl.querySelector('input[name="workFormLanguage"][value="' + lang + '"]');
+      if (radio) radio.checked = true;
+      applyEditorDirection(lang);
+      markDirty();
+
+      if (window.adminNotify) {
+        window.adminNotify.success(lang === 'ar' ? 'Translated to Arabic' : 'Translated to English');
+      }
+    } catch (err) {
+      showError(err.message || 'Translation failed');
+    } finally {
+      setTranslateLoading(false);
+    }
   }
 
   function markDirty() {
@@ -164,7 +314,7 @@
     showError('');
     if (saveBtn) {
       saveBtn.disabled = true;
-      saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Creating…';
+      saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Creatingâ€¦';
     }
 
     fetch('api/work-create.php', {
@@ -250,6 +400,14 @@
     const tag = headingSelect.value || 'p';
     execFormat('formatBlock', tag === 'p' ? 'p' : tag);
     headingSelect.value = 'p';
+  });
+
+  translateBtns.forEach(function (btn) {
+    btn.addEventListener('click', function (event) {
+      event.preventDefault();
+      const target = btn.getAttribute('data-target') === 'ar' ? 'ar' : 'en';
+      translateEditorContent(target);
+    });
   });
 
   modalEl.querySelectorAll('input[name="workFormLanguage"]').forEach(function (radio) {
@@ -354,337 +512,4 @@
   if (boot.editId) {
     loadDocument(parseInt(String(boot.editId), 10));
   }
-})();
-
-
-// Work Documents JavaScript functionality
-(function() {
-    'use strict';
-
-    const WORK_ENDPOINT = 'ajax/work-documents.php';
-    let currentWorkId = 0;
-    let workEditor = null;
-
-    // Initialize
-    function initWorkModule() {
-        // Get the work editor element
-        workEditor = document.getElementById('workFormBody');
-        if (!workEditor) return;
-
-        // Set up event listeners
-        setupNewDocumentButtons();
-        setupEditButtons();
-        setupDeleteButtons();
-        setupPrintButtons();
-        setupToolbarCommands();
-        setupHeadingSelect();
-        setupLanguageToggle();
-        setupFormSubmit();
-        setupDeleteConfirm();
-
-        // Auto-open edit if specified
-        if (window.WORK_BOOT && window.WORK_BOOT.editId > 0) {
-            loadAndOpenDocument(window.WORK_BOOT.editId);
-        }
-    }
-
-    function setupNewDocumentButtons() {
-        const buttons = document.querySelectorAll('#btnNewWork, #btnNewWorkEmpty');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                createNewDocument();
-            });
-        });
-    }
-
-    function setupEditButtons() {
-        document.querySelectorAll('.btn-edit-work').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = parseInt(this.dataset.id);
-                loadAndOpenDocument(id);
-            });
-        });
-    }
-
-    function setupDeleteButtons() {
-        document.querySelectorAll('.btn-delete-work').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = parseInt(this.dataset.id);
-                const title = this.dataset.title || 'Untitled';
-                document.getElementById('deleteWorkId').value = id;
-                document.getElementById('deleteWorkTitle').textContent = title;
-                const modal = new bootstrap.Modal(document.getElementById('modalDeleteWork'));
-                modal.show();
-            });
-        });
-    }
-
-    function setupPrintButtons() {
-        document.querySelectorAll('.btn-print-work').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = parseInt(this.dataset.id);
-                window.open(`work.php?id=${id}&print=1`, '_blank');
-            });
-        });
-    }
-
-    function setupToolbarCommands() {
-        document.querySelectorAll('.work-cmd-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (!workEditor) return;
-                const cmd = this.dataset.cmd;
-                document.execCommand(cmd, false, null);
-                workEditor.focus();
-                checkContent();
-            });
-        });
-    }
-
-    function setupHeadingSelect() {
-        const select = document.getElementById('workHeadingSelect');
-        if (!select) return;
-        select.addEventListener('change', function() {
-            if (!workEditor) return;
-            const value = this.value;
-            if (value === 'p') {
-                document.execCommand('formatBlock', false, '<p>');
-            } else {
-                document.execCommand('formatBlock', false, '<' + value + '>');
-            }
-            workEditor.focus();
-            checkContent();
-        });
-    }
-
-    function setupLanguageToggle() {
-        const radios = document.querySelectorAll('input[name="workFormLanguage"]');
-        radios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                if (!workEditor) return;
-                const dir = this.value === 'ar' ? 'rtl' : 'ltr';
-                workEditor.dir = dir;
-            });
-        });
-    }
-
-    function setupFormSubmit() {
-        const form = document.getElementById('formWork');
-        if (!form) return;
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveDocument();
-        });
-    }
-
-    function setupDeleteConfirm() {
-        const btn = document.getElementById('btnConfirmDeleteWork');
-        if (!btn) return;
-        btn.addEventListener('click', function() {
-            const id = parseInt(document.getElementById('deleteWorkId').value);
-            if (id > 0) {
-                deleteDocument(id);
-            }
-        });
-    }
-
-    function createNewDocument() {
-        fetch(WORK_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'action=create'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.id) {
-                currentWorkId = data.id;
-                openModalWithData({ id: data.id, body: '', language: 'en' });
-            } else {
-                showError(data.error || 'Failed to create document');
-            }
-        })
-        .catch(error => {
-            showError('Network error: ' + error.message);
-        });
-    }
-
-    function loadAndOpenDocument(id) {
-        fetch(`${WORK_ENDPOINT}?action=get&id=${id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.document) {
-                currentWorkId = id;
-                openModalWithData(data.document);
-            } else {
-                showError(data.error || 'Failed to load document');
-            }
-        })
-        .catch(error => {
-            showError('Network error: ' + error.message);
-        });
-    }
-
-    function openModalWithData(data) {
-        const modal = new bootstrap.Modal(document.getElementById('modalWorkForm'));
-        
-        // Set document ID
-        document.getElementById('workFormId').value = data.id || 0;
-        currentWorkId = data.id || 0;
-
-        // Set metadata fields
-        document.getElementById('workFormTitle').value = data.title || '';
-        document.getElementById('workFormSubject').value = data.subject || '';
-        document.getElementById('workFormOfferDate').value = data.offer_date || '';
-        document.getElementById('workFormPreparedBy').value = data.prepared_by || '';
-        document.getElementById('workFormTel').value = data.tel || '';
-
-        // Set body content
-        if (workEditor) {
-            workEditor.innerHTML = data.body || '';
-        }
-
-        // Set language
-        const lang = data.language || 'en';
-        const radio = document.getElementById(`workLang${lang === 'ar' ? 'Ar' : 'En'}`);
-        if (radio) {
-            radio.checked = true;
-            if (workEditor) {
-                workEditor.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            }
-        }
-
-        // Enable save/print buttons
-        document.getElementById('btnWorkSave').disabled = false;
-        document.getElementById('btnWorkPrint').disabled = false;
-
-        // Hide any previous errors
-        document.getElementById('workFormError').classList.add('d-none');
-
-        modal.show();
-        if (workEditor) {
-            setTimeout(() => workEditor.focus(), 300);
-        }
-        checkContent();
-    }
-
-    function saveDocument() {
-        const id = parseInt(document.getElementById('workFormId').value);
-        if (!id) {
-            showError('No document ID found');
-            return;
-        }
-
-        const title = document.getElementById('workFormTitle').value;
-        const subject = document.getElementById('workFormSubject').value;
-        const offerDate = document.getElementById('workFormOfferDate').value;
-        const preparedBy = document.getElementById('workFormPreparedBy').value;
-        const tel = document.getElementById('workFormTel').value;
-        const body = workEditor ? workEditor.innerHTML : '';
-        const language = document.querySelector('input[name="workFormLanguage"]:checked')?.value || 'en';
-
-        const data = new URLSearchParams({
-            action: 'save',
-            id: id,
-            title: title,
-            subject: subject,
-            offer_date: offerDate,
-            prepared_by: preparedBy,
-            tel: tel,
-            body: body,
-            language: language
-        });
-
-        fetch(WORK_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: data
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                // Close modal and reload page to show changes
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalWorkForm'));
-                if (modal) modal.hide();
-                location.reload();
-            } else {
-                showError(result.error || 'Failed to save document');
-            }
-        })
-        .catch(error => {
-            showError('Network error: ' + error.message);
-        });
-    }
-
-    function deleteDocument(id) {
-        const data = new URLSearchParams({
-            action: 'delete',
-            id: id
-        });
-
-        fetch(WORK_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: data
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalDeleteWork'));
-                if (modal) modal.hide();
-                location.reload();
-            } else {
-                alert('Failed to delete document: ' + (result.error || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            alert('Network error: ' + error.message);
-        });
-    }
-
-    function checkContent() {
-        // Enable/disable save button based on content
-        const saveBtn = document.getElementById('btnWorkSave');
-        if (saveBtn) {
-            const hasContent = workEditor && workEditor.textContent.trim() !== '';
-            saveBtn.disabled = !hasContent;
-        }
-    }
-
-    function showError(message) {
-        const errorEl = document.getElementById('workFormError');
-        if (errorEl) {
-            errorEl.textContent = message;
-            errorEl.classList.remove('d-none');
-        }
-    }
-
-    // Check content on input
-    if (document.getElementById('workFormBody')) {
-        document.getElementById('workFormBody').addEventListener('input', checkContent);
-        document.getElementById('workFormBody').addEventListener('keyup', checkContent);
-        document.getElementById('workFormBody').addEventListener('paste', function() {
-            setTimeout(checkContent, 100);
-        });
-    }
-
-    // Print button
-    document.getElementById('btnWorkPrint')?.addEventListener('click', function() {
-        const id = currentWorkId || parseInt(document.getElementById('workFormId').value);
-        if (id) {
-            window.open(`work.php?id=${id}&print=1`, '_blank');
-        }
-    });
-
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initWorkModule);
-    } else {
-        initWorkModule();
-    }
-
 })();

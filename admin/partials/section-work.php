@@ -94,6 +94,14 @@ $editWorkId = !empty($_GET['edit']) ? (int) $_GET['edit'] : 0;
                                 <option value="h3">Heading 3</option>
                             </select>
                         </div>
+                        <div class="work-editor-toolbar__group work-editor-toolbar__group--translate">
+                            <button type="button" class="btn btn-sm btn-outline-primary work-translate-btn" id="btnWorkTranslateEn" data-target="en" title="Translate content to English">
+                                <i class="bi bi-translate"></i> To EN
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary work-translate-btn" id="btnWorkTranslateAr" data-target="ar" title="Translate content to Arabic">
+                                <i class="bi bi-translate"></i> To AR
+                            </button>
+                        </div>
                         <div class="work-editor-toolbar__group work-editor-toolbar__group--lang">
                             <span class="small text-muted me-1">Language</span>
                             <div class="btn-group work-language-pills" role="group">
@@ -106,7 +114,7 @@ $editWorkId = !empty($_GET['edit']) ? (int) $_GET['edit'] : 0;
                     </div>
                     <div id="workFormBody" class="work-editor-body" contenteditable="true" dir="ltr" aria-label="Document content" data-placeholder="Start typing here…"></div>
                 </div>
-                <p class="small text-muted mt-2 mb-0">Use the toolbar for bold, alignment, lists, and headings. Print keeps the proposal header, watermark, and footer — only your formatted content appears in the body.</p>
+                <p class="small text-muted mt-2 mb-0">Use the toolbar for formatting. <strong>To EN</strong> / <strong>To AR</strong> translate your content with Google Translate while keeping headings and lists. Print keeps the proposal header, watermark, and footer.</p>
                 <p id="workFormError" class="alert alert-danger d-none mt-3 mb-0" role="alert"></p>
             </form>
             <div class="modal-footer work-modal__footer">

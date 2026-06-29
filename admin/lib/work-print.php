@@ -211,23 +211,15 @@ function adminRenderWorkPrint(PDO $pdo, int $workId, bool $autoPrint = false): s
       .invoice-page {
         box-shadow: none;
         min-height: 0;
-        display: block;
       }
       .invoice-page-footer {
-        position: fixed;
-        left: 14mm;
-        right: 14mm;
-        bottom: 6mm;
-        width: auto;
-        margin: 0;
-        padding: 10px 0 0;
-        border-top: 1px solid var(--border);
-        background: #fff;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        position: relative;
+        margin-top: auto;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
       .invoice-body--proposal {
-        padding-bottom: 32mm;
+        padding-bottom: 16px;
       }
       .toolbar { display: none !important; }
       .doc-watermark {
