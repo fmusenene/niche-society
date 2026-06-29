@@ -2347,3 +2347,160 @@ table td, table th { vertical-align: middle; }
         grid-template-columns: 1fr;
     }
 }
+
+/* Work documents */
+.work-list-card {
+    padding: 1rem 1.25rem;
+}
+
+.work-list-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.work-list-intro {
+    color: #6b4f58;
+    max-width: 42rem;
+    font-size: 0.92rem;
+}
+
+.work-empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+}
+
+.work-empty-state__icon {
+    font-size: 2.5rem;
+    color: #602234;
+    opacity: 0.65;
+    margin-bottom: 0.75rem;
+}
+
+.work-empty-state__title {
+    font-family: "Domine", Georgia, serif;
+    color: #602234;
+    margin-bottom: 0.5rem;
+}
+
+.work-empty-state__text {
+    color: #6b4f58;
+    max-width: 28rem;
+    margin: 0 auto 1rem;
+}
+
+.work-data-table th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b4f58;
+}
+
+.work-body-input {
+    min-height: 320px;
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.work-editor-wrap {
+    border: 1px solid #e8ddd2;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.work-editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.65rem;
+    background: linear-gradient(180deg, #f5ebe3 0%, #efe4da 100%);
+    border-bottom: 1px solid #e0d4c8;
+}
+
+.work-editor-toolbar__group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.work-editor-toolbar__group--lang {
+    margin-left: auto;
+}
+
+.work-editor-toolbar .work-cmd-btn {
+    min-width: 2rem;
+    padding: 0.2rem 0.45rem;
+}
+
+.work-heading-select {
+    width: auto;
+    min-width: 7rem;
+}
+
+.work-editor-body {
+    min-height: 360px;
+    max-height: min(62vh, 640px);
+    overflow-y: auto;
+    padding: 1rem 1.1rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #2c1a23;
+    background: #fff;
+    outline: none;
+}
+
+.work-editor-body:empty::before {
+    content: attr(data-placeholder);
+    color: #a8949c;
+    pointer-events: none;
+}
+
+.work-editor-body h1,
+.work-editor-body h2,
+.work-editor-body h3 {
+    font-family: "Domine", Georgia, serif;
+    color: #602234;
+}
+
+.work-editor-body ul,
+.work-editor-body ol {
+    padding-left: 1.4rem;
+}
+
+.work-editor-body[dir="rtl"] ul,
+.work-editor-body[dir="rtl"] ol {
+    padding-left: 0;
+    padding-right: 1.4rem;
+}
+
+.work-modal__footer {
+    gap: 0.5rem;
+}
+
+@media (max-width: 767.98px) {
+    .work-list-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .work-data-table .btn {
+        margin-bottom: 0.25rem;
+    }
+
+    .work-editor-toolbar__group--lang {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .work-editor-body {
+        min-height: 280px;
+        max-height: 50vh;
+    }
+}

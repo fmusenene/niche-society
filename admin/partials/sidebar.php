@@ -10,6 +10,7 @@ $navItems = [
     ['id' => 'contact', 'label' => 'Contact', 'icon' => 'bi-envelope'],
     ['id' => 'account', 'label' => 'Account', 'icon' => 'bi-key'],
     ['id' => 'invoices', 'label' => 'Proposals', 'icon' => 'bi-file-earmark-text'],
+    ['id' => 'work', 'label' => 'Work', 'icon' => 'bi-journal-text'],
 ];
 ?>
 <div class="admin-sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>

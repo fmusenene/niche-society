@@ -205,6 +205,11 @@ if ($authenticated && $section === 'invoices') {
     }
 }
 
+$workDocuments = [];
+if ($authenticated && $section === 'work') {
+    $workDocuments = cmsGetAllWorkDocuments($pdo);
+}
+
 $sectionTitles = [
     'dashboard' => 'Dashboard',
     'maintenance' => 'Maintenance mode',
@@ -215,6 +220,7 @@ $sectionTitles = [
     'contact' => 'Contact & company',
     'account' => 'Account & password',
     'invoices' => 'Proposals',
+    'work' => 'Work',
 ];
 $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
 ?>
@@ -657,6 +663,8 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
             <?php endif; ?>
         </div>
     </div>
+    <?php elseif ($section === 'work'): ?>
+    <?php include __DIR__ . '/partials/section-work.php'; ?>
     <?php endif; ?>
 
     <?php include __DIR__ . '/partials/modals.php'; ?>
@@ -712,6 +720,10 @@ $pageHeading = $sectionTitles[$section] ?? 'Dashboard';
 <script src="assets/admin-notify.js?v=<?= (int) @filemtime(__DIR__ . '/assets/admin-notify.js') ?>"></script>
 <script>window.INVOICE_LIST_BOOT = <?= json_encode($openInvoiceBoot) ?>;</script>
 <script src="assets/invoices-list.js?v=<?= (int) @filemtime(__DIR__ . '/assets/invoices-list.js') ?>"></script>
+<?php endif; ?>
+<?php if ($authenticated && $section === 'work'): ?>
+<script src="assets/admin-notify.js?v=<?= (int) @filemtime(__DIR__ . '/assets/admin-notify.js') ?>"></script>
+<script src="assets/work.js?v=<?= (int) @filemtime(__DIR__ . '/assets/work.js') ?>"></script>
 <?php endif; ?>
 <?php if ($authenticated): ?>
     <script src="assets/admin.js?v=<?= (int) @filemtime(__DIR__ . '/assets/admin.js') ?>"></script>

@@ -99,6 +99,7 @@ function adminInvoicePrintLabels(string $lang = 'en'): array
         'installmentFullOf' => 'Full payment (100%)',
         'feesService' => 'Service management fees (15%)',
         'serviceDetailHeading' => 'Service details',
+        'serviceExplanationsHeading' => 'Explanations',
         'serviceCategory' => 'Category',
         'bankDetailsTitle' => 'Bank details',
         'priceExclTax' => 'Price (excl. tax)',
@@ -162,6 +163,7 @@ function adminInvoicePrintLabels(string $lang = 'en'): array
         'installmentFullOf' => 'دفع كامل (100%)',
         'feesService' => 'رسوم إدارة الخدمات (15%)',
         'serviceDetailHeading' => 'تفاصيل الخدمة',
+        'serviceExplanationsHeading' => 'الشروحات',
         'serviceCategory' => 'القسم',
         'bankDetailsTitle' => 'تفاصيل الحساب البنكي',
         'priceExclTax' => 'السعر (بدون ضريبة)',
@@ -858,10 +860,18 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
     .closing-block { margin-bottom: 20px; }
     .closing-block .regards { margin-top: 12px; font-weight: 600; }
     .closing-block .prepared-name { margin-top: 4px; font-style: italic; }
+    .service-explanations-title {
+      font-family: "Domine", Georgia, serif;
+      font-size: 14pt;
+      font-weight: 600;
+      color: var(--burgundy);
+      margin: 0 0 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--burgundy);
+    }
     .service-details-block {
-      margin-top: 24px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
+      margin-top: 0;
+      padding-top: 0;
     }
     .service-detail-item + .service-detail-item {
       margin-top: 18px;
@@ -1141,8 +1151,6 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       </div>
       <?php endif; ?>
 
-      <?php if ($isServiceProposal): ?><div class="proposal-continued"><?php endif; ?>
-
       <?php if ($isProposal && $paymentTermsHtml !== ''): ?>
       <div class="terms prose-block">
         <h4 class="section-title"><?= $h($L['paymentsTitle']) ?></h4>
@@ -1201,19 +1209,21 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       <?php endif; ?>
 
       <?php if ($deferClosingFooter && $serviceDetailPages !== []): ?>
-      <div class="service-details-block">
-        <?php foreach ($serviceDetailPages as $servicePage): ?>
-        <div class="service-detail-item">
-          <?php if ($servicePage['category'] !== ''): ?>
-          <p class="service-detail-category"><?= $h($servicePage['category']) ?></p>
-          <?php endif; ?>
-          <?php if ($servicePage['title'] !== ''): ?>
-          <h3 class="service-detail-name"><?= $h($servicePage['title']) ?></h3>
-          <?php endif; ?>
-          <div class="service-detail-body"><?= nl2br($h($servicePage['explanation'])) ?></div>
+      <div class="proposal-continued">
+        <h2 class="service-explanations-title"><?= $h($L['serviceExplanationsHeading']) ?></h2>
+        <div class="service-details-block">
+          <?php foreach ($serviceDetailPages as $servicePage): ?>
+          <div class="service-detail-item">
+            <?php if ($servicePage['category'] !== ''): ?>
+            <p class="service-detail-category"><?= $h($servicePage['category']) ?></p>
+            <?php endif; ?>
+            <?php if ($servicePage['title'] !== ''): ?>
+            <h3 class="service-detail-name"><?= $h($servicePage['title']) ?></h3>
+            <?php endif; ?>
+            <div class="service-detail-body"><?= nl2br($h($servicePage['explanation'])) ?></div>
+          </div>
+          <?php endforeach; ?>
         </div>
-        <?php endforeach; ?>
-      </div>
       <?php endif; ?>
 
       <?php if ($deferClosingFooter): ?>
@@ -1241,7 +1251,7 @@ function adminRenderInvoicePrint(PDO $pdo, int $invoiceId, bool $autoPrint = fal
       </div>
       <?php endif; ?>
 
-      <?php if ($isServiceProposal): ?></div><?php endif; ?>
+      <?php if ($deferClosingFooter && $serviceDetailPages !== []): ?></div><?php endif; ?>
 
       <p class="muted" style="margin-top:24px;font-size:8.5pt;text-align:center;">
         <?= $h($L['footerThanks']) ?> <?= $h($company['name']) ?> · <?= $h($company['website']) ?>

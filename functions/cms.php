@@ -32,6 +32,11 @@ function cmsEnsureTables(PDO $pdo): void
         require_once __DIR__ . '/invoices.php';
         cmsEnsureInvoicesTable($pdo);
     }
+
+    if (file_exists(__DIR__ . '/work-documents.php')) {
+        require_once __DIR__ . '/work-documents.php';
+        cmsEnsureWorkDocumentsTable($pdo);
+    }
 }
 
 function cmsTableExists(PDO $pdo, string $table): bool
